@@ -555,9 +555,7 @@
     <button class="tab on" data-tab="vision"><span class="ic">🌼</span>비전</button>
     <button class="tab" data-tab="networth"><span class="ic">💰</span>순자산</button>
     <button class="tab" data-tab="goals"><span class="ic">🎯</span>목표</button>
-    <button class="tab" data-tab="bucket"><span class="ic">✨</span>하고싶은일</button>
-    <button class="tab" data-tab="trade"><span class="ic">🔄</span>갈아타기</button>
-    <button class="tab" data-tab="plan"><span class="ic">📘</span>플랜</button>
+    <button class="tab" data-tab="bucket"><span class="ic">🙏</span>희망</button>
   </nav>
 </div>
 
@@ -996,9 +994,7 @@ function render() {
   if (ST.tab === 'vision') { view.innerHTML = visionView(); fitGoalBadges(view); }
   else if (ST.tab === 'networth') { view.innerHTML = netWorthView(); fitAmounts(view); }
   else if (ST.tab === 'goals') view.innerHTML = goalsView();
-  else if (ST.tab === 'bucket') view.innerHTML = bucketView();
-  else if (ST.tab === 'plan') view.innerHTML = planView();
-  else view.innerHTML = tradeView();
+  else view.innerHTML = bucketView();
   if (render.sameTab) view.scrollTop = keep;
   render.sameTab = true;
 }
@@ -1106,7 +1102,7 @@ function visionView() {
   if (v) {
     const arr = expertiseItems();
     expertise = '<section class="card">' +
-      '<div class="card-h"><h2>📚 세팅력</h2><div class="board-tools">' +
+      '<div class="card-h"><h2>📚 세팅력 컨설턴트</h2><div class="board-tools">' +
         (arr.length ? '<span class="pill">' + arr.length + '개</span>' : '') + '</div></div>' +
       (arr.length ? '<div class="chips">' + arr.map((x) =>
         '<div class="chip"><span class="ci">' + esc(x.emoji || '•') + '</span>' + esc(x.label || '') + '</div>').join('') + '</div>' : '<p class="empty">아직 영역이 없어요</p>') +
@@ -1320,7 +1316,7 @@ function bkRow(it) {
 function bucketView() {
   const list = bkSorted();
   const head = '<section class="card">' +
-    '<div class="card-h"><h2>✨ 돈 벌면 하고 싶은 일</h2><span class="pill">' + list.length + '개</span></div>' +
+    '<div class="card-h"><h2>🙏 돈 벌면 하고 싶은 일</h2><span class="pill">' + list.length + '개</span></div>' +
     '<p class="cap" style="text-align:left">하고 싶은 일을 모아 두세요 · 항목을 누르면 이모지·문구·메모를 고칠 수 있어요</p>' +
     '</section>';
   if (!list.length) {
@@ -1421,12 +1417,33 @@ function openSheet(title, bodyHtml, actsHtml) {
   $('#scrim').classList.add('on');
   $('#sheet').classList.add('on');
   $('#sheet').setAttribute('aria-hidden', 'false');
+  pushSheetHistory();
 }
-function closeSheet() {
+function closeSheet(fromPop) {
+  const wasOpen = $('#sheet').classList.contains('on');
   $('#scrim').classList.remove('on');
   $('#sheet').classList.remove('on');
   $('#sheet').setAttribute('aria-hidden', 'true');
+  // 시트를 위해 쌓아 둔 히스토리를 정리한다(이미 뒤로가기로 닫힌 경우는 건너뜀)
+  if (wasOpen && sheetHistPushed) {
+    sheetHistPushed = false;
+    if (!fromPop && history.state && history.state.bdModal) {
+      try { history.back(); } catch (e) {}
+    }
+  }
 }
+/* 안드로이드 뒤로가기: 시트가 열려 있으면 앱을 나가지 않고 시트만 닫는다 */
+let sheetHistPushed = false;
+function pushSheetHistory() {
+  if (sheetHistPushed) return;
+  try { history.pushState({ bdModal: true }, ''); sheetHistPushed = true; } catch (e) {}
+}
+window.addEventListener('popstate', () => {
+  if ($('#sheet').classList.contains('on')) {
+    sheetHistPushed = false; /* 엔트리는 방금 소비됐다 */
+    closeSheet(true);
+  }
+});
 $('#scrim').addEventListener('click', closeSheet);
 $('#shX').addEventListener('click', closeSheet);
 
@@ -2303,7 +2320,7 @@ function openPlanChapterSheet(cid) {
 const MEMO_KEY = 'bubudaisy.memos';
 const TAB_NAMES = {
   vision: '비전', networth: '순자산', goals: '목표',
-  bucket: '하고싶은일', trade: '갈아타기', plan: '플랜'
+  bucket: '희망', trade: '갈아타기', plan: '플랜'
 };
 let MEMOS = loadMemos();
 function loadMemos() {
