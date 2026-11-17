@@ -1439,8 +1439,8 @@ function goalsView() {
 /* 아이콘은 그룹마다 고정 — 전략은 🍯, 마인드는 💛.
    방에 저장된 emoji 값과 상관없이 화면은 항상 이 아이콘으로 그린다(데이터는 건드리지 않는다). */
 const SM_LISTS = [
-  { key: 'strategy', title: '🍯 전략', label: '전략', emoji: '🍯', ph: '예: 이주비 대출로 갈아탄다' },
-  { key: 'mind', title: '💛 마인드', label: '마인드', emoji: '💛', ph: '예: 매일 아침 목표를 소리 내어 읽는다' }
+  { key: 'strategy', title: '🍯 전략', label: '전략', emoji: '🍯', empty: '아직 전략이 없어요', ph: '예: 이주비 대출로 갈아탄다' },
+  { key: 'mind', title: '💛 마인드', label: '마인드', emoji: '💛', empty: '아직 마인드가 없어요', ph: '예: 매일 아침 목표를 소리 내어 읽는다' }
 ];
 /* 처음 한 번만 깔아 두는 전략 예시 — 기존 tradeUpStrategies에 있던 2건. 바로 고치고 지울 수 있다. */
 const SM_SEED = [
@@ -1500,7 +1500,7 @@ function smCard(l) {
     '<div class="card-h"><h2>' + l.title + '</h2><span class="pill">' + list.length + '개</span></div>' +
     '<ul class="srows" data-list="' + l.key + '">' +
       (list.length ? list.map(it => smRow(l, it)).join('')
-        : '<li class="sempty">아직 ' + l.label + '이 없어요<br>아래 버튼으로 첫 ' + l.label + '을 적어 보세요</li>') +
+        : '<li class="sempty">' + l.empty + '<br>아래 버튼으로 첫 ' + l.label + '을 적어 보세요</li>') +
     '</ul>' +
     '<button class="card-add" type="button" data-act="sm-add" data-list="' + l.key + '">' +
       '<span class="plus" aria-hidden="true">+</span> ' + l.label + ' 추가</button>' +
