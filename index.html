@@ -315,11 +315,21 @@
     margin-top:5px;background:#fff;border-radius:11px;padding:7px 10px}
 
   /* ================= 순자산 ================= */
-  .split{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .mini{background:var(--cream);border-radius:15px;padding:10px 12px}
-  .mini .who{font-size:10.5px;font-weight:900;color:#7C765C;display:flex;align-items:center;gap:4px}
-  .mini b{display:block;margin-top:3px;font-size:14.5px;font-weight:900;color:var(--navy);letter-spacing:-.03em}
-  .mini.chankyu b{color:#2A6E3C}
+  /* 1번: 부부 순자산 — 카드 폭 전체 크림 박스 */
+  .nwhero{background:var(--cream);border:1px solid var(--cream-line);border-radius:18px;
+    padding:12px 13px 13px;display:flex;flex-direction:column;gap:5px}
+  .nwhero .card-h{gap:6px}
+  .nwhero .pill{background:#fff}
+  .nwhero .big{font-size:clamp(26px,8vw,33px);line-height:1.08}
+  /* 2·3·4번: 3칸 가로 그리드 — 금액은 한 줄, 넘치면 JS가 폰트를 줄인다 */
+  .nw3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .nw3 .mini{background:var(--cream);border-radius:14px;padding:9px 7px 10px;min-width:0}
+  .nw3 .mini .who{font-size:10px;font-weight:900;color:#7C765C;display:flex;align-items:center;gap:3px;
+    white-space:nowrap;overflow:hidden;letter-spacing:-.02em}
+  .nw3 .mini b{display:block;margin-top:3px;font-size:12.5px;font-weight:900;color:var(--navy);
+    letter-spacing:-.045em;white-space:nowrap;overflow:hidden;line-height:1.25}
+  .nw3 .mini.chankyu b{color:#2A6E3C}
+  .nw3 .mini.cost b{color:#BE5A45}
   .add-btn{width:100%;height:52px;border-radius:18px;background:var(--navy);color:#fff;
     font-size:14.5px;font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;justify-content:center;gap:7px;
     box-shadow:0 12px 24px rgba(30,27,122,.26);transition:transform .12s}
@@ -402,10 +412,6 @@
   .sum-preview.net{background:#EFECFB}
   .sum-preview.net .k{color:#4A46A8}
   .sum-preview.net .v{color:var(--navy)}
-  .nwcost{display:flex;align-items:center;justify-content:space-between;gap:8px;
-    background:var(--cream);border-radius:12px;padding:8px 11px;font-size:11.5px;font-weight:900;
-    color:#8A8674;letter-spacing:-.02em}
-  .nwcost b{font-size:12.5px;font-weight:900;color:#BE5A45;letter-spacing:-.03em}
   .goalcard .goal-top{justify-content:center;gap:0;padding:2px 0 3px;
     font-size:15.5px;font-weight:900;color:#fff;letter-spacing:-.03em}
   .sh-acts{flex:0 0 auto;display:flex;gap:8px;padding-top:10px}
@@ -843,6 +849,19 @@ function scheduleRender() {
   if (renderTimer) return;
   renderTimer = setTimeout(() => { renderTimer = null; render(); }, 90);
 }
+/* 3칸 금액이 칸 밖으로 넘치지 않게 폰트를 한 단계씩 줄여 맞춘다 */
+function fitAmounts(root) {
+  const els = (root || document).querySelectorAll('[data-fit]');
+  els.forEach(el => {
+    el.style.fontSize = '';
+    const base = parseFloat(getComputedStyle(el).fontSize) || 12.5;
+    let size = base, guard = 0;
+    while (size > 8 && el.scrollWidth > el.clientWidth + .5 && guard++ < 40) {
+      size = Math.round((size - .5) * 100) / 100;
+      el.style.fontSize = size + 'px';
+    }
+  });
+}
 function render() {
   $$('#tabs .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === ST.tab));
   const view = $('#view');
@@ -852,7 +871,7 @@ function render() {
     return;
   }
   if (ST.tab === 'vision') view.innerHTML = visionView();
-  else if (ST.tab === 'networth') view.innerHTML = netWorthView();
+  else if (ST.tab === 'networth') { view.innerHTML = netWorthView(); fitAmounts(view); }
   else if (ST.tab === 'goals') view.innerHTML = goalsView();
   else if (ST.tab === 'bucket') view.innerHTML = bucketView();
   else if (ST.tab === 'plan') view.innerHTML = planView();
@@ -877,6 +896,15 @@ $('#tabs').addEventListener('click', (e) => {
   const b = e.target.closest('[data-tab]');
   if (b) go(b.dataset.tab);
 });
+/* 화면 폭이 바뀌면(회전 등) 3칸 금액을 다시 맞춘다 */
+let fitTimer = null;
+function refitSoon() {
+  if (fitTimer) clearTimeout(fitTimer);
+  fitTimer = setTimeout(() => { if (ST.tab === 'networth') fitAmounts($('#view')); }, 120);
+}
+window.addEventListener('resize', refitSoon);
+window.addEventListener('orientationchange', refitSoon);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(refitSoon);
 
 /* ---------- 1. 비전보드 ---------- */
 function vArr(v, key) { return v && Array.isArray(v[key]) ? v[key] : []; }
@@ -1039,13 +1067,15 @@ function netWorthView() {
       '</section>';
   } else {
     sum = '<section class="card">' +
-      '<div class="card-h"><h2>부부 순자산</h2><span class="pill">' + esc(monthLabel(latest.month)) + ' 기준</span></div>' +
-      '<div class="big">' + esc(fmtMan(total)) + '</div>' +
-      '<div class="split">' +
-        '<div class="mini"><span class="who">👩🏻 세은</span><b>' + esc(fmtMan(latest.seeun)) + '</b></div>' +
-        '<div class="mini chankyu"><span class="who">👨🏻 찬규</span><b>' + esc(fmtMan(latest.chankyu)) + '</b></div>' +
+      '<div class="nwhero">' +
+        '<div class="card-h"><h2>부부 순자산</h2><span class="pill">' + esc(monthLabel(latest.month)) + ' 기준</span></div>' +
+        '<div class="big">' + esc(fmtMan(total)) + '</div>' +
       '</div>' +
-      '<div class="nwcost"><span class="k">부부총비용</span><b>−' + esc(fmtMan(latest.expense)) + '</b></div>' +
+      '<div class="nw3">' +
+        '<div class="mini"><span class="who">👩🏻 세은</span><b data-fit>' + esc(fmtMan(latest.seeun)) + '</b></div>' +
+        '<div class="mini chankyu"><span class="who">👨🏻 찬규</span><b data-fit>' + esc(fmtMan(latest.chankyu)) + '</b></div>' +
+        '<div class="mini cost"><span class="who">부부 총비용</span><b data-fit>−' + esc(fmtMan(latest.expense)) + '</b></div>' +
+      '</div>' +
       (target ? '<div class="bar green"><i style="width:' + (pct === null ? 0 : Math.min(100, Math.max(0, pct)).toFixed(1)) + '%"></i></div>' +
         '<div class="bar-meta"><span>' + (tYear() ? tYear() + '년 목표 대비 ' : '목표 대비 ') + '<b>' + (pct === null ? '—' : pct.toFixed(1) + '%') + '</b></span><span>목표 ' + esc(fmtMan(target)) + '</span></div>' : '') +
       (latest.memo ? '<div class="ynote">📝 ' + esc(latest.memo) + '</div>' : '') +
@@ -1318,14 +1348,13 @@ function openNwSheet(month) {
       '<input class="inp" type="number" inputmode="decimal" id="nwChankyu" placeholder="0" value="' + esc(fromMan(d.chankyu, 'man')) + '">' +
       '<div class="unit-seg" data-who="chankyu"><button data-u="man" class="on">만원</button><button data-u="eok">억원</button></div>' +
     '</div></div>' +
-    '<div class="fld"><span>부부총비용</span><div class="unit-row">' +
+    '<div class="fld"><span>부부 총비용</span><div class="unit-row">' +
       '<input class="inp" type="number" inputmode="decimal" id="nwCost" placeholder="0" value="' + esc(fromMan(d.expense, 'man')) + '">' +
       '<div class="unit-seg" data-who="expense"><button data-u="man" class="on">만원</button><button data-u="eok">억원</button></div>' +
     '</div></div>' +
-    '<div class="sum-preview"><span class="k">세은 + 찬규</span><span class="v" id="nwSum">—</span></div>' +
     '<div class="sum-preview net"><span class="k">부부 순자산</span><span class="v" id="nwNet">—</span></div>' +
     '<label class="fld"><span>메모 (선택)</span><textarea class="inp" id="nwMemo" placeholder="예: 예금·주식·부동산 합계">' + esc(d.memo) + '</textarea></label>' +
-    '<p class="cap" style="text-align:left">부부 순자산 = 세은 + 찬규 − 부부총비용. 대출·부채를 뺀 순수 자산으로 적어 주세요. 만원 단위로 저장돼요.</p>';
+    '<p class="cap" style="text-align:left">부부 순자산 = 세은 + 찬규 − 부부 총비용. 대출·부채를 뺀 순수 자산으로 적어 주세요. 만원 단위로 저장돼요.</p>';
 
   const acts = '<button class="sh-save" id="nwSave">' + (d.editing ? '수정 저장' : '저장') + '</button>' +
     (d.editing ? '<button class="sh-del" id="nwDel">삭제</button>' : '');
@@ -1338,7 +1367,6 @@ function openNwSheet(month) {
     const e = toMan($('#nwCost').value, d.unit.expense);
     const gross = (s === null ? 0 : s) + (c === null ? 0 : c);
     const net = gross - (e === null ? 0 : e);
-    $('#nwSum').textContent = (s === null && c === null) ? '—' : fmtMan(gross);
     $('#nwNet').textContent = (s === null && c === null && e === null) ? '—' : fmtMan(net);
   };
   upd();
