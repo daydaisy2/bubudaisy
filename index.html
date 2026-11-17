@@ -141,11 +141,11 @@
     font-size:11px;font-weight:900;display:grid;place-items:center;margin-top:1px}
   .steps .t{display:block;font-size:12.5px;font-weight:900;color:var(--ink);letter-spacing:-.02em;line-height:1.4}
   .steps .d{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-top:2px;letter-spacing:-.02em;line-height:1.4}
+  .cap{font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;letter-spacing:-.02em}
   .chips{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
   .chip{background:var(--cream);border-radius:14px;padding:11px 6px;display:flex;flex-direction:column;
     align-items:center;gap:4px;font-size:11px;font-weight:900;color:#4A4738;letter-spacing:-.02em}
   .chip .ci{font-size:18px;line-height:1}
-  .cap{font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;letter-spacing:-.02em}
   .ms{display:flex;flex-direction:column;gap:8px}
   .ms-card{border-radius:16px;background:var(--cream);padding:11px 11px 11px;transition:background .15s}
   .ms-card:active{background:#F6EFD6}
@@ -203,6 +203,19 @@
   .nwpill .v{font-size:11.5px;font-weight:900;color:#FFE680;letter-spacing:-.03em}
   .nwpill.none{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);color:#B6B1EE}
   .nwpill.none .v{color:#CFCBF3;font-size:11px}
+  /* 목표 카드 1·2·3번 오른쪽 '현재' 뱃지 — 세 줄 폭·높이를 같게(폭은 스크립트가 가장 넓은 뱃지에 맞춤) */
+  .goalcard .grow{align-items:center;gap:8px;min-height:48px}
+  .goalcard .gv{font-size:12px}
+  .goalcard .nwpill{justify-content:center}
+  @media (min-width:400px){
+    .goalcard .gv{font-size:13.5px}
+  }
+  @media (max-width:379px){
+    .goalcard .grow{padding:9px;gap:6px;min-height:46px}
+    .goalcard .gv{font-size:11px}
+    .goalcard .nwpill{font-size:9.5px;padding:5px 7px}
+    .goalcard .nwpill .v{font-size:10.5px}
+  }
   .gadd{width:100%;min-height:36px;border-radius:12px;border:1.5px dashed rgba(255,255,255,.26);
     color:#CCC8F2;font-size:11.5px;font-weight:900;letter-spacing:-.02em;
     display:flex;align-items:center;justify-content:center;gap:4px}
@@ -863,6 +876,16 @@ function fitAmounts(root) {
     }
   });
 }
+/* 목표 카드 1·2·3번 '현재' 뱃지의 폭을 가장 넓은 뱃지에 맞춰 세로로 반듯하게 통일한다 */
+function fitGoalBadges(root) {
+  const pills = Array.from((root || document).querySelectorAll('.goalcard .nwpill'));
+  if (pills.length < 2) return;
+  pills.forEach(p => { p.style.minWidth = '0px'; });
+  const widest = Math.max.apply(null, pills.map(p => p.getBoundingClientRect().width));
+  if (!widest) return;
+  const w = Math.ceil(widest) + 'px';
+  pills.forEach(p => { p.style.minWidth = w; });
+}
 function render() {
   $$('#tabs .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === ST.tab));
   const view = $('#view');
@@ -871,7 +894,7 @@ function render() {
     view.innerHTML = '<div class="skeleton">불러오는 중…</div>';
     return;
   }
-  if (ST.tab === 'vision') view.innerHTML = visionView();
+  if (ST.tab === 'vision') { view.innerHTML = visionView(); fitGoalBadges(view); }
   else if (ST.tab === 'networth') { view.innerHTML = netWorthView(); fitAmounts(view); }
   else if (ST.tab === 'goals') view.innerHTML = goalsView();
   else if (ST.tab === 'bucket') view.innerHTML = bucketView();
@@ -897,11 +920,14 @@ $('#tabs').addEventListener('click', (e) => {
   const b = e.target.closest('[data-tab]');
   if (b) go(b.dataset.tab);
 });
-/* 화면 폭이 바뀌면(회전 등) 3칸 금액을 다시 맞춘다 */
+/* 화면 폭이 바뀌면(회전 등) 3칸 금액·목표 뱃지 폭을 다시 맞춘다 */
 let fitTimer = null;
 function refitSoon() {
   if (fitTimer) clearTimeout(fitTimer);
-  fitTimer = setTimeout(() => { if (ST.tab === 'networth') fitAmounts($('#view')); }, 120);
+  fitTimer = setTimeout(() => {
+    if (ST.tab === 'networth') fitAmounts($('#view'));
+    else if (ST.tab === 'vision') fitGoalBadges($('#view'));
+  }, 120);
 }
 window.addEventListener('resize', refitSoon);
 window.addEventListener('orientationchange', refitSoon);
@@ -935,6 +961,18 @@ function nwBadge() {
   const total = (num(nw.seeun) || 0) + (num(nw.chankyu) || 0) - (num(nw.expense) || 0);
   return '<span class="nwpill"><span class="k">현재</span><span class="v">' + esc(fmtMan(total)) + '</span></span>';
 }
+/* 2·3번 목표 오른쪽 '현재' 뱃지 값 — 방 데이터의 목표 항목에 now 값이 있으면 그것을,
+   없으면 지금 적힌 목표(2번 1호기 · 3번 0원)에 맞춘 기본값을 쓴다. */
+const GOAL_NOW_DEFAULT = ['1호기', '0원'];
+function goalNowText(fg, i) {
+  const v = fg && fg.now;
+  if (v != null && String(v).trim()) return String(v).trim();
+  return GOAL_NOW_DEFAULT[i] || '';
+}
+function nowBadge(text) {
+  if (!text) return '';
+  return '<span class="nwpill"><span class="k">현재</span><span class="v">' + esc(text) + '</span></span>';
+}
 function visionView() {
   const v = ST.vision;
   const target = targetMan();
@@ -957,7 +995,7 @@ function visionView() {
         (fg.label ? '<span class="gl">' + esc(fg.label) + '</span>' : '') +
         '<span class="gv">' + esc(fg.value || '') + '</span>' +
         (fg.note ? '<span class="gsub">' + esc(fg.note) + '</span>' : '') +
-        '</span></div>');
+        '</span>' + nowBadge(goalNowText(fg, i)) + '</div>');
     });
     hero = '<section class="hero goalcard">' +
       '<div class="hero-top goal-top"><span>' + esc(topTxt || '우리의 목표') + '</span></div>' +
@@ -973,7 +1011,6 @@ function visionView() {
         (arr.length ? '<span class="pill">' + arr.length + '개</span>' : '') + '</div></div>' +
       (arr.length ? '<div class="chips">' + arr.map((x) =>
         '<div class="chip"><span class="ci">' + esc(x.emoji || '•') + '</span>' + esc(x.label || '') + '</div>').join('') + '</div>' : '<p class="empty">아직 영역이 없어요</p>') +
-      (v.expertiseCaption ? '<p class="cap">' + esc(v.expertiseCaption) + '</p>' : '') +
       '</section>';
   }
 
