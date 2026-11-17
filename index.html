@@ -1427,7 +1427,7 @@ function closeSheet(fromPop) {
   // 시트를 위해 쌓아 둔 히스토리를 정리한다(이미 뒤로가기로 닫힌 경우는 건너뜀)
   if (wasOpen && sheetHistPushed) {
     sheetHistPushed = false;
-    if (!fromPop && history.state && history.state.bdModal) {
+    if (fromPop !== true && history.state && history.state.bdModal) {
       try { history.back(); } catch (e) {}
     }
   }
@@ -1797,7 +1797,7 @@ async function toggleMsDone(i, b) {
   m.done = done;
   render.sameTab = true; render();
   try {
-    await patch('vision/milestones/' + Number(i) + '/done', done);
+    await put('vision/milestones/' + Number(i) + '/done', done);
     toast(done[k] ? '성공으로 표시했어요 ✨' : '다시 도전 중으로 돌렸어요');
   } catch (e) {
     m.done = prevDone;
