@@ -149,7 +149,7 @@
   .ms ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
   .ms li{display:flex;gap:6px;font-size:11.5px;font-weight:700;color:#3A382E;letter-spacing:-.02em;line-height:1.4}
   .ms li .tk{color:var(--green);font-weight:900}
-  .foot-note{margin:2px 4px 6px;font-size:10.5px;font-weight:700;color:#9A947C;text-align:center;letter-spacing:-.02em}
+  .foot-note{margin:2px 4px 6px;font-size:10.5px;font-weight:700;color:#7E7448;text-align:center;letter-spacing:-.02em}
 
   /* ================= 비전 탭 직접 편집 ================= */
   .pen-btn{flex:0 0 auto;width:28px;height:28px;border-radius:10px;background:var(--cream);
@@ -158,6 +158,25 @@
   .board-tools{display:flex;align-items:center;gap:6px;flex:0 0 auto}
   .hero-tap{cursor:pointer}
   .hero-top .pen-btn{margin-left:auto;background:rgba(255,255,255,.17);color:#fff}
+  /* 통합 목표 카드 */
+  .goalcard{gap:9px}
+  .grows{display:flex;flex-direction:column;gap:6px}
+  .grow{display:flex;align-items:flex-start;gap:9px;width:100%;text-align:left;
+    background:rgba(255,255,255,.10);border-radius:15px;padding:10px 11px;transition:background .15s}
+  .grow:active{background:rgba(255,255,255,.18)}
+  .grow .gn{flex:0 0 auto;width:19px;height:19px;border-radius:50%;background:#FFE680;color:#2A2694;
+    font-size:10.5px;font-weight:900;display:grid;place-items:center;margin-top:1px}
+  .grow .gt{flex:1 1 auto;min-width:0;display:block}
+  .grow .gl{display:block;font-size:10px;font-weight:900;color:#C6C2F2;letter-spacing:-.01em}
+  .grow .gv{display:block;font-size:13.5px;font-weight:900;color:#fff;letter-spacing:-.03em;
+    line-height:1.32;margin-top:1px}
+  .grow .gsub{display:block;font-size:10.5px;font-weight:700;color:#B6B1EE;letter-spacing:-.02em;
+    line-height:1.4;margin-top:3px}
+  .grow .gchev{flex:0 0 auto;align-self:center;color:rgba(255,255,255,.45);font-size:12px}
+  .gadd{width:100%;min-height:36px;border-radius:12px;border:1.5px dashed rgba(255,255,255,.26);
+    color:#CCC8F2;font-size:11.5px;font-weight:900;letter-spacing:-.02em;
+    display:flex;align-items:center;justify-content:center;gap:4px}
+  .gadd:active{background:rgba(255,255,255,.10)}
   .tap{cursor:pointer}
   .li-chev{flex:0 0 auto;align-self:center;margin-left:auto;padding-left:4px;
     color:#C6BFA6;font-size:13px;line-height:1}
@@ -180,6 +199,38 @@
   .seg2 button.on{background:var(--navy);color:#fff}
   .hint-in{font-size:10.5px;font-weight:800;color:#9A947C;letter-spacing:-.02em;
     line-height:1.5;padding-left:2px}
+
+  /* ================= 하단 탭 6개 ================= */
+  .tabs{grid-template-columns:repeat(6,minmax(52px,1fr));gap:2px;
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{font-size:10px;padding:5px 0;gap:2px;white-space:nowrap}
+  .tab .ic{font-size:15px}
+
+  /* ================= 하고 싶은 일 ================= */
+  .bks{display:flex;flex-direction:column;gap:6px}
+  .bk{display:flex;align-items:flex-start;background:var(--cream);border-radius:14px;
+    padding:9px 11px;transition:background .18s}
+  .bk.done{background:var(--green-soft)}
+  .bkck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:2px solid #DDD6BD;color:transparent;
+    font-size:11px;font-weight:900;display:grid;place-items:center;margin:1px 0 0}
+  .bk.done .bkck{background:var(--green);border-color:var(--green);color:#fff}
+  .bkbtn{flex:1 1 auto;min-width:0;display:flex;align-items:flex-start;gap:7px;text-align:left;padding-left:8px}
+  .bke{flex:0 0 auto;font-size:15px;line-height:1.35}
+  .bkt{flex:1 1 auto;min-width:0;font-size:12.5px;font-weight:700;color:#3A382E;line-height:1.45;letter-spacing:-.02em}
+  .bk.done .bkt{color:#2A6E3C;font-weight:800}
+  .bkchev{flex:0 0 auto;align-self:center;color:#C6BFA6;font-size:12px;padding-left:2px}
+
+  /* ================= 갈아타기 ================= */
+  .tlist{display:flex;flex-direction:column;gap:7px}
+  .trow{background:var(--cream);border-radius:15px;padding:10px 12px}
+  .trow-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .tdate{font-size:10.5px;font-weight:900;color:#7C765C;background:#fff;border-radius:999px;
+    padding:3px 9px;letter-spacing:-.02em}
+  .ttitle{font-size:12.5px;font-weight:900;color:var(--ink);line-height:1.45;letter-spacing:-.02em;margin-top:6px}
+  .tmemo{font-size:11.5px;font-weight:700;color:#6E6851;line-height:1.5;letter-spacing:-.02em;
+    margin-top:5px;background:#fff;border-radius:11px;padding:7px 10px}
 
   /* ================= 순자산 ================= */
   .split{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -347,6 +398,8 @@
     <button class="tab" data-tab="networth"><span class="ic">💰</span>순자산</button>
     <button class="tab" data-tab="roadmap"><span class="ic">🗓️</span>로드맵</button>
     <button class="tab" data-tab="goals"><span class="ic">🎯</span>목표</button>
+    <button class="tab" data-tab="bucket"><span class="ic">✨</span>하고싶은일</button>
+    <button class="tab" data-tab="trade"><span class="ic">🔄</span>갈아타기</button>
   </nav>
 </div>
 
@@ -373,7 +426,7 @@ const VERIFY_HEX = 'c94584ef0ca10084ad0655e469418be1f0dad47b16e4762adc1d36b35c51
 const AUTH_KEY = 'bubudaisy.auth';
 const ROOM_KEY_RE = /^bubudaisy-[a-z0-9]{12,32}$/;
 
-const TABS = ['vision', 'networth', 'roadmap', 'goals'];
+const TABS = ['vision', 'networth', 'roadmap', 'goals', 'bucket', 'trade'];
 
 /* ---------- 도우미 ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -426,6 +479,7 @@ function hex(buf) {
 /* ---------- 상태 ---------- */
 const ST = {
   vision: null, netWorth: {}, roadmap: {}, goals: {}, affirmations: {},
+  bucket: {}, tradeUp: {},
   tab: 'vision', loaded: false
 };
 let ROOM = '';
@@ -503,7 +557,7 @@ function lockNow(reload) {
   if (es) { try { es.close(); } catch (e) {} es = null; }
   stopPolling();
   ST.loaded = false; ST.vision = null; ST.netWorth = {}; ST.roadmap = {};
-  ST.goals = {}; ST.affirmations = {};
+  ST.goals = {}; ST.affirmations = {}; ST.bucket = {}; ST.tradeUp = {};
   pin.buf = ''; paintPins();
   const msg = $('#pinMsg'); msg.className = 'pin-msg'; msg.textContent = '';
   $('#app').classList.add('hidden');
@@ -540,6 +594,8 @@ function absorb(d) {
   ST.roadmap = d.roadmap || {};
   ST.goals = d.goals || {};
   ST.affirmations = d.affirmations || {};
+  ST.bucket = (d.bucket && typeof d.bucket === 'object') ? d.bucket : {};
+  ST.tradeUp = (d.tradeUpStrategies && typeof d.tradeUpStrategies === 'object') ? d.tradeUpStrategies : {};
   ST.loaded = true;
 }
 async function syncNow(quiet) {
@@ -589,16 +645,27 @@ function connect() {
   es.onopen = () => { retry = 0; setLive('live'); stopPolling(); };
   es.onerror = () => { setLive(navigator.onLine ? 'warn' : 'off'); reconnect(); startPolling(); };
 }
+const NODE_TO_ST = {
+  netWorth: 'netWorth', roadmap: 'roadmap', goals: 'goals', affirmations: 'affirmations',
+  bucket: 'bucket', tradeUpStrategies: 'tradeUp'
+};
 function applyNode(name, data) {
-  const map = { netWorth: ST.netWorth, roadmap: ST.roadmap, goals: ST.goals, affirmations: ST.affirmations };
-  if (name === 'vision') { absorb({ vision: data, netWorth: ST.netWorth, roadmap: ST.roadmap, goals: ST.goals, affirmations: ST.affirmations }); return; }
-  if (map[name]) { map[name] = data || {}; }
+  if (name === 'vision') {
+    absorb({
+      vision: data, netWorth: ST.netWorth, roadmap: ST.roadmap, goals: ST.goals,
+      affirmations: ST.affirmations, bucket: ST.bucket, tradeUpStrategies: ST.tradeUp
+    });
+    return;
+  }
+  const k = NODE_TO_ST[name];
+  if (k) ST[k] = (data && typeof data === 'object') ? data : {};
 }
 function applyChild(root, key, val) {
-  const map = { netWorth: ST.netWorth, roadmap: ST.roadmap, goals: ST.goals, affirmations: ST.affirmations };
-  if (!map[root]) return;
-  if (val === null || val === undefined) delete map[root][key];
-  else map[root][key] = val;
+  const k = NODE_TO_ST[root];
+  if (!k) return;
+  if (!ST[k] || typeof ST[k] !== 'object') ST[k] = {};
+  if (val === null || val === undefined) delete ST[k][key];
+  else ST[k][key] = val;
 }
 function reconnect() {
   if (es) { try { es.close(); } catch (e) {} es = null; }
@@ -683,7 +750,9 @@ function render() {
   if (ST.tab === 'vision') view.innerHTML = visionView();
   else if (ST.tab === 'networth') view.innerHTML = netWorthView();
   else if (ST.tab === 'roadmap') view.innerHTML = roadmapView();
-  else view.innerHTML = goalsView();
+  else if (ST.tab === 'goals') view.innerHTML = goalsView();
+  else if (ST.tab === 'bucket') view.innerHTML = bucketView();
+  else view.innerHTML = tradeView();
   if (render.sameTab) view.scrollTop = keep;
   render.sameTab = true;
 }
@@ -705,13 +774,28 @@ function tYear() { const t = ST.vision && ST.vision.target; return (t && t.year)
 function penBtn(act, label) {
   return '<button class="pen-btn" data-act="' + act + '" aria-label="' + esc(label) + '">✏️</button>';
 }
+function goalItems() {
+  const g = ST.vision && ST.vision.goal;
+  return (g && Array.isArray(g.items)) ? g.items : [];
+}
+function goalNote() {
+  return goalItems().map(i => ((i.label ? i.label + ' ' : '') + (i.value || '')).trim())
+    .filter(Boolean).join(' + ');
+}
+function freeGoals() {
+  const t = (ST.vision && ST.vision.target && typeof ST.vision.target === 'object') ? ST.vision.target : {};
+  if (Array.isArray(t.goals)) return t.goals;
+  const out = [];
+  if (t.plus) out.push({ value: String(t.plus), label: '', note: '' });
+  if (t.cashflow) out.push({ value: '월 ' + fmtMan(t.cashflow), label: '월급 외 현금흐름', note: '' });
+  return out;
+}
 function visionView() {
   const v = ST.vision;
   const nw = latestNw();
   const total = nw ? nw.seeun + nw.chankyu : null;
   const pct = pctOf(total);
   const target = targetMan();
-  const ty = tYear();
 
   let hero;
   if (!v) {
@@ -719,13 +803,27 @@ function visionView() {
       '<div class="hero-main">비전보드 데이터를 기다리고 있어요</div>' +
       '<div class="hero-sub">한 번만 준비되면 여기에 우리의 10년이 담겨요</div></section>';
   } else {
-    const t = v.target || {};
-    const topTxt = (t.year ? t.year + '년' : '') + (t.age ? (t.year && t.year !== '' ? ' · ' : '') + '만 ' + t.age + '세' : '');
-    hero = '<section class="hero hero-tap" data-act="v-target">' +
-      '<div class="hero-top"><span>🚩</span><span>' + esc(topTxt || '목표') + '</span>' +
-      penBtn('v-target', '목표 배너 수정') + '</div>' +
-      '<div class="hero-main"><b>' + esc(t.headline || '') + '</b></div>' +
-      (t.plus ? '<div class="hero-sub">' + esc(t.plus) + '</div>' : '') +
+    const t = (v.target && typeof v.target === 'object') ? v.target : {};
+    const topTxt = (t.year ? t.year + '년' : '') + (t.age ? (t.year ? ' · ' : '') + '만 ' + t.age + '세' : '');
+    const note = goalNote();
+    const rows = [];
+    rows.push('<button class="grow" data-act="v-gnet"><span class="gn">1</span><span class="gt">' +
+      '<span class="gl">순자산</span>' +
+      '<span class="gv">' + (target ? esc(fmtMan(target)) : '목표 정하기') + '</span>' +
+      (note ? '<span class="gsub">' + esc(note) + '</span>' : '') +
+      '</span><span class="gchev">›</span></button>');
+    freeGoals().forEach((fg, i) => {
+      rows.push('<button class="grow" data-act="v-grow" data-i="' + i + '"><span class="gn">' + (i + 2) + '</span><span class="gt">' +
+        (fg.label ? '<span class="gl">' + esc(fg.label) + '</span>' : '') +
+        '<span class="gv">' + esc(fg.value || '') + '</span>' +
+        (fg.note ? '<span class="gsub">' + esc(fg.note) + '</span>' : '') +
+        '</span><span class="gchev">›</span></button>');
+    });
+    hero = '<section class="hero goalcard" data-act="v-card">' +
+      '<div class="hero-top"><span>🚩</span><span>' + esc(topTxt || '우리의 목표') + '</span>' +
+      penBtn('v-card', '목표 카드 수정') + '</div>' +
+      '<div class="grows">' + rows.join('') + '</div>' +
+      '<button class="gadd" data-act="v-grow" data-i="new">＋ 목표 추가</button>' +
       '</section>' +
       '<p class="hint">카드를 누르거나 ✏️ 를 누르면 바로 고칠 수 있어요</p>';
   }
@@ -733,44 +831,13 @@ function visionView() {
   let progress = '';
   if (v && target) {
     progress = '<section class="card">' +
-      '<div class="card-h"><h2>지금 우리의 순자산</h2><span class="pill">' + esc((ty ? ty + '년 목표 ' : '목표 ') + fmtMan(target)) + '</span></div>' +
+      '<div class="card-h"><h2>지금 우리의 순자산</h2>' +
+        (nw ? '<span class="pill">' + esc(monthLabel(nw.month)) + ' 기준</span>' : '') + '</div>' +
       '<div class="big">' + (total === null ? '<span class="big-none">아직 기록 전</span>' : esc(fmtMan(total))) + '</div>' +
       '<div class="bar"><i style="width:' + (pct === null ? 0 : Math.min(100, Math.max(0, pct)).toFixed(1)) + '%"></i></div>' +
       '<div class="bar-meta"><span>달성률 <b>' + (pct === null ? '—' : pct.toFixed(1) + '%') + '</b></span>' +
       '<span>' + (total === null ? '이번 달부터 기록해 보세요' : '남은 금액 <b>' + esc(fmtMan(Math.max(0, target - total))) + '</b>') + '</span></div>' +
       (total === null ? '<button class="rowline" data-go="networth" style="justify-content:center"><span class="v" style="text-align:center"><b>이번 달 순자산 기록하러 가기 →</b></span></button>' : '') +
-      '</section>';
-  }
-
-  let goal = '';
-  if (v) {
-    const g = (v.goal && typeof v.goal === 'object') ? v.goal : {};
-    const gItems = Array.isArray(g.items) ? g.items : [];
-    goal = '<section class="card">' +
-      '<div class="card-h"><h2>🌱 우리의 목표</h2><div class="board-tools">' +
-        (g.caption ? '<span class="pill">' + esc(g.caption) + '</span>' : '') +
-        penBtn('v-goal', '우리의 목표 수정') +
-      '</div></div>' +
-      (gItems.length ? gItems.map(it =>
-        '<button class="rowline tap" data-act="v-goal"><span class="k">' + esc(it.label || '항목') + '</span>' +
-        '<span class="v" style="text-align:right"><b>' + esc(it.value || '') + '</b></span>' +
-        '<span class="li-chev">›</span></button>').join('') : '<p class="empty">아직 항목이 없어요 · ✏️ 로 추가해 보세요</p>') +
-      (g.sum ? '<div class="rowline green"><span class="v" style="text-align:center"><b>→ ' + esc(g.sum) + '</b></span></div>' : '') +
-      '</section>';
-  }
-
-  let strategy = '';
-  if (v) {
-    const arr = vArr(v, 'strategy');
-    strategy = '<section class="card">' +
-      '<div class="card-h"><h2>🧭 핵심 전략</h2><div class="board-tools">' +
-        (arr.length ? '<span class="pill">' + arr.length + '개</span>' : '') + '</div></div>' +
-      (arr.length ? '<ul class="steps">' + arr.map((s, i) =>
-        '<li class="tap" data-act="v-strategy" data-i="' + i + '"><span class="n">' + (i + 1) + '</span>' +
-        '<span style="flex:1 1 auto;min-width:0"><span class="t">' + esc(s.title || '') + '</span>' +
-        (s.desc ? '<span class="d">' + esc(s.desc) + '</span>' : '') + '</span>' +
-        '<span class="li-chev">›</span></li>').join('') + '</ul>' : '<p class="empty">아직 전략이 없어요</p>') +
-      '<button class="add-row" data-act="v-strategy" data-i="new">＋ 전략 추가</button>' +
       '</section>';
   }
 
@@ -823,7 +890,7 @@ function visionView() {
   const foot = (v && v.footer)
     ? '<p class="foot-note"><button class="foot-btn tap" data-act="v-footer">' + esc(v.footer) + ' ✏️</button></p>'
     : '';
-  return hero + progress + goal + strategy + expertise + pledge + ms + foot;
+  return hero + progress + expertise + pledge + ms + foot;
 }
 
 /* ---------- 2. 월별 순자산 ---------- */
@@ -978,6 +1045,107 @@ function goalsView() {
   return goalCard + affCard + '<p class="foot-note">체크하면 두 분 폰에 바로 함께 반영돼요 🌼</p>';
 }
 
+/* ---------- 5. 하고 싶은 일 (버킷) ---------- */
+const BK_GROUPS = [
+  { id: 'g1', name: '핵심 자산 · 라이프' },
+  { id: 'g2', name: '일 · 커리어 · 현금흐름' },
+  { id: 'g3', name: '나 · 부부의 삶 · 경험' },
+  { id: 'g4', name: '가족' },
+  { id: 'g5', name: '지인' }
+];
+function bkGroups() {
+  const gs = (ST.bucket && typeof ST.bucket === 'object' && ST.bucket.groups) || {};
+  return BK_GROUPS.map((g, i) => {
+    const d = (gs[g.id] && typeof gs[g.id] === 'object') ? gs[g.id] : {};
+    const o = num(d.order);
+    return { id: g.id, name: d.name || g.name, order: o === null ? i + 1 : o };
+  }).sort((a, b) => a.order - b.order);
+}
+function bkItems() {
+  const it = (ST.bucket && typeof ST.bucket === 'object') ? ST.bucket.items : null;
+  return entries(it).map(([id, v]) => ({ id, ...v }));
+}
+function bkSorted() {
+  const order = {};
+  bkGroups().forEach((g, i) => { order[g.id] = i; });
+  return bkItems().sort((a, b) => {
+    const ga = order[a.group] === undefined ? 99 : order[a.group];
+    const gb = order[b.group] === undefined ? 99 : order[b.group];
+    const na = num(a.order), nb = num(b.order);
+    return (ga - gb) ||
+      ((na === null ? 999 : na) - (nb === null ? 999 : nb)) ||
+      String(a.text || '').localeCompare(String(b.text || ''));
+  });
+}
+function bkRow(it) {
+  return '<div class="bk' + (it.done ? ' done' : '') + '">' +
+    '<button class="bkck" data-act="bk-toggle" data-id="' + esc(it.id) + '" aria-label="달성 체크">✓</button>' +
+    '<button class="bkbtn" data-act="bk-edit" data-id="' + esc(it.id) + '">' +
+      '<span class="bke">' + esc(it.emoji || '✨') + '</span>' +
+      '<span class="bkt">' + esc(it.text || '') + '</span>' +
+      '<span class="bkchev">›</span>' +
+    '</button></div>';
+}
+function bucketView() {
+  const list = bkSorted();
+  const doneN = list.filter(x => x.done).length;
+  const pctB = list.length ? Math.round(doneN / list.length * 100) : 0;
+  const head = '<section class="card">' +
+    '<div class="card-h"><h2>✨ 돈 벌면 하고 싶은 일</h2><span class="pill green">' + doneN + ' / ' + list.length + '</span></div>' +
+    '<div class="bar green"><i style="width:' + pctB + '%"></i></div>' +
+    '<p class="cap" style="text-align:left">이룬 것은 체크해서 연초록으로 바꿔 두세요 · 항목을 누르면 고칠 수 있어요</p>' +
+    '</section>';
+  if (!list.length) {
+    return head + '<section class="card"><p class="empty">아직 항목이 없어요<br>첫 항목을 추가해 보세요 🌼</p>' +
+      '<button class="add-row" data-act="bk-add" data-group="g1">＋ 항목 추가</button></section>';
+  }
+  const groups = bkGroups();
+  const known = {};
+  groups.forEach(g => { known[g.id] = true; });
+  const cards = groups.map(g => {
+    const its = list.filter(x => x.group === g.id);
+    const dn = its.filter(x => x.done).length;
+    return '<section class="card">' +
+      '<div class="card-h"><h2>' + esc(g.name) + '</h2><div class="board-tools">' +
+        (its.length ? '<span class="pill">' + dn + '/' + its.length + '</span>' : '') + '</div></div>' +
+      (its.length ? '<div class="bks">' + its.map(bkRow).join('') + '</div>' : '<p class="empty">아직 항목이 없어요</p>') +
+      '<button class="add-row" data-act="bk-add" data-group="' + g.id + '">＋ 항목 추가</button>' +
+      '</section>';
+  }).join('');
+  const etc = list.filter(x => !known[x.group]);
+  const etcCard = etc.length
+    ? '<section class="card"><div class="card-h"><h2>기타</h2><span class="pill">' + etc.length + '</span></div>' +
+      '<div class="bks">' + etc.map(bkRow).join('') + '</div></section>'
+    : '';
+  return head + cards + etcCard;
+}
+
+/* ---------- 6. 갈아타기 전략 ---------- */
+function tradeList() {
+  return entries(ST.tradeUp).map(([id, v]) => ({ id, ...v })).sort((a, b) => {
+    const da = String(a.date || ''), db = String(b.date || '');
+    if (da !== db) return da < db ? 1 : -1;
+    const oa = num(a.order), ob = num(b.order);
+    return (oa === null ? 999 : oa) - (ob === null ? 999 : ob) || a.id.localeCompare(b.id);
+  });
+}
+function tradeView() {
+  const list = tradeList();
+  const rows = list.map(t =>
+    '<div class="trow">' +
+      '<div class="trow-h"><span class="tdate">' + esc(t.date ? String(t.date).replace(/-/g, '.') : '날짜 없음') + '</span>' +
+      '<button class="pen-btn" data-act="tt-edit" data-id="' + esc(t.id) + '" aria-label="전략 수정">✏️</button></div>' +
+      '<div class="ttitle">' + esc(t.title || '') + '</div>' +
+      (t.memo ? '<div class="tmemo">' + esc(t.memo) + '</div>' : '') +
+    '</div>').join('');
+  return '<section class="card">' +
+    '<div class="card-h"><h2>🔄 갈아타기 전략</h2><span class="pill">' + list.length + '개</span></div>' +
+    (list.length ? '<div class="tlist">' + rows + '</div>' : '<p class="empty">아직 적어 둔 전략이 없어요</p>') +
+    '<button class="add-row" data-act="tt-add">＋ 전략 추가</button>' +
+    '</section>' +
+    '<p class="foot-note">갈아탈 때마다 방법과 조건을 남겨 두면 다음 선택이 쉬워져요 🌼</p>';
+}
+
 /* ============================================================
    이벤트 — 화면
    ============================================================ */
@@ -986,14 +1154,29 @@ $('#view').addEventListener('click', async (e) => {
   if (!el) return;
   if (el.dataset.go) { go(el.dataset.go); return; }
   const act = el.dataset.act;
-  if (act === 'v-target') return openVisionTargetSheet();
-  if (act === 'v-goal') return openVisionGoalSheet();
-  if (act === 'v-strategy') return openVisionStrategySheet(el.dataset.i);
+  if (act === 'v-card') return openVisionCardSheet();
+  if (act === 'v-gnet') return openVisionNetGoalSheet();
+  if (act === 'v-grow') return openVisionGoalRowSheet(el.dataset.i);
   if (act === 'v-expertise') return openVisionExpertiseSheet(el.dataset.i);
   if (act === 'v-excaption') return openVisionTextSheet('expertiseCaption', '전문성 영역 한 줄 설명', false);
   if (act === 'v-pledge') return openVisionPledgeSheet(el.dataset.i);
   if (act === 'v-ms') return openVisionMsSheet(el.dataset.i);
   if (act === 'v-footer') return openVisionTextSheet('footer', '맨 아래 문구', true);
+  if (act === 'bk-add') return openBkSheet(null, el.dataset.group);
+  if (act === 'bk-edit') return openBkSheet(el.dataset.id);
+  if (act === 'bk-toggle') {
+    const id = el.dataset.id;
+    const cur0 = ST.bucket && ST.bucket.items ? ST.bucket.items[id] : null;
+    if (!cur0) return;
+    const next0 = !cur0.done;
+    bkSet(id, { ...cur0, done: next0, doneAt: next0 ? Date.now() : null });
+    render.sameTab = true; render();
+    try { await patch('bucket/items/' + id, { done: next0, doneAt: next0 ? Date.now() : null }); }
+    catch (err) { bkSet(id, cur0); render.sameTab = true; render(); toast('저장하지 못했어요'); }
+    return;
+  }
+  if (act === 'tt-add') return openTradeSheet(null);
+  if (act === 'tt-edit') return openTradeSheet(el.dataset.id);
   if (act === 'nw-add') return openNwSheet(thisMonth());
   if (act === 'nw-edit') return openNwSheet(el.dataset.month);
   if (act === 'y-toggle') {
@@ -1187,127 +1370,132 @@ async function saveVisionKey(key, val, okMsg) {
   catch (e) { ST.vision = prev; render.sameTab = true; render(); toast('저장하지 못했어요'); }
 }
 
-/* ---------- 히어로 목표 배너 ---------- */
-function openVisionTargetSheet() {
+/* ---------- 목표 카드 (연도 · 나이) ---------- */
+function openVisionCardSheet() {
   const t = (ST.vision && ST.vision.target && typeof ST.vision.target === 'object') ? ST.vision.target : {};
-  draft.vtarget = { base: { ...t } };
+  draft.vcard = { base: { ...t } };
   const body =
     '<div class="fld"><span>목표 연도 · 만 나이</span><div class="ym-row">' +
-      '<input class="inp" type="number" inputmode="numeric" id="vtYear" value="' + esc(t.year == null ? '' : t.year) + '" placeholder="2035">' +
-      '<input class="inp" type="number" inputmode="numeric" id="vtAge" value="' + esc(t.age == null ? '' : t.age) + '" placeholder="40">' +
+      '<input class="inp" type="number" inputmode="numeric" id="vcYear" value="' + esc(t.year == null ? '' : t.year) + '" placeholder="2035">' +
+      '<input class="inp" type="number" inputmode="numeric" id="vcAge" value="' + esc(t.age == null ? '' : t.age) + '" placeholder="40">' +
     '</div></div>' +
-    '<label class="fld"><span>핵심 목표 문구</span><input class="inp" id="vtHead" value="' + esc(t.headline || '') + '" placeholder="순자산 30억 &amp; 월 현금흐름 1,000만 원"></label>' +
-    '<label class="fld"><span>서브 문구</span><input class="inp" id="vtPlus" value="' + esc(t.plus || '') + '" placeholder="올림픽선수기자촌 입성!"></label>' +
-    '<label class="fld"><span>목표 순자산 (만원)</span><input class="inp" type="number" inputmode="numeric" id="vtNw" value="' + esc(t.netWorth == null ? '' : t.netWorth) + '" placeholder="300000"></label>' +
-    '<label class="fld"><span>목표 월 현금흐름 (만원)</span><input class="inp" type="number" inputmode="numeric" id="vtCf" value="' + esc(t.cashflow == null ? '' : t.cashflow) + '" placeholder="1000"></label>' +
-    '<div class="sum-preview"><span class="k">이렇게 보여요</span><span class="v" id="vtPrev">—</span></div>' +
-    '<p class="hint-in">금액은 만원 단위예요. 30억원 → 300000 / 1,000만원 → 1000</p>';
-  openSheet('목표 배너 수정', body, '<button class="sh-save" id="vtSave">저장</button>');
-  const upd = () => {
-    const n = intOrNull($('#vtNw').value), c = intOrNull($('#vtCf').value);
-    const parts = [];
-    if (n !== null) parts.push('순자산 ' + fmtMan(n));
-    if (c !== null) parts.push('월 ' + fmtMan(c));
-    $('#vtPrev').textContent = parts.length ? parts.join(' · ') : '—';
-  };
-  upd();
-  ['#vtNw', '#vtCf'].forEach(s => $(s).addEventListener('input', upd));
-  $('#vtSave').addEventListener('click', async () => {
-    const head = $('#vtHead').value.trim();
-    if (!head) { toast('핵심 목표 문구를 적어 주세요'); return; }
-    const plus = $('#vtPlus').value.trim();
+    '<p class="hint-in">카드 맨 위 「2035년 · 만 40세」로 보여요. 순자산 금액은 첫 번째 목표를 눌러 고칠 수 있어요.</p>';
+  openSheet('목표 카드 수정', body, '<button class="sh-save" id="vcSave">저장</button>');
+  $('#vcSave').addEventListener('click', async () => {
     const next = {
-      ...draft.vtarget.base,
-      year: intOrNull($('#vtYear').value),
-      age: intOrNull($('#vtAge').value),
-      headline: head,
-      plus: plus || null,
-      netWorth: intOrNull($('#vtNw').value),
-      cashflow: intOrNull($('#vtCf').value),
+      ...draft.vcard.base,
+      year: intOrNull($('#vcYear').value),
+      age: intOrNull($('#vcAge').value),
       updatedAt: Date.now()
     };
-    await saveVisionKey('target', next, '목표 배너를 저장했어요');
+    await saveVisionKey('target', next, '목표 카드를 저장했어요');
   });
 }
 
-/* ---------- 우리의 목표 ---------- */
-function openVisionGoalSheet() {
+/* ---------- 1번 목표: 순자산 (금액 + 하위 항목) ---------- */
+function openVisionNetGoalSheet() {
+  const t = (ST.vision && ST.vision.target && typeof ST.vision.target === 'object') ? ST.vision.target : {};
   const g = (ST.vision && ST.vision.goal && typeof ST.vision.goal === 'object') ? ST.vision.goal : {};
-  draft.vgoal = {
-    base: { ...g },
-    caption: g.caption || '',
-    sum: g.sum || '',
+  draft.vnet = {
+    tBase: { ...t },
+    gBase: { ...g },
     items: (Array.isArray(g.items) ? g.items : []).map(x => ({ label: x.label || '', value: x.value || '' }))
   };
-  const d = draft.vgoal;
+  const d = draft.vnet;
   const body =
-    '<label class="fld"><span>상단 설명 (예: 2035년 · 만 40세)</span><input class="inp" id="vgCap" value="' + esc(d.caption) + '"></label>' +
-    '<div class="fld"><span>항목 (이름 · 금액)</span><div class="rows" id="vgItems"></div></div>' +
-    '<button class="add-row" id="vgAdd">＋ 항목 추가</button>' +
-    '<label class="fld"><span>맨 아래 합계 문구</span><input class="inp" id="vgSum" value="' + esc(d.sum) + '" placeholder="순자산 30억 원 · 월 현금흐름 1,000만 원"></label>';
-  openSheet('우리의 목표 수정', body, '<button class="sh-save" id="vgSave">저장</button>');
+    '<label class="fld"><span>목표 순자산 (만원)</span><input class="inp" type="number" inputmode="numeric" id="vnNw" value="' + esc(t.netWorth == null ? '' : t.netWorth) + '" placeholder="300000"></label>' +
+    '<div class="sum-preview"><span class="k">이렇게 보여요</span><span class="v" id="vnPrev">—</span></div>' +
+    '<div class="fld"><span>하위 항목 (근로소득 · 투자소득 등)</span><div class="rows" id="vnItems"></div></div>' +
+    '<button class="add-row" id="vnAdd">＋ 항목 추가</button>' +
+    '<p class="hint-in">금액은 만원 단위예요 (30억원 → 300000). 하위 항목은 목표 아래 작은 글씨로 붙어요.</p>';
+  openSheet('순자산 목표 수정', body, '<button class="sh-save" id="vnSave">저장</button>');
+  const upd = () => {
+    const n = intOrNull($('#vnNw').value);
+    $('#vnPrev').textContent = n === null ? '—' : fmtMan(n);
+  };
+  upd();
+  $('#vnNw').addEventListener('input', upd);
   const paint = () => {
-    $('#vgItems').innerHTML = d.items.length
+    $('#vnItems').innerHTML = d.items.length
       ? d.items.map((it, i) =>
-        '<div class="row-edit"><input class="inp" data-i="' + i + '" data-f="label" value="' + esc(it.label) + '" placeholder="항목 이름">' +
-        '<input class="inp" data-i="' + i + '" data-f="value" value="' + esc(it.value) + '" placeholder="값">' +
+        '<div class="row-edit"><input class="inp" data-i="' + i + '" data-f="label" value="' + esc(it.label) + '" placeholder="근로소득">' +
+        '<input class="inp" data-i="' + i + '" data-f="value" value="' + esc(it.value) + '" placeholder="10억 원">' +
         '<button class="row-del" data-del="' + i + '" aria-label="삭제">✕</button></div>').join('')
-      : '<p class="empty">항목이 없어요 · 아래에서 추가해 보세요</p>';
+      : '<p class="empty">항목이 없어요</p>';
   };
   paint();
-  $('#vgItems').addEventListener('input', (e) => {
+  $('#vnItems').addEventListener('input', (e) => {
     const inp = e.target.closest('.inp'); if (!inp) return;
     const i = Number(inp.dataset.i);
     if (d.items[i]) d.items[i][inp.dataset.f] = inp.value;
   });
-  $('#vgItems').addEventListener('click', (e) => {
+  $('#vnItems').addEventListener('click', (e) => {
     const b = e.target.closest('[data-del]'); if (!b) return;
     d.items.splice(Number(b.dataset.del), 1);
     paint();
   });
-  $('#vgAdd').addEventListener('click', () => { d.items.push({ label: '', value: '' }); paint(); });
-  $('#vgSave').addEventListener('click', async () => {
+  $('#vnAdd').addEventListener('click', () => { d.items.push({ label: '', value: '' }); paint(); });
+  $('#vnSave').addEventListener('click', async () => {
+    const man = intOrNull($('#vnNw').value);
+    if (man === null) { toast('목표 금액을 적어 주세요'); return; }
     const items = d.items
       .map(x => ({ label: String(x.label || '').trim(), value: String(x.value || '').trim() }))
       .filter(x => x.label || x.value);
-    const next = {
-      ...d.base,
-      caption: $('#vgCap').value.trim() || null,
-      items,
-      sum: $('#vgSum').value.trim() || null,
-      updatedAt: Date.now()
-    };
-    await saveVisionKey('goal', next, '우리의 목표를 저장했어요');
+    const prevV = ST.vision;
+    const tNext = { ...d.tBase, netWorth: man, updatedAt: Date.now() };
+    const gNext = { ...d.gBase, items: items, updatedAt: Date.now() };
+    ST.vision = { ...prevV, target: tNext, goal: gNext };
+    closeSheet(); render.sameTab = true; render();
+    try {
+      await put('vision/target', tNext);
+      await put('vision/goal', gNext);
+      toast('순자산 목표를 저장했어요');
+    } catch (e) {
+      ST.vision = prevV; render.sameTab = true; render(); toast('저장하지 못했어요');
+    }
   });
 }
 
-/* ---------- 핵심 전략 ---------- */
-function openVisionStrategySheet(i) {
-  const arr = vArr(ST.vision, 'strategy');
+/* ---------- 2·3번 목표: 자유 목표 항목 ---------- */
+async function saveGoalRows(arr, okMsg) {
+  const prev = ST.vision;
+  const tBase = (prev && prev.target && typeof prev.target === 'object') ? prev.target : {};
+  const next = { ...tBase, goals: arr.length ? arr : null, updatedAt: Date.now() };
+  if (!arr.length) { next.plus = null; next.cashflow = null; }
+  ST.vision = { ...prev, target: next };
+  closeSheet(); render.sameTab = true; render();
+  try { await put('vision/target', next); toast(okMsg); }
+  catch (e) { ST.vision = prev; render.sameTab = true; render(); toast('저장하지 못했어요'); }
+}
+function openVisionGoalRowSheet(i) {
+  const t = (ST.vision && ST.vision.target && typeof ST.vision.target === 'object') ? ST.vision.target : {};
+  const arr = freeGoals().map(x => ({ label: x.label || '', value: x.value || '', note: x.note || '' }));
   const isNew = i === 'new' || i === undefined || !arr[Number(i)];
   const idx = isNew ? -1 : Number(i);
-  const cur = isNew ? { title: '', desc: '' } : arr[idx];
-  draft.vstrat = { idx: idx, arr: arr };
+  const cur = isNew ? { label: '', value: '', note: '' } : arr[idx];
+  draft.vrow = { idx: idx, arr: arr, tBase: { ...t } };
   const body =
-    '<label class="fld"><span>전략 제목</span><input class="inp" id="vsTitle" value="' + esc(cur.title || '') + '" placeholder="안정적인 본업으로 10억 만들기"></label>' +
-    '<label class="fld"><span>설명 (선택)</span><textarea class="inp" id="vsDesc" placeholder="공무원·직장인 급여, 저축·투자">' + esc(cur.desc || '') + '</textarea></label>';
-  const acts = '<button class="sh-save" id="vsSave">' + (isNew ? '추가' : '저장') + '</button>' +
-    (isNew ? '' : '<button class="sh-del" id="vsDel">삭제</button>');
-  openSheet(isNew ? '전략 추가' : '전략 ' + (idx + 1) + ' 수정', body, acts);
-  $('#vsSave').addEventListener('click', async () => {
-    const title = $('#vsTitle').value.trim();
-    const desc = $('#vsDesc').value.trim();
-    if (!title) { toast('전략 제목을 적어 주세요'); return; }
+    '<label class="fld"><span>목표 (큰 글씨)</span><input class="inp" id="vrValue" value="' + esc(cur.value) + '" placeholder="올림픽선수기자촌 등기"></label>' +
+    '<label class="fld"><span>작은 제목 (선택)</span><input class="inp" id="vrLabel" value="' + esc(cur.label) + '" placeholder="월급 외 현금흐름"></label>' +
+    '<label class="fld"><span>부기 문구 (선택)</span><input class="inp" id="vrNote" value="' + esc(cur.note) + '" placeholder="월 1,000만원"></label>';
+  const acts = '<button class="sh-save" id="vrSave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="vrDel">삭제</button>');
+  openSheet(isNew ? '목표 추가' : '목표 수정', body, acts);
+  $('#vrSave').addEventListener('click', async () => {
+    const value = $('#vrValue').value.trim();
+    if (!value) { toast('목표를 적어 주세요'); return; }
+    const label = $('#vrLabel').value.trim();
+    const note = $('#vrNote').value.trim();
     const next = arr.slice();
-    if (isNew) next.push({ title: title, desc: desc || null });
-    else next[idx] = { ...next[idx], title: title, desc: desc || null };
-    await saveVisionKey('strategy', next, isNew ? '전략을 추가했어요' : '전략을 저장했어요');
+    const rec = { value: value, label: label || null, note: note || null };
+    if (isNew) next.push(rec); else next[idx] = rec;
+    await saveGoalRows(next, isNew ? '목표를 추가했어요' : '목표를 저장했어요');
   });
-  if (!isNew) $('#vsDel').addEventListener('click', async (e) => {
+  if (!isNew) $('#vrDel').addEventListener('click', async (e) => {
     if (!delArm(e.currentTarget)) return;
     const next = arr.slice();
     next.splice(idx, 1);
-    await saveVisionKey('strategy', next, '전략을 삭제했어요');
+    await saveGoalRows(next, '목표를 삭제했어요');
   });
 }
 
@@ -1440,6 +1628,118 @@ function openVisionTextSheet(key, title, multiline) {
   if (cur) $('#vtxDel').addEventListener('click', async (e) => {
     if (!delArm(e.currentTarget)) return;
     await saveVisionKey(key, null, '삭제했어요');
+  });
+}
+
+/* ============================================================
+   하고 싶은 일 (버킷) · 갈아타기 전략 시트
+   ============================================================ */
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function newKey(prefix) {
+  return (prefix || 'k') + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+function bkSet(id, rec) {
+  if (!ST.bucket || typeof ST.bucket !== 'object') ST.bucket = {};
+  if (!ST.bucket.items || typeof ST.bucket.items !== 'object') ST.bucket.items = {};
+  ST.bucket.items[id] = rec;
+}
+function bkDel(id) {
+  if (ST.bucket && ST.bucket.items) delete ST.bucket.items[id];
+}
+function nextBkOrder(group) {
+  let max = 0;
+  bkItems().forEach(x => {
+    if (x.group === group) { const n = num(x.order); if (n !== null && n > max) max = n; }
+  });
+  return max + 1;
+}
+function openBkSheet(id, group) {
+  const isNew = !id;
+  const cur = isNew
+    ? { emoji: '', text: '', group: group || 'g1', done: false }
+    : ((ST.bucket && ST.bucket.items && ST.bucket.items[id]) || {});
+  draft.bk = { id: isNew ? null : id, base: { ...cur }, group: cur.group || group || 'g1' };
+  const groups = bkGroups();
+  const body =
+    '<label class="fld"><span>아이콘 (이모지 한 글자)</span><input class="inp" id="bkEmoji" style="text-align:center;font-size:22px" maxlength="12" value="' + esc(cur.emoji || '') + '" placeholder="✨"></label>' +
+    '<label class="fld"><span>하고 싶은 일</span><textarea class="inp" id="bkText" style="min-height:80px" placeholder="서울아파트 2채를 갖고싶어">' + esc(cur.text || '') + '</textarea></label>' +
+    '<label class="fld"><span>그룹</span><select class="inp" id="bkGroup">' +
+      groups.map(g => '<option value="' + esc(g.id) + '"' + (g.id === draft.bk.group ? ' selected' : '') + '>' + esc(g.name) + '</option>').join('') +
+    '</select></label>' +
+    '<p class="hint-in">🏡 🚗 💵 처럼 짧은 이모지를 붙여 넣으면 돼요. 체크는 목록에서 바로 할 수 있어요.</p>';
+  const acts = '<button class="sh-save" id="bkSave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="bkDel">삭제</button>');
+  openSheet(isNew ? '하고 싶은 일 추가' : '하고 싶은 일 수정', body, acts);
+  $('#bkSave').addEventListener('click', async () => {
+    const text = $('#bkText').value.trim();
+    if (!text) { toast('하고 싶은 일을 적어 주세요'); return; }
+    const emoji = $('#bkEmoji').value.trim() || '✨';
+    const grp = $('#bkGroup').value || draft.bk.group;
+    const key2 = isNew ? newKey('b') : draft.bk.id;
+    const rec = {
+      ...draft.bk.base, text: text, emoji: emoji, group: grp,
+      done: !!draft.bk.base.done, updatedAt: Date.now()
+    };
+    if (isNew) { rec.done = false; rec.order = nextBkOrder(grp); }
+    const prevItems = ST.bucket && ST.bucket.items ? { ...ST.bucket.items } : {};
+    bkSet(key2, rec);
+    closeSheet(); render.sameTab = true; render();
+    try { await put('bucket/items/' + key2, rec); toast(isNew ? '하고 싶은 일을 추가했어요' : '저장했어요'); }
+    catch (e) { ST.bucket.items = prevItems; render.sameTab = true; render(); toast('저장하지 못했어요'); }
+  });
+  if (!isNew) $('#bkDel').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    const id2 = draft.bk.id;
+    const prevItems = { ...(ST.bucket.items || {}) };
+    bkDel(id2);
+    closeSheet(); render.sameTab = true; render();
+    try { await del('bucket/items/' + id2); toast('삭제했어요'); }
+    catch (err) { ST.bucket.items = prevItems; render.sameTab = true; render(); toast('삭제하지 못했어요'); }
+  });
+}
+
+function openTradeSheet(id) {
+  const isNew = !id;
+  const cur = isNew ? { title: '', memo: '', date: todayStr() } : ((ST.tradeUp && ST.tradeUp[id]) || {});
+  draft.tt = { id: isNew ? null : id, base: { ...cur } };
+  const body =
+    '<label class="fld"><span>전략 제목</span><textarea class="inp" id="ttTitle" style="min-height:78px" placeholder="집주인근저당 + 이자 더 주고 이주할 때 이주비 대출로 갈아탄다">' + esc(cur.title || '') + '</textarea></label>' +
+    '<label class="fld"><span>세부 조건 · 메모 (선택)</span><textarea class="inp" id="ttMemo" placeholder="이자 조건, 시기, 은행, 확인할 것">' + esc(cur.memo || '') + '</textarea></label>' +
+    '<label class="fld"><span>날짜</span><input class="inp" type="date" id="ttDate" value="' + esc(cur.date || '') + '"></label>';
+  const acts = '<button class="sh-save" id="ttSave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="ttDel">삭제</button>');
+  openSheet(isNew ? '갈아타기 전략 추가' : '갈아타기 전략 수정', body, acts);
+  $('#ttSave').addEventListener('click', async () => {
+    const title = $('#ttTitle').value.trim();
+    if (!title) { toast('전략 제목을 적어 주세요'); return; }
+    const memo = $('#ttMemo').value.trim();
+    const date = $('#ttDate').value || null;
+    const key2 = isNew ? newKey('t') : draft.tt.id;
+    let order = num(draft.tt.base.order);
+    if (order === null) {
+      let max = 0;
+      entries(ST.tradeUp).forEach(([, v]) => { const n = num(v.order); if (n !== null && n > max) max = n; });
+      order = max + 1;
+    }
+    const rec = { ...draft.tt.base, title: title, memo: memo || null, date: date, order: order, updatedAt: Date.now() };
+    const prevAll = { ...(ST.tradeUp || {}) };
+    if (!ST.tradeUp || typeof ST.tradeUp !== 'object') ST.tradeUp = {};
+    ST.tradeUp[key2] = rec;
+    closeSheet(); render.sameTab = true; render();
+    try { await put('tradeUpStrategies/' + key2, rec); toast(isNew ? '전략을 추가했어요' : '전략을 저장했어요'); }
+    catch (e) { ST.tradeUp = prevAll; render.sameTab = true; render(); toast('저장하지 못했어요'); }
+  });
+  if (!isNew) $('#ttDel').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    const id2 = draft.tt.id;
+    const prevAll = { ...(ST.tradeUp || {}) };
+    delete ST.tradeUp[id2];
+    closeSheet(); render.sameTab = true; render();
+    try { await del('tradeUpStrategies/' + id2); toast('삭제했어요'); }
+    catch (err) { ST.tradeUp = prevAll; render.sameTab = true; render(); toast('삭제하지 못했어요'); }
   });
 }
 
