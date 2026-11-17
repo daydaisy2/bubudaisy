@@ -79,6 +79,12 @@
   .dot.off{background:#A9A497}
   .lock-btn{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;
     background:rgba(255,255,255,.55);font-size:14px;color:var(--navy)}
+  .memo-btn{position:relative;width:32px;height:32px;border-radius:12px;display:grid;place-items:center;
+    background:rgba(255,255,255,.55);font-size:14px;color:var(--navy);transition:background .18s,color .18s}
+  .memo-btn.has{background:var(--navy);color:#fff}
+  .memo-cnt{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;
+    background:#E8603C;color:#fff;font-size:9px;font-weight:900;line-height:16px;text-align:center;
+    border:1.5px solid var(--yellow)}
   #view{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
     padding:2px 16px 20px;display:flex;flex-direction:column;gap:13px;scrollbar-width:none}
   #view > *{flex:0 0 auto}
@@ -200,12 +206,13 @@
   .hint-in{font-size:10.5px;font-weight:800;color:#9A947C;letter-spacing:-.02em;
     line-height:1.5;padding-left:2px}
 
-  /* ================= 하단 탭 6개 ================= */
-  .tabs{grid-template-columns:repeat(6,minmax(52px,1fr));gap:2px;
-    padding:6px 6px calc(6px + env(safe-area-inset-bottom));
-    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  /* ================= 하단 탭 7개 (넘치면 가로 스크롤) ================= */
+  .tabs{grid-auto-flow:column;grid-auto-columns:minmax(45px,1fr);gap:2px;
+    padding:6px 5px calc(6px + env(safe-area-inset-bottom));
+    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;scroll-padding:0 10px}
   .tabs::-webkit-scrollbar{display:none}
-  .tab{font-size:10px;padding:5px 0;gap:2px;white-space:nowrap}
+  .tab{font-size:9.5px;padding:5px 1px;gap:2px;white-space:nowrap;letter-spacing:-.03em;scroll-snap-align:center}
   .tab .ic{font-size:15px}
 
   /* ================= 하고 싶은 일 ================= */
@@ -357,6 +364,45 @@
     padding:9px 15px;border-radius:999px;z-index:90;box-shadow:0 8px 20px rgba(0,0,0,.2)}
   .skeleton{background:var(--white);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);
     font-size:12.5px;font-weight:800;color:var(--muted);text-align:center}
+
+  /* ================= 📘 플랜 ================= */
+  .pl-intro{margin:0;font-size:11.5px;font-weight:700;color:#6E6851;line-height:1.55;letter-spacing:-.02em;
+    background:var(--cream);border-radius:14px;padding:9px 11px}
+  .pl-count{display:flex;flex-wrap:wrap;gap:5px}
+  .pl-secs{display:flex;flex-direction:column;gap:11px}
+  .pl-sec{display:flex;flex-direction:column;gap:6px}
+  .pl-sec-h{display:flex;align-items:center;gap:6px;padding:1px 2px 0;
+    font-size:10.5px;font-weight:900;color:#948E75;letter-spacing:-.01em}
+  .pl-sec-h:after{content:'';flex:1 1 auto;height:1px;background:var(--cream-line)}
+  .pl-item{display:flex;align-items:flex-start;gap:8px;width:100%;text-align:left;
+    background:var(--cream);border-radius:14px;padding:9px 11px;transition:background .15s}
+  .pl-item:active{background:#F6EFD6}
+  .pl-item .plb{flex:1 1 auto;min-width:0;display:block}
+  .pl-item .lb{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:900;color:#948E75;
+    letter-spacing:-.01em;line-height:1.35}
+  .pl-item .vv{display:block;font-size:12.5px;font-weight:900;color:var(--ink);line-height:1.45;
+    margin-top:1px;letter-spacing:-.02em;white-space:pre-line}
+  .pl-item .nt{display:block;font-size:11px;font-weight:700;color:#6E6851;line-height:1.5;
+    margin-top:3px;letter-spacing:-.02em;white-space:pre-line}
+  .pl-item .chev{flex:0 0 auto;align-self:center;color:#C6BFA6;font-size:12px}
+  .pl-item.draft{background:#F1F0FD}
+  .pl-item.draft .vv{color:var(--navy)}
+  .bdraft{flex:0 0 auto;font-size:9px;font-weight:900;color:#fff;background:var(--navy);
+    border-radius:999px;padding:2px 6px;letter-spacing:-.01em;line-height:1.3}
+  .pl-check{display:flex;align-items:center;gap:9px;background:var(--cream);border-radius:14px;
+    padding:11px 12px;font-size:12px;font-weight:800;color:#4A4738;letter-spacing:-.02em}
+  .pl-check input{flex:0 0 auto;width:20px;height:20px;accent-color:var(--navy)}
+
+  /* ================= 📝 수정 요청 메모 ================= */
+  .memo-list{display:flex;flex-direction:column;gap:6px}
+  .memo-row{display:flex;align-items:flex-start;gap:7px;background:var(--cream);border-radius:14px;padding:9px 10px}
+  .memo-row .mt{flex:0 0 auto;font-size:10px;font-weight:900;color:var(--navy);background:#fff;
+    border-radius:8px;padding:3px 6px;letter-spacing:-.02em;max-width:40%;overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  .memo-row .mx{flex:1 1 auto;min-width:0;font-size:12px;font-weight:700;color:#3A382E;line-height:1.5;
+    letter-spacing:-.02em;white-space:pre-line}
+  .memo-del{flex:0 0 auto;width:24px;height:24px;border-radius:9px;background:#FBEAE7;color:#C0392B;
+    font-size:11px;display:grid;place-items:center}
 </style>
 </head>
 <body>
@@ -389,6 +435,7 @@
     <h1 class="brand">BUBUDAISY<span class="fl">🌼</span></h1>
     <div class="top-right">
       <span class="dot" id="dot" title="연결 확인 중"></span>
+      <button class="memo-btn" id="memoBtn" aria-label="수정 요청 메모">📝<span class="memo-cnt hidden" id="memoCnt">0</span></button>
       <button class="lock-btn" id="lockBtn" aria-label="잠그기">🔒</button>
     </div>
   </div>
@@ -400,6 +447,7 @@
     <button class="tab" data-tab="goals"><span class="ic">🎯</span>목표</button>
     <button class="tab" data-tab="bucket"><span class="ic">✨</span>하고싶은일</button>
     <button class="tab" data-tab="trade"><span class="ic">🔄</span>갈아타기</button>
+    <button class="tab" data-tab="plan"><span class="ic">📘</span>플랜</button>
   </nav>
 </div>
 
@@ -426,7 +474,7 @@ const VERIFY_HEX = 'c94584ef0ca10084ad0655e469418be1f0dad47b16e4762adc1d36b35c51
 const AUTH_KEY = 'bubudaisy.auth';
 const ROOM_KEY_RE = /^bubudaisy-[a-z0-9]{12,32}$/;
 
-const TABS = ['vision', 'networth', 'roadmap', 'goals', 'bucket', 'trade'];
+const TABS = ['vision', 'networth', 'roadmap', 'goals', 'bucket', 'trade', 'plan'];
 
 /* ---------- 도우미 ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -479,7 +527,7 @@ function hex(buf) {
 /* ---------- 상태 ---------- */
 const ST = {
   vision: null, netWorth: {}, roadmap: {}, goals: {}, affirmations: {},
-  bucket: {}, tradeUp: {},
+  bucket: {}, tradeUp: {}, plan: {},
   tab: 'vision', loaded: false
 };
 let ROOM = '';
@@ -557,7 +605,7 @@ function lockNow(reload) {
   if (es) { try { es.close(); } catch (e) {} es = null; }
   stopPolling();
   ST.loaded = false; ST.vision = null; ST.netWorth = {}; ST.roadmap = {};
-  ST.goals = {}; ST.affirmations = {}; ST.bucket = {}; ST.tradeUp = {};
+  ST.goals = {}; ST.affirmations = {}; ST.bucket = {}; ST.tradeUp = {}; ST.plan = {};
   pin.buf = ''; paintPins();
   const msg = $('#pinMsg'); msg.className = 'pin-msg'; msg.textContent = '';
   $('#app').classList.add('hidden');
@@ -596,6 +644,7 @@ function absorb(d) {
   ST.affirmations = d.affirmations || {};
   ST.bucket = (d.bucket && typeof d.bucket === 'object') ? d.bucket : {};
   ST.tradeUp = (d.tradeUpStrategies && typeof d.tradeUpStrategies === 'object') ? d.tradeUpStrategies : {};
+  ST.plan = (d.masterPlan && typeof d.masterPlan === 'object') ? d.masterPlan : {};
   ST.loaded = true;
 }
 async function syncNow(quiet) {
@@ -647,13 +696,14 @@ function connect() {
 }
 const NODE_TO_ST = {
   netWorth: 'netWorth', roadmap: 'roadmap', goals: 'goals', affirmations: 'affirmations',
-  bucket: 'bucket', tradeUpStrategies: 'tradeUp'
+  bucket: 'bucket', tradeUpStrategies: 'tradeUp', masterPlan: 'plan'
 };
 function applyNode(name, data) {
   if (name === 'vision') {
     absorb({
       vision: data, netWorth: ST.netWorth, roadmap: ST.roadmap, goals: ST.goals,
-      affirmations: ST.affirmations, bucket: ST.bucket, tradeUpStrategies: ST.tradeUp
+      affirmations: ST.affirmations, bucket: ST.bucket, tradeUpStrategies: ST.tradeUp,
+      masterPlan: ST.plan
     });
     return;
   }
@@ -752,6 +802,7 @@ function render() {
   else if (ST.tab === 'roadmap') view.innerHTML = roadmapView();
   else if (ST.tab === 'goals') view.innerHTML = goalsView();
   else if (ST.tab === 'bucket') view.innerHTML = bucketView();
+  else if (ST.tab === 'plan') view.innerHTML = planView();
   else view.innerHTML = tradeView();
   if (render.sameTab) view.scrollTop = keep;
   render.sameTab = true;
@@ -762,6 +813,12 @@ function go(tab) {
   render.sameTab = false;
   render();
   $('#view').scrollTop = 0;
+  tabIntoView(tab);
+}
+function tabIntoView(tab) {
+  const b = $('#tabs .tab[data-tab="' + (tab || ST.tab) + '"]');
+  if (!b) return;
+  try { b.scrollIntoView({ block: 'nearest', inline: 'center' }); } catch (e) {}
 }
 $('#tabs').addEventListener('click', (e) => {
   const b = e.target.closest('[data-tab]');
@@ -1207,6 +1264,9 @@ $('#view').addEventListener('click', async (e) => {
     return;
   }
   if (act === 'g-edit') return openGoalSheet(el.dataset.kind, el.dataset.id);
+  if (act === 'pl-item') return openPlanItemSheet(el.dataset.c, el.dataset.s, el.dataset.i);
+  if (act === 'pl-add') return openPlanItemSheet(el.dataset.c, el.dataset.s, null);
+  if (act === 'pl-ch') return openPlanChapterSheet(el.dataset.c);
 });
 
 /* ============================================================
@@ -1809,6 +1869,288 @@ function openGoalSheet(kind, id) {
     catch (err) { ST[kind][id] = draft.goal.base; render.sameTab = true; render(); toast('저장하지 못했어요'); }
   });
 }
+
+/* ============================================================
+   📘 플랜 (masterPlan)
+   카드 내용도 전부 Firebase 방에서만 온다. 정적 코드에는 없다.
+   ============================================================ */
+function planRoot() {
+  if (!ST.plan || typeof ST.plan !== 'object') ST.plan = {};
+  if (!ST.plan.chapters || typeof ST.plan.chapters !== 'object') ST.plan.chapters = {};
+  return ST.plan.chapters;
+}
+function plOrder(v, d) { const n = num(v); return n === null ? d : n; }
+function planChapters() {
+  const ch = planRoot();
+  return entries(ch).map(([id, v]) => ({ id, ...v }))
+    .sort((a, b) => (plOrder(a.order, 999) - plOrder(b.order, 999)) || a.id.localeCompare(b.id));
+}
+function planSections(ch) {
+  const s = (ch && ch.sections && typeof ch.sections === 'object') ? ch.sections : {};
+  return entries(s).map(([id, v]) => ({ id, ...v }))
+    .sort((a, b) => (plOrder(a.order, 999) - plOrder(b.order, 999)) || a.id.localeCompare(b.id));
+}
+function planItems(sec) {
+  const it = (sec && sec.items && typeof sec.items === 'object') ? sec.items : {};
+  return entries(it).map(([id, v]) => ({ id, ...v }))
+    .sort((a, b) => (plOrder(a.order, 999) - plOrder(b.order, 999)) || a.id.localeCompare(b.id));
+}
+function planCount() {
+  let n = 0;
+  planChapters().forEach(ch => planSections(ch).forEach(sec => { n += planItems(sec).length; }));
+  return n;
+}
+function planItemRow(cid, sid, it) {
+  const badge = it.draft ? '<span class="bdraft">구상</span>' : '';
+  const head = (it.label || it.draft)
+    ? '<span class="lb">' + (it.label ? esc(it.label) : '') + badge + '</span>' : '';
+  return '<button class="pl-item' + (it.draft ? ' draft' : '') + '" data-act="pl-item" data-c="' + esc(cid) +
+    '" data-s="' + esc(sid) + '" data-i="' + esc(it.id) + '">' +
+    '<span class="plb">' + head +
+      '<span class="vv">' + esc(it.value || '') + '</span>' +
+      (it.note ? '<span class="nt">' + esc(it.note) + '</span>' : '') +
+    '</span><span class="chev">›</span></button>';
+}
+function planView() {
+  const chs = planChapters();
+  const top = '<section class="card">' +
+    '<div class="card-h"><h2>📘 부부데이지 마스터 플랜</h2>' +
+      (chs.length ? '<span class="pill navy">' + chs.length + '장</span>' : '') + '</div>' +
+    (chs.length
+      ? '<p class="pl-intro">브랜드 · 콘텐츠 · 채널 · 사업 구상 · 확정 전 항목을 한 장씩 모았어요. 항목을 눌러 바로 고칠 수 있어요.</p>' +
+        '<div class="pl-count"><span class="pill">' + planCount() + '개 항목</span>' +
+        '<span class="pill">확정 전은 구상 표시</span></div>'
+      : '<p class="empty">플랜 데이터를 기다리고 있어요</p>') +
+    '</section>';
+  if (!chs.length) return top;
+  const cards = chs.map(ch => {
+    const secs = planSections(ch);
+    const body = secs.length ? '<div class="pl-secs">' + secs.map(sec => {
+      const its = planItems(sec);
+      return '<div class="pl-sec">' +
+        (sec.name ? '<div class="pl-sec-h">' + esc(sec.name) + '</div>' : '') +
+        its.map(it => planItemRow(ch.id, sec.id, it)).join('') +
+        '<button class="add-row" data-act="pl-add" data-c="' + esc(ch.id) + '" data-s="' + esc(sec.id) + '">＋ 항목 추가</button>' +
+        '</div>';
+    }).join('') + '</div>' : '<p class="empty">아직 섹션이 없어요</p>';
+    return '<section class="card">' +
+      '<div class="card-h"><h2>' + (ch.emoji ? esc(ch.emoji) + ' ' : '') + esc(ch.title || '플랜') + '</h2>' +
+        '<button class="pen-btn" data-act="pl-ch" data-c="' + esc(ch.id) + '" aria-label="챕터 수정">✏️</button></div>' +
+      (ch.intro ? '<p class="pl-intro">' + esc(ch.intro) + '</p>' : '') +
+      body +
+      '</section>';
+  }).join('');
+  return top + cards + '<p class="foot-note">항목을 누르면 고칠 수 있어요 · 아직 확정 전인 내용은 <b>구상</b>으로 표시돼요</p>';
+}
+
+function nextPlanOrder(sec) {
+  let max = 0;
+  planItems(sec).forEach(x => { const n = num(x.order); if (n !== null && n > max) max = n; });
+  return max + 1;
+}
+function openPlanItemSheet(cid, sid, iid) {
+  const ch = planRoot()[cid];
+  if (!ch) return;
+  const secs = planSections({ id: cid, ...ch });
+  const sec = (ch.sections && ch.sections[sid]) ? ch.sections[sid] : null;
+  if (!sec) return;
+  const isNew = !iid;
+  const cur = isNew ? null : ((sec.items && sec.items[iid]) || null);
+  if (!isNew && !cur) return;
+  const seed = cur || { label: '', value: '', note: '', draft: false };
+  const body =
+    '<label class="fld"><span>구분 (선택 · 예: 인스타그램)</span>' +
+      '<input class="inp" id="plLabel" value="' + esc(seed.label || '') + '"></label>' +
+    '<label class="fld"><span>내용</span>' +
+      '<textarea class="inp" id="plValue" style="min-height:88px">' + esc(seed.value || '') + '</textarea></label>' +
+    '<label class="fld"><span>설명 (선택)</span>' +
+      '<textarea class="inp" id="plNote">' + esc(seed.note || '') + '</textarea></label>' +
+    (secs.length > 1
+      ? '<label class="fld"><span>위치</span><select class="inp" id="plSec">' + secs.map(s =>
+          '<option value="' + esc(s.id) + '"' + (s.id === sid ? ' selected' : '') + '>' +
+          esc(s.name || '기타') + '</option>').join('') + '</select></label>'
+      : '') +
+    '<label class="pl-check"><input type="checkbox" id="plDraft"' + (seed.draft ? ' checked' : '') +
+      '><span>아직 확정 전이에요 (구상 표시)</span></label>' +
+    '<p class="hint-in">내용은 두 분 폰에 바로 반영돼요. 위치를 바꾸면 다른 섹션으로 옮겨가요.</p>';
+  const acts = '<button class="sh-save" id="plSave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="plDel">삭제</button>');
+  openSheet(isNew ? '플랜 항목 추가' : '플랜 항목 수정', body, acts);
+
+  $('#plSave').addEventListener('click', async () => {
+    const value = $('#plValue').value.trim();
+    if (!value) { toast('내용을 적어 주세요'); return; }
+    const label = $('#plLabel').value.trim();
+    const note = $('#plNote').value.trim();
+    const draftOn = !!$('#plDraft').checked;
+    const targetSid = ($('#plSec') ? $('#plSec').value : sid) || sid;
+    const tSec = (ch.sections && ch.sections[targetSid]) || null;
+    if (!tSec) { toast('위치를 확인해 주세요'); return; }
+    if (!tSec.items) tSec.items = {};
+    const key2 = isNew ? newKey('p') : iid;
+    const order = (isNew || targetSid !== sid) ? nextPlanOrder(tSec) : plOrder(seed.order, 1);
+    const rec = { label: label || null, value: value, note: note || null,
+      draft: draftOn, order: order, updatedAt: Date.now() };
+    const prev = JSON.parse(JSON.stringify(ST.plan || {}));
+    tSec.items[key2] = rec;
+    if (!isNew && targetSid !== sid) delete ch.sections[sid].items[iid];
+    closeSheet(); render.sameTab = true; render();
+    try {
+      await put('masterPlan/chapters/' + cid + '/sections/' + targetSid + '/items/' + key2, rec);
+      if (!isNew && targetSid !== sid) await del('masterPlan/chapters/' + cid + '/sections/' + sid + '/items/' + iid);
+      toast(isNew ? '항목을 추가했어요' : '저장했어요');
+    } catch (e) {
+      ST.plan = prev; render.sameTab = true; render(); toast('저장하지 못했어요');
+    }
+  });
+  if (!isNew) $('#plDel').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    const prev = JSON.parse(JSON.stringify(ST.plan || {}));
+    delete ch.sections[sid].items[iid];
+    closeSheet(); render.sameTab = true; render();
+    try { await del('masterPlan/chapters/' + cid + '/sections/' + sid + '/items/' + iid); toast('삭제했어요'); }
+    catch (err) { ST.plan = prev; render.sameTab = true; render(); toast('삭제하지 못했어요'); }
+  });
+}
+function openPlanChapterSheet(cid) {
+  const ch = planRoot()[cid];
+  if (!ch) return;
+  const body =
+    '<div class="fld"><span>아이콘 · 제목</span><div class="ym-row">' +
+      '<input class="inp" id="plxEmoji" style="text-align:center" maxlength="12" value="' + esc(ch.emoji || '') + '" placeholder="📘">' +
+      '<input class="inp" id="plxTitle" value="' + esc(ch.title || '') + '" placeholder="챕터 제목">' +
+    '</div></div>' +
+    '<label class="fld"><span>맨 위 설명 (선택)</span>' +
+      '<textarea class="inp" id="plxIntro" style="min-height:88px">' + esc(ch.intro || '') + '</textarea></label>' +
+    '<p class="hint-in">항목은 각 섹션 아래 「＋ 항목 추가」로 더하고, 항목을 누르면 고칠 수 있어요.</p>';
+  openSheet('챕터 수정', body, '<button class="sh-save" id="plxSave">저장</button>');
+  $('#plxSave').addEventListener('click', async () => {
+    const title = $('#plxTitle').value.trim();
+    if (!title) { toast('제목을 적어 주세요'); return; }
+    const emoji = $('#plxEmoji').value.trim();
+    const intro = $('#plxIntro').value.trim();
+    const prev = JSON.parse(JSON.stringify(ST.plan || {}));
+    const base = { ...ch };
+    ch.emoji = emoji || null; ch.title = title; ch.intro = intro || null; ch.updatedAt = Date.now();
+    closeSheet(); render.sameTab = true; render();
+    try {
+      await patch('masterPlan/chapters/' + cid, { emoji: emoji || null, title: title, intro: intro || null, updatedAt: Date.now() });
+      toast('챕터를 저장했어요');
+    } catch (e) {
+      ST.plan.chapters[cid] = base; render.sameTab = true; render(); toast('저장하지 못했어요');
+    }
+  });
+}
+
+/* ============================================================
+   📝 수정 요청 메모 (이 기기에만 저장 · 탭 이동해도 유지)
+   ============================================================ */
+const MEMO_KEY = 'bubudaisy.memos';
+const TAB_NAMES = {
+  vision: '비전', networth: '순자산', roadmap: '로드맵', goals: '목표',
+  bucket: '하고싶은일', trade: '갈아타기', plan: '플랜'
+};
+let MEMOS = loadMemos();
+function loadMemos() {
+  try {
+    const a = JSON.parse(localStorage.getItem(MEMO_KEY) || '[]');
+    return Array.isArray(a) ? a.filter(x => x && x.text) : [];
+  } catch (e) { return []; }
+}
+function saveMemos() {
+  try { localStorage.setItem(MEMO_KEY, JSON.stringify(MEMOS)); } catch (e) {}
+  paintMemoBadge();
+}
+function memoTabName(t) { return TAB_NAMES[t] || '기타'; }
+function paintMemoBadge() {
+  const b = $('#memoBtn'), c = $('#memoCnt');
+  if (!b || !c) return;
+  const n = MEMOS.length;
+  b.classList.toggle('has', n > 0);
+  c.textContent = n > 9 ? '9+' : String(n);
+  c.classList.toggle('hidden', n === 0);
+  b.setAttribute('aria-label', n ? '수정 요청 메모 ' + n + '개' : '수정 요청 메모');
+}
+function memoRows() {
+  if (!MEMOS.length) return '<p class="empty">아직 적어 둔 요청이 없어요<br>고치고 싶은 곳을 그때그때 적어 두세요 🌼</p>';
+  return MEMOS.map(m =>
+    '<div class="memo-row"><span class="mt">' + esc(m.tab || '기타') + '</span>' +
+    '<span class="mx">' + esc(m.text) + '</span>' +
+    '<button class="memo-del" data-mdel="' + esc(m.id) + '" aria-label="삭제">✕</button></div>').join('');
+}
+async function copyText(t) {
+  if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(t); return; }
+  const ta = document.createElement('textarea');
+  ta.value = t; ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0';
+  document.body.appendChild(ta);
+  ta.select(); ta.setSelectionRange(0, t.length);
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+  ta.remove();
+  if (!ok) throw new Error('copy failed');
+}
+function openMemoSheet() {
+  const body =
+    '<div class="fld"><span>요청 내용 · 지금 탭 [' + esc(memoTabName(ST.tab)) + ']</span>' +
+      '<textarea class="inp" id="memoText" style="min-height:78px" placeholder="예: 플랜 탭 항목 글자가 조금 작아요"></textarea></div>' +
+    '<button class="add-row" id="memoAdd">＋ 메모 추가</button>' +
+    '<div class="memo-list" id="memoList">' + memoRows() + '</div>' +
+    '<p class="hint-in">탭 이름이 앞에 자동으로 붙어요. 메모는 이 기기에만 저장되고, 탭을 옮겨도 그대로 남아요.</p>';
+  const acts =
+    '<button class="sh-save" id="memoCopy">📋 전체 복사</button>' +
+    '<button class="sh-del" id="memoClear">🗑 목록 비우기</button>';
+  openSheet('📝 두두에게 보낼 수정 요청', body, acts);
+
+  const inp = $('#memoText');
+  const addMemo = () => {
+    const v = inp.value.trim();
+    if (!v) { toast('요청 내용을 적어 주세요'); inp.focus(); return; }
+    MEMOS.push({ id: newKey('m'), tab: memoTabName(ST.tab), text: v, at: Date.now() });
+    saveMemos();
+    inp.value = '';
+    $('#memoList').innerHTML = memoRows();
+    toast('메모를 추가했어요');
+    inp.focus();
+  };
+  $('#memoAdd').addEventListener('click', addMemo);
+  inp.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); addMemo(); }
+  });
+  $('#memoList').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-mdel]');
+    if (!b) return;
+    MEMOS = MEMOS.filter(x => x.id !== b.dataset.mdel);
+    saveMemos();
+    $('#memoList').innerHTML = memoRows();
+  });
+  $('#memoCopy').addEventListener('click', async () => {
+    if (!MEMOS.length) { toast('복사할 메모가 없어요'); return; }
+    const text = 'BUBUDAISY 수정 요청:\n' +
+      MEMOS.map(m => '- [' + (m.tab || '기타') + '] ' + m.text).join('\n');
+    try { await copyText(text); toast('복사됐어요! 피클 채팅에 붙여넣어 주세요'); }
+    catch (e) { toast('복사하지 못했어요 — 메모를 길게 눌러 복사해 주세요'); }
+  });
+  $('#memoClear').addEventListener('click', (e) => {
+    if (!MEMOS.length) { toast('비울 메모가 없어요'); return; }
+    const btn = e.currentTarget;
+    if (btn.dataset.armed !== '1') {
+      btn.dataset.armed = '1';
+      btn.classList.add('confirm');
+      btn.textContent = '정말 비울까요?';
+      return;
+    }
+    MEMOS = [];
+    saveMemos();
+    $('#memoList').innerHTML = memoRows();
+    btn.dataset.armed = '';
+    btn.classList.remove('confirm');
+    btn.textContent = '🗑 목록 비우기';
+    toast('메모를 모두 지웠어요');
+  });
+}
+$('#memoBtn').addEventListener('click', openMemoSheet);
+paintMemoBadge();
 
 /* ============================================================
    시작
