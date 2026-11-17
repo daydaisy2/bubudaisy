@@ -348,6 +348,7 @@
   .mli .mid{flex:1 1 auto;min-width:0}
   .mli .tot{display:block;font-size:12.5px;font-weight:900;color:var(--ink);letter-spacing:-.02em}
   .mli .sub{display:block;font-size:10.5px;font-weight:700;color:var(--muted);margin-top:2px;letter-spacing:-.02em}
+  .nowrap{white-space:nowrap}
   .mli .ch{flex:0 0 auto;color:#BDB79B;font-size:14px}
   .empty{padding:14px 6px;text-align:center;font-size:12px;font-weight:700;color:var(--muted);line-height:1.6}
 
@@ -1108,7 +1109,7 @@ function netWorthView() {
         '<span class="mm">' + esc(monthLabel(x.month)) + '</span>' +
         '<span class="mid"><span class="tot">' + esc(fmtMan(x.net)) + '</span>' +
         '<span class="sub">세은 ' + esc(fmtMan(x.seeun)) + ' · 찬규 ' + esc(fmtMan(x.chankyu)) +
-          (x.expense ? ' · 총비용 ' + esc(fmtMan(x.expense)) : '') + '</span></span>' +
+          (x.expense ? ' <span class="nowrap">· 부부 총비용 ' + esc(fmtMan(x.expense)) + '</span>' : '') + '</span></span>' +
         '<span class="ch">›</span></button></li>').join('') +
       '</ul></section>';
   }
