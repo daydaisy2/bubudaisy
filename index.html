@@ -319,8 +319,17 @@
   /* ================= 하고 싶은 일 ================= */
   .bks{display:flex;flex-direction:column;gap:6px}
   .bk{display:flex;align-items:flex-start;background:var(--cream);border-radius:14px;
-    padding:10px 12px;transition:background .18s}
+    padding:10px 10px 10px 4px;transition:background .18s}
   .bk:active{background:#F6EFD6}
+  /* 드래그 핸들(⋮⋮) — 핸들만 touch-action:none 이라 화면 스크롤과 부딪히지 않는다 */
+  .bkh{flex:0 0 auto;align-self:stretch;width:18px;display:grid;place-items:center;
+    color:#ADA78D;font-size:13px;line-height:1;letter-spacing:-1px;
+    touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none;
+    -webkit-tap-highlight-color:transparent}
+  .bkh:active{cursor:grabbing;color:#8F8A73}
+  .bk.dragging{position:relative;z-index:3;background:#FFF8E0;
+    box-shadow:0 10px 20px rgba(30,27,60,.16);transform:scale(1.01);transition:none}
+  .bk-sorting{-webkit-user-select:none;user-select:none}
   .bkbtn{flex:1 1 auto;min-width:0;display:flex;align-items:flex-start;gap:8px;text-align:left}
   .bke{flex:0 0 auto;font-size:15px;line-height:1.35}
   .bkt{flex:1 1 auto;min-width:0;font-size:12.5px;font-weight:800;color:#3A382E;line-height:1.45;letter-spacing:-.02em}
@@ -405,7 +414,12 @@
   .ynote{font-size:11px;font-weight:700;color:#7C765C;background:#FFFBF0;border:1px dashed var(--cream-line);
     border-radius:12px;padding:8px 10px;line-height:1.5}
 
-  /* ================= 목표 ================= */
+  /* ================= 목표 · 확언 ================= */
+  /* 비전 탭 8대 핵심 목표 — 체크박스 대신 원형 숫자(1~8) */
+  .goals .gnum{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:#FFE680;color:#2A2694;
+    font-size:10.5px;font-weight:900;line-height:1;display:grid;place-items:center;margin-top:1px;
+    letter-spacing:0}
+  .goals .goal.done .gnum{background:var(--navy);color:#fff}
   .goals{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
   .goal{display:flex;align-items:flex-start;gap:9px;background:var(--cream);border-radius:14px;padding:10px 11px}
   .goal .gcheck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:2px solid #DDD6BD;
@@ -553,9 +567,9 @@
   <main id="view"></main>
   <nav class="tabs" id="tabs">
     <button class="tab on" data-tab="vision"><span class="ic">🌼</span>비전</button>
-    <button class="tab" data-tab="networth"><span class="ic">💰</span>순자산</button>
-    <button class="tab" data-tab="goals"><span class="ic">🎯</span>목표</button>
+    <button class="tab" data-tab="goals"><span class="ic">💬</span>확언</button>
     <button class="tab" data-tab="bucket"><span class="ic">🙏</span>희망</button>
+    <button class="tab" data-tab="networth"><span class="ic">💰</span>순자산</button>
   </nav>
 </div>
 
@@ -1044,10 +1058,18 @@ function goalNote() {
 }
 function freeGoals() {
   const t = (ST.vision && ST.vision.target && typeof ST.vision.target === 'object') ? ST.vision.target : {};
-  if (Array.isArray(t.goals)) return t.goals;
-  const out = [];
-  if (t.plus) out.push({ value: String(t.plus), label: '', note: '' });
-  if (t.cashflow) out.push({ value: '월 ' + fmtMan(t.cashflow), label: '월급 외 현금흐름', note: '' });
+  let out;
+  if (Array.isArray(t.goals)) out = t.goals.slice();
+  else {
+    out = [];
+    if (t.plus) out.push({ value: String(t.plus), label: '', note: '' });
+    if (t.cashflow) out.push({ value: '월 ' + fmtMan(t.cashflow), label: '월급 외 현금흐름', note: '' });
+  }
+  /* 화면에서만 보정: 방 데이터에 '세팅력 컨설턴트'가 아직 없으면 4번으로 붙인다.
+     (방 데이터는 그대로 둔다 — 목표 시트에서 저장할 때만 함께 저장된다) */
+  if (!out.some(g => String((g && g.value) || '').indexOf('세팅력') >= 0)) {
+    out.push({ value: '세팅력 컨설턴트', label: '', note: '', now: '공부중' });
+  }
   return out;
 }
 function nwBadge() {
@@ -1129,8 +1151,26 @@ function visionView() {
   }
 
   const flow = v ? flowSection() : '';
+
+  /* 📚 세팅력 컨설턴트 바로 아래 — 8대 핵심 목표 (체크박스 대신 원형 숫자, 보기 전용) */
+  let core = '';
+  if (v) {
+    const list = goalList();
+    core = '<section class="card">' +
+      '<div class="card-h"><h2>🎯 8대 핵심 목표</h2>' +
+        (list.length ? '<span class="pill">' + list.length + '개</span>' : '') + '</div>' +
+      (list.length ? '<ul class="goals">' + list.map((g, i) =>
+        '<li class="goal' + (g.done ? ' done' : '') + '">' +
+        '<span class="gnum">' + (i + 1) + '</span>' +
+        '<span class="gtext">' + esc(g.text) +
+          (g.memo ? '<span class="gmemo">📝 ' + esc(g.memo) + '</span>' : '') + '</span>' +
+        '</li>').join('') + '</ul>' :
+        '<p class="empty">목표 데이터를 기다리고 있어요</p>') +
+      '</section>';
+  }
+
   const foot = (v && v.footer) ? '<p class="foot-note">' + esc(v.footer) + '</p>' : '';
-  return hero + flow + expertise + ms + foot;
+  return hero + flow + expertise + core + ms + foot;
 }
 
 /* ---------- 🔄 갈아타기 전략 (비전 탭 · 편집 가능) ---------- */
@@ -1238,27 +1278,12 @@ function netWorthView() {
   return sum + addBtn + chart + mlist;
 }
 
-/* ---------- 3. 핵심 목표 ---------- */
+/* ---------- 3. 확언 (8대 핵심 목표는 비전 탭으로 옮겼다 — 방 데이터는 그대로) ---------- */
 function goalsView() {
-  const goals = goalList();
   const affs = affList();
-  const doneN = goals.filter(g => g.done).length;
-  const pct = goals.length ? Math.round(doneN / goals.length * 100) : 0;
-
-  const goalCard = '<section class="card">' +
-    '<div class="card-h"><h2>🎯 8대 핵심 목표</h2><span class="pill">' + doneN + '/' + goals.length + ' 완료</span></div>' +
-    '<div class="bar green"><i style="width:' + pct + '%"></i></div>' +
-    (goals.length ? '<ul class="goals">' + goals.map(g =>
-      '<li class="goal' + (g.done ? ' done' : '') + '">' +
-      '<button class="gcheck" data-act="g-toggle" data-kind="goals" data-id="' + esc(g.id) + '" aria-label="완료">✓</button>' +
-      '<button class="gtext" data-act="g-edit" data-kind="goals" data-id="' + esc(g.id) + '">' + esc(g.text) +
-      (g.memo ? '<span class="gmemo">📝 ' + esc(g.memo) + '</span>' : '') + '</button>' +
-      '</li>').join('') + '</ul>' :
-      '<p class="empty">목표 데이터를 기다리고 있어요</p>') +
-    '</section>';
 
   const affCard = '<section class="card">' +
-    '<div class="card-h"><h2>🌼 4대 확언</h2><span class="pill navy">매일 읽기</span></div>' +
+    '<div class="card-h"><h2>💬 4대 확언</h2><span class="pill navy">매일 읽기</span></div>' +
     (affs.length ? '<div class="affair">' + affs.map(a =>
       '<div class="aff' + (a.done ? ' done' : '') + '">' +
       '<button class="gcheck" data-act="g-toggle" data-kind="affirmations" data-id="' + esc(a.id) + '" aria-label="완료">✓</button>' +
@@ -1268,7 +1293,7 @@ function goalsView() {
       '<p class="empty">확언 데이터를 기다리고 있어요</p>') +
     '</section>';
 
-  return goalCard + affCard + '<p class="foot-note">체크하면 두 분 폰에 바로 함께 반영돼요 🌼</p>';
+  return affCard + '<p class="foot-note">체크하면 두 분 폰에 바로 함께 반영돼요 🌼</p>';
 }
 
 /* ---------- 3. 하고 싶은 일 (버킷) ---------- */
@@ -1304,7 +1329,9 @@ function bkSorted() {
   });
 }
 function bkRow(it) {
-  return '<div class="bk">' +
+  const label = (it.text || '항목');
+  return '<div class="bk" data-id="' + esc(it.id) + '">' +
+    '<button class="bkh" aria-label="' + esc(label + ' 순서 바꾸기') + '" title="잡고 위아래로 끌면 순서가 바뀌어요">⋮⋮</button>' +
     '<button class="bkbtn" data-act="bk-edit" data-id="' + esc(it.id) + '">' +
       '<span class="bke">' + esc(it.emoji || '✨') + '</span>' +
       '<span class="bkt">' + esc(it.text || '') +
@@ -1313,11 +1340,110 @@ function bkRow(it) {
       '<span class="bkchev">›</span>' +
     '</button></div>';
 }
+/* ---------- 희망 탭 — 핸들(⋮⋮) 드래그로 순서 바꾸기 ----------
+   같은 그룹 안에서만 옮겨지고, 손을 떼는 순간 Firebase(bucket/items)에 order를 저장한다.
+   핸들만 touch-action:none 이라 화면 세로 스크롤은 그대로 동작한다. */
+const bkDrag = { on: false, pid: null, id: null, row: null, box: null, from: -1, to: -1, lastY: 0 };
+let bkScrollRAF = null;
+function bkDragRows(box) { return Array.from(box.querySelectorAll('.bk[data-id]')); }
+function bkReorderAt(y) {
+  const box = bkDrag.box, row = bkDrag.row;
+  if (!box || !row) return;
+  const rows = bkDragRows(box);
+  let ref = null;
+  for (const r of rows) {
+    if (r === row) continue;
+    const b = r.getBoundingClientRect();
+    if (y < b.top + b.height / 2) { ref = r; break; }
+  }
+  if (ref) {
+    if (row.nextElementSibling !== ref) box.insertBefore(row, ref);
+  } else if (box.lastElementChild !== row) {
+    box.appendChild(row);
+  }
+  bkDrag.to = bkDragRows(box).indexOf(row);
+}
+/* 목록이 화면보다 길 때 — 손가락을 위·아래 끝에 대고 있으면 화면이 따라 내려간다 */
+function bkAutoScroll() {
+  if (!bkDrag.on) { bkScrollRAF = null; return; }
+  const view = $('#view');
+  if (!view) { bkScrollRAF = null; return; }
+  const y = bkDrag.lastY;
+  const topEdge = 96, botEdge = window.innerHeight - 150;
+  let d = 0;
+  if (y < topEdge) d = -Math.min(16, (topEdge - y) / 2.5);
+  else if (y > botEdge) d = Math.min(16, (y - botEdge) / 2.5);
+  /* 지금 순서를 바꾸고 있는 그룹의 끝을 넘어가면 더는 내리지 않는다 */
+  if (d > 0 && bkDrag.box && bkDrag.box.getBoundingClientRect().bottom <= window.innerHeight - 30) d = 0;
+  if (d < 0 && bkDrag.box && bkDrag.box.getBoundingClientRect().top >= 74) d = 0;
+  if (d) {
+    const before = view.scrollTop;
+    view.scrollTop = before + d;
+    if (view.scrollTop !== before) bkReorderAt(y);
+  }
+  bkScrollRAF = requestAnimationFrame(bkAutoScroll);
+}
+function bkDragStart(e) {
+  const handle = e.target.closest && e.target.closest('.bkh');
+  if (!handle) return;
+  const row = handle.closest('.bk'), box = row && row.closest('.bks');
+  if (!row || !box) return;
+  e.preventDefault();
+  bkDrag.on = true; bkDrag.pid = e.pointerId; bkDrag.id = row.dataset.id;
+  bkDrag.row = row; bkDrag.box = box; bkDrag.lastY = e.clientY;
+  bkDrag.from = bkDragRows(box).indexOf(row);
+  bkDrag.to = bkDrag.from;
+  row.classList.add('dragging');
+  const view = $('#view'); if (view) view.classList.add('bk-sorting');
+  try { handle.setPointerCapture(e.pointerId); } catch (err) {}
+  if (!bkScrollRAF) bkScrollRAF = requestAnimationFrame(bkAutoScroll);
+}
+function bkDragMove(e) {
+  if (!bkDrag.on || e.pointerId !== bkDrag.pid || !bkDrag.row) return;
+  e.preventDefault();
+  bkDrag.lastY = e.clientY;
+  bkReorderAt(e.clientY);
+}
+function bkDragEnd(e) {
+  if (!bkDrag.on) return;
+  if (e && e.pointerId != null && e.pointerId !== bkDrag.pid) return;
+  const row = bkDrag.row, box = bkDrag.box;
+  bkDrag.on = false; bkDrag.pid = null; bkDrag.row = null; bkDrag.box = null;
+  if (bkScrollRAF) { cancelAnimationFrame(bkScrollRAF); bkScrollRAF = null; }
+  if (row) row.classList.remove('dragging');
+  const view = $('#view'); if (view) view.classList.remove('bk-sorting');
+  if (!box || bkDrag.from === bkDrag.to) return;
+  return saveBkOrder(bkDragRows(box).map(r => r.dataset.id));
+}
+async function saveBkOrder(ids) {
+  const items = (ST.bucket && ST.bucket.items) || {};
+  const changes = {}, prev = {};
+  ids.forEach((id, i) => {
+    const cur = items[id];
+    if (!cur) return;
+    const o = i + 1;
+    if (num(cur.order) === o) return;
+    prev[id] = { has: Object.prototype.hasOwnProperty.call(cur, 'order'), order: cur.order };
+    cur.order = o;
+    changes[id] = { order: o };
+  });
+  if (!Object.keys(changes).length) return;
+  try { await patch('bucket/items', changes); toast('순서를 저장했어요'); }
+  catch (err) {
+    Object.entries(prev).forEach(([id, p]) => {
+      const cur = items[id];
+      if (!cur) return;
+      if (p.has) cur.order = p.order; else delete cur.order;
+    });
+    render.sameTab = true; render();
+    toast('순서를 저장하지 못했어요');
+  }
+}
 function bucketView() {
   const list = bkSorted();
   const head = '<section class="card">' +
     '<div class="card-h"><h2>🙏 돈 벌면 하고 싶은 일</h2><span class="pill">' + list.length + '개</span></div>' +
-    '<p class="cap" style="text-align:left">하고 싶은 일을 모아 두세요 · 항목을 누르면 이모지·문구·메모를 고칠 수 있어요</p>' +
+    '<p class="cap" style="text-align:left">하고 싶은 일을 모아 두세요 · 항목을 누르면 이모지·문구·메모를 고칠 수 있어요 · 왼쪽 ⋮⋮를 끌면 순서가 바뀌어요</p>' +
     '</section>';
   if (!list.length) {
     return head + '<section class="card"><p class="empty">아직 항목이 없어요<br>첫 항목을 추가해 보세요 🌼</p>' +
@@ -1406,6 +1532,12 @@ $('#view').addEventListener('click', async (e) => {
   if (act === 'pl-add') return openPlanItemSheet(el.dataset.c, el.dataset.s, null);
   if (act === 'pl-ch') return openPlanChapterSheet(el.dataset.c);
 });
+
+/* 희망 탭 드래그 — 핸들에서만 시작되고, 스크롤은 건드리지 않는다 */
+$('#view').addEventListener('pointerdown', bkDragStart, { passive: false });
+$('#view').addEventListener('pointermove', bkDragMove, { passive: false });
+$('#view').addEventListener('pointerup', bkDragEnd);
+$('#view').addEventListener('pointercancel', bkDragEnd);
 
 /* ============================================================
    시트
@@ -2319,7 +2451,7 @@ function openPlanChapterSheet(cid) {
    ============================================================ */
 const MEMO_KEY = 'bubudaisy.memos';
 const TAB_NAMES = {
-  vision: '비전', networth: '순자산', goals: '목표',
+  vision: '비전', networth: '순자산', goals: '확언',
   bucket: '희망', trade: '갈아타기', plan: '플랜'
 };
 let MEMOS = loadMemos();
