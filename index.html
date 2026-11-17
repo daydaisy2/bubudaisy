@@ -1475,7 +1475,11 @@ async function seedStrategyMind() {
   d.strategy = { ...(d.strategy || {}), ...strategy };
   d.meta = { ...(d.meta || {}), seededAt: now };
   render.sameTab = true; render();
-  try { await patch('strategyMind', { strategy: strategy, meta: { seededAt: now } }); }
+  try {
+    /* 항목 단위로만 저장한다 — strategy 노드를 통째로 PATCH 하면 그 사이 다른 폰에서 들어온 항목을 지울 수 있다 */
+    await Promise.all(entries(strategy).map(([id, rec]) => put('strategyMind/strategy/' + id, rec)));
+    await patch('strategyMind/meta', { seededAt: now });
+  }
   catch (e) {}
 }
 function smRow(l, it) {
@@ -1694,23 +1698,30 @@ async function smSaveOrder(listEl) {
   const key = listEl.dataset.list;
   const ids = Array.from(listEl.querySelectorAll('.srow')).map(r => r.dataset.id);
   const data = smData()[key] || {};
-  const changes = {}, prev = {};
+  /* 항목 단위 PATCH 로만 저장한다. strategyMind/{key} 처럼 위 노드에 {id:{order}} 를 PATCH 하면
+     Firebase 가 id 아래 객체 전체를 {order} 로 갈아 버려 text·emoji·note 가 지워진다. */
+  const jobs = [], prev = {};
   ids.forEach((id, i) => {
     const cur = data[id];
     if (!cur) return;
     if (num(cur.order) === i) return;
-    prev[id] = { has: Object.prototype.hasOwnProperty.call(cur, 'order'), order: cur.order };
+    prev[id] = {
+      has: Object.prototype.hasOwnProperty.call(cur, 'order'), order: cur.order,
+      hasAt: Object.prototype.hasOwnProperty.call(cur, 'updatedAt'), updatedAt: cur.updatedAt
+    };
     cur.order = i;
-    changes[id] = { order: i };
+    cur.updatedAt = Date.now();
+    jobs.push(patch('strategyMind/' + key + '/' + id, { order: i, updatedAt: cur.updatedAt }));
   });
   render.sameTab = true; render();
-  if (!Object.keys(changes).length) return;
-  try { await patch('strategyMind/' + key, changes); toast('순서를 저장했어요'); }
+  if (!jobs.length) return;
+  try { await Promise.all(jobs); toast('순서를 저장했어요'); }
   catch (e) {
     Object.entries(prev).forEach(([id, p]) => {
       const cur = data[id];
       if (!cur) return;
       if (p.has) cur.order = p.order; else delete cur.order;
+      if (p.hasAt) cur.updatedAt = p.updatedAt; else delete cur.updatedAt;
     });
     render.sameTab = true; render();
     toast('순서를 저장하지 못했어요');
