@@ -1584,7 +1584,7 @@ function openVisionExpertiseSheet(i) {
   });
 }
 
-/* ---------- 연도별 이정표 ---------- */
+/* ---------- 연도별 TOP3 목표 ---------- */
 function msLead(y) {
   const m = /\d{4}/.exec(String(y == null ? '' : y));
   return m ? Number(m[0]) : 9999;
@@ -1607,7 +1607,7 @@ function openVisionMsSheet(i, box) {
       '<button data-t="navy" class="' + (tone === 'green' ? '' : 'on') + '">남색</button>' +
       '<button data-t="green" class="' + (tone === 'green' ? 'on' : '') + '">초록 (완성의 해)</button>' +
     '</div></div>' +
-    '<div class="fld"><span>이정표 박스 3개</span><div class="ms-in3">' +
+    '<div class="fld"><span>TOP3 목표 3칸</span><div class="ms-in3">' +
       boxIn(1, '올선 등기') + boxIn(2, '결혼식') + boxIn(3, '경제적 자유') +
     '</div></div>' +
     '<div class="fld"><span>이렇게 보여요</span><div class="ms-prev"><div class="ms-grid" id="vmPrev"></div></div></div>' +
