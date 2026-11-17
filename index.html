@@ -148,9 +148,10 @@
   .chip .ci{font-size:18px;line-height:1}
   .ms{display:flex;flex-direction:column;gap:8px}
   .ms-card{border-radius:16px;background:var(--cream);padding:11px 11px 11px;transition:background .15s}
-  .ms-card:active{background:#F6EFD6}
-  .ms-card.green:active{background:#E4F3E1}
-  .ms-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;padding:0 2px}
+  /* 연도 헤더(연도·배지·›)만 누르면 편집 시트가 열린다 — 아래 칸은 성공 토글 */
+  .ms-h{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;
+    margin-bottom:8px;padding:0 2px;border-radius:10px;text-align:left}
+  .ms-h:active{opacity:.62}
   .ms-h .y{font-size:15px;font-weight:900;color:var(--navy);letter-spacing:-.03em}
   .ms-h .y.green{color:var(--green)}
   .ms-h .bd{font-size:10px;font-weight:900;color:#7C765C;background:#fff;padding:3px 8px;border-radius:999px}
@@ -158,11 +159,19 @@
   .ms-hr{display:flex;align-items:center;gap:6px;min-width:0}
   .ms-hr .li-chev{padding-left:0}
   .ms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-  .ms-box{background:#fff;border-radius:12px;min-height:52px;padding:8px 6px;
+  .ms-box{position:relative;background:#fff;border-radius:12px;min-height:52px;padding:8px 6px;
     display:flex;align-items:center;justify-content:center;text-align:center;
     font-size:11px;font-weight:900;color:#3A382E;letter-spacing:-.03em;line-height:1.32;
     transition:background .15s}
   .ms-box:active{background:#F6EFD6}
+  /* 성공(달성) 상태 — 연초록 배경 + 오른쪽 위 체크 배지, 다시 누르면 되돌아간다 */
+  .ms-box.done{background:#E1F3DE;color:#215C2E;box-shadow:inset 0 0 0 1.5px #9CCFA0}
+  .ms-box.done:active{background:#D3EBD0}
+  .ms-box .ck{position:absolute;top:5px;right:5px;width:13px;height:13px;border-radius:50%;
+    background:#2A6E3C;color:#fff;font-size:9px;font-weight:900;line-height:1;display:grid;place-items:center}
+  .ms-card.green .ms-box.done{background:#FFF2BE;color:#6B5600;box-shadow:inset 0 0 0 1.5px #EFD871}
+  .ms-card.green .ms-box.done:active{background:#FBE9A6}
+  .ms-card.green .ms-box.done .ck{background:#B08A00}
   .ms-card.green .ms-box{background:var(--green-soft);color:#265C33}
   .ms-in3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .ms-in3 label{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -1112,11 +1121,12 @@ function visionView() {
         (arr.length ? '<span class="pill">' + esc(arr[0].year || '') + '~</span>' : '') + '</div></div>' +
       (arr.length ? '<div class="ms">' + arr.map((m, i) => {
         const its = (Array.isArray(m.items) ? m.items : []).slice(0, 3);
-        return '<div class="ms-card' + (m.tone === 'green' ? ' green' : '') + ' tap" data-act="v-ms" data-i="' + i + '">' +
-          '<div class="ms-h"><span class="y' + (m.tone === 'green' ? ' green' : '') + '">' + esc(m.year) + '</span>' +
+        const done = Array.isArray(m.done) ? m.done : [];
+        return '<div class="ms-card' + (m.tone === 'green' ? ' green' : '') + '">' +
+          '<button class="ms-h" data-act="v-ms" data-i="' + i + '" aria-label="연도 카드 수정"><span class="y' + (m.tone === 'green' ? ' green' : '') + '">' + esc(m.year) + '</span>' +
           '<span class="ms-hr">' + (m.badge ? '<span class="bd">' + esc(m.badge) + '</span>' : '') +
-          '<span class="li-chev">›</span></span></div>' +
-          (its.length ? '<div class="ms-grid">' + its.map((x, b) => '<button class="ms-box tap" data-act="v-ms-cell" data-i="' + i + '" data-b="' + b + '">' + esc(x) + '</button>').join('') + '</div>' : '') +
+          '<span class="li-chev">›</span></span></button>' +
+          (its.length ? '<div class="ms-grid">' + its.map((x, b) => '<button class="ms-box tap' + (done[b] ? ' done' : '') + '" data-act="v-ms-toggle" data-i="' + i + '" data-b="' + b + '" aria-pressed="' + (done[b] ? 'true' : 'false') + '">' + (done[b] ? '<span class="ck">✓</span>' : '') + esc(x) + '</button>').join('') + '</div>' : '') +
           '</div>';
       }).join('') + '</div>' : '<p class="empty">아직 연도 카드가 없어요</p>') +
       '</section>';
@@ -1372,6 +1382,7 @@ $('#view').addEventListener('click', async (e) => {
   if (el.dataset.go) { go(el.dataset.go); return; }
   const act = el.dataset.act;
   if (act === 'v-ms') return openVisionMsSheet(el.dataset.i);
+  if (act === 'v-ms-toggle') return toggleMsDone(el.dataset.i, el.dataset.b);
   if (act === 'v-ms-cell') return openVisionMsSheet(el.dataset.i, el.dataset.b);
   if (act === 'v-flow-step') return openFlowStepSheet(el.dataset.i);
   if (act === 'v-flow-way') return openFlowWaySheet(el.dataset.i);
@@ -1756,6 +1767,27 @@ function openVisionExpertiseSheet(i) {
 }
 
 /* ---------- 연도별 TOP3 목표 ---------- */
+/* 칸을 누르면 그 항목만 성공(달성) 토글 — 방 데이터의 milestones/{i}/done 배열만 PATCH하고
+   연도·배지·항목 텍스트는 건드리지 않는다. */
+async function toggleMsDone(i, b) {
+  const arr = vArr(ST.vision, 'milestones');
+  const m = arr[Number(i)];
+  const k = Number(b);
+  if (!m || !(k >= 0)) return;
+  const prevDone = Array.isArray(m.done) ? m.done.slice() : [];
+  const done = prevDone.slice();
+  done[k] = !done[k];
+  m.done = done;
+  render.sameTab = true; render();
+  try {
+    await patch('vision/milestones/' + Number(i) + '/done', done);
+    toast(done[k] ? '성공으로 표시했어요 ✨' : '다시 도전 중으로 돌렸어요');
+  } catch (e) {
+    m.done = prevDone;
+    render.sameTab = true; render();
+    toast('저장하지 못했어요');
+  }
+}
 function msLead(y) {
   const m = /\d{4}/.exec(String(y == null ? '' : y));
   return m ? Number(m[0]) : 9999;
