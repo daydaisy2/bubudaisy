@@ -203,10 +203,11 @@
   .nwpill .v{font-size:11.5px;font-weight:900;color:#FFE680;letter-spacing:-.03em}
   .nwpill.none{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);color:#B6B1EE}
   .nwpill.none .v{color:#CFCBF3;font-size:11px}
-  /* 목표 카드 1·2·3번 오른쪽 '현재' 뱃지 — 세 줄 폭·높이를 같게(폭은 스크립트가 가장 넓은 뱃지에 맞춤) */
+  /* 목표 카드 1·2·3번 오른쪽 '현재' 뱃지 — 세 줄 폭·높이를 같게(폭은 스크립트가 가장 넓은 뱃지에 맞춤),
+     안쪽은 왼쪽 정렬이라 세 줄의 '현재' 글자 시작선이 세로로 일직선이 된다 */
   .goalcard .grow{align-items:center;gap:8px;min-height:48px}
   .goalcard .gv{font-size:12px}
-  .goalcard .nwpill{justify-content:center}
+  .goalcard .nwpill{justify-content:flex-start;text-align:left}
   @media (min-width:400px){
     .goalcard .gv{font-size:13.5px}
   }
@@ -1005,7 +1006,7 @@ function visionView() {
 
   let expertise = '';
   if (v) {
-    const arr = vArr(v, 'expertise');
+    const arr = expertiseItems();
     expertise = '<section class="card">' +
       '<div class="card-h"><h2>📚 전문성 영역</h2><div class="board-tools">' +
         (arr.length ? '<span class="pill">' + arr.length + '개</span>' : '') + '</div></div>' +
@@ -1616,6 +1617,31 @@ function openVisionGoalRowSheet(i) {
 }
 
 /* ---------- 전문성 영역 ---------- */
+/* 화면에 보이는 전문성 영역 — 방 데이터(rooms/…)는 건드리지 않고
+   화면에서만 최신 구성으로 맞춘다: 재개발·재건축은 🏗️ 재재 한 칸으로 묶고,
+   마지막 칸에 📜 정책을 붙인다(이미 있으면 중복해서 붙이지 않는다). */
+const EXP_EMOJI_MERGE = '🏗️';
+function expertiseItems() {
+  const raw = vArr(ST.vision, 'expertise').filter(x => x && (x.label || x.emoji));
+  const out = [];
+  let merged = false;
+  raw.forEach(x => {
+    const label = String(x.label || '').trim();
+    if (!label) return;
+    if (/재재|재개발|재건축/.test(label)) {
+      if (!merged) {
+        out.push({ emoji: EXP_EMOJI_MERGE, label: '재재' });
+        merged = true;
+      }
+      return;
+    }
+    if (/정책/.test(label)) return; /* 정책은 항상 마지막 칸으로 내려 붙인다 */
+    out.push({ emoji: x.emoji, label: label });
+  });
+  if (!out.length) return out;
+  out.push({ emoji: '📜', label: '정책' });
+  return out;
+}
 function openVisionExpertiseSheet(i) {
   const arr = vArr(ST.vision, 'expertise');
   const isNew = i === 'new' || i === undefined || !arr[Number(i)];
