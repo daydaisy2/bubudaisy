@@ -1008,7 +1008,7 @@ function visionView() {
   if (v) {
     const arr = expertiseItems();
     expertise = '<section class="card">' +
-      '<div class="card-h"><h2>📚 전문성 영역</h2><div class="board-tools">' +
+      '<div class="card-h"><h2>📚 세팅력</h2><div class="board-tools">' +
         (arr.length ? '<span class="pill">' + arr.length + '개</span>' : '') + '</div></div>' +
       (arr.length ? '<div class="chips">' + arr.map((x) =>
         '<div class="chip"><span class="ci">' + esc(x.emoji || '•') + '</span>' + esc(x.label || '') + '</div>').join('') + '</div>' : '<p class="empty">아직 영역이 없어요</p>') +
