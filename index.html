@@ -411,11 +411,12 @@
   /* ================= 목표 · 확언 ================= */
   /* 비전 탭 8대 핵심 목표 — 체크박스 대신 원형 숫자(1~8) */
   .goals .gnum{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:#FFE680;color:#2A2694;
-    font-size:10.5px;font-weight:900;line-height:1;display:grid;place-items:center;margin-top:1px;
-    letter-spacing:0}
+    font-size:10.5px;font-weight:900;line-height:1;display:inline-flex;align-items:center;justify-content:center;
+    box-sizing:border-box;letter-spacing:0;margin-top:0}
   .goals .goal.done .gnum{background:var(--navy);color:#fff}
   .goals{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
-  .goal{display:flex;align-items:flex-start;gap:9px;background:var(--cream);border-radius:14px;padding:10px 11px}
+  /* 원형 숫자·텍스트 모두 행 세로 정중앙에 (1줄·여러 줄 모두) */
+  .goal{display:flex;align-items:center;gap:9px;background:var(--cream);border-radius:14px;padding:10px 11px}
   .goal .gcheck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:2px solid #DDD6BD;
     display:grid;place-items:center;font-size:11px;font-weight:900;color:transparent;transition:.15s}
   .goal.done .gcheck{background:var(--green);border-color:var(--green);color:#fff}
