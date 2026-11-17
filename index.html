@@ -89,7 +89,7 @@
     padding:2px 16px 20px;display:flex;flex-direction:column;gap:13px;scrollbar-width:none}
   #view > *{flex:0 0 auto}
   #view::-webkit-scrollbar{display:none}
-  .tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;
+  .tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
     padding:8px 12px calc(8px + env(safe-area-inset-bottom));
     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);
     border-radius:24px 24px 0 0;box-shadow:0 -6px 20px rgba(112,86,0,.12)}
@@ -146,6 +146,13 @@
   .chip{background:var(--cream);border-radius:14px;padding:11px 6px;display:flex;flex-direction:column;
     align-items:center;gap:4px;font-size:11px;font-weight:900;color:#4A4738;letter-spacing:-.02em}
   .chip .ci{font-size:18px;line-height:1}
+  /* 💸 현금흐름 6칸 — 세팅력 컨설턴트와 같은 3열×2행 그리드, 칸을 눌러 직접 적는다 */
+  .chips.cf .chip{padding:12px 6px;gap:5px;transition:background .15s}
+  .chips.cf .chip:active{background:#F6EFD6}
+  .chips.cf .chip.empty{color:#B4AE97}
+  .chips.cf .chip.empty .ci{color:#C9C2A6;font-size:15px}
+  .chips.cf .chip .cf-l{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    line-height:1.3;min-height:1.3em;text-align:center;overflow-wrap:anywhere}
   .ms{display:flex;flex-direction:column;gap:8px}
   .ms-card{border-radius:16px;background:var(--cream);padding:11px 11px 11px;transition:background .15s}
   /* 연도 헤더(연도·배지·›)만 누르면 편집 시트가 열린다 — 아래 칸은 성공 토글 */
@@ -307,8 +314,8 @@
     .fs-emoji{font-size:18px}
   }
 
-  /* ================= 하단 탭 2개 (비전 · 순자산) ================= */
-  .tabs{grid-template-columns:repeat(2,1fr);gap:8px;overflow:visible}
+  /* ================= 하단 탭 3개 (비전 · 전략 · 순자산) ================= */
+  .tabs{grid-template-columns:repeat(3,1fr);gap:8px;overflow:visible}
 
   /* ================= 하고 싶은 일 ================= */
   .bks{display:flex;flex-direction:column;gap:6px}
@@ -339,6 +346,41 @@
   .ttitle{font-size:12.5px;font-weight:900;color:var(--ink);line-height:1.45;letter-spacing:-.02em;margin-top:6px}
   .tmemo{font-size:11.5px;font-weight:700;color:#6E6851;line-height:1.5;letter-spacing:-.02em;
     margin-top:5px;background:#fff;border-radius:11px;padding:7px 10px}
+
+  /* ================= 🧭 전략 탭 (전략 · 마인드) ================= */
+  .srows{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+  .srow{--delw:74px;position:relative;display:block;overflow:hidden;border-radius:14px;
+    background:var(--cream);min-height:46px;
+    -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:pan-y}
+  .srow-face{display:flex;align-items:center;gap:9px;padding:11px 12px;min-height:46px;
+    background:var(--cream);position:relative;z-index:2;border-radius:inherit;width:100%;
+    transition:width .22s cubic-bezier(.22,.61,.36,1);touch-action:pan-y}
+  .srow.open .srow-face{width:calc(100% - var(--delw))}
+  .srow.swiping .srow-face{transition:none}
+  .srow-acts{position:absolute;top:0;right:0;height:100%;display:flex;z-index:1;
+    border-radius:inherit;overflow:hidden}
+  .srow-acts .act{width:var(--delw);height:100%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:2px;background:#C0392B;color:#fff;
+    font-size:11px;font-weight:900;letter-spacing:-.03em;line-height:1}
+  .srow-acts .act .ai{font-size:17px;line-height:1}
+  .srow .ico{flex:0 0 auto;font-size:16px;line-height:1}
+  .srow .body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .srow .txt{font-size:12.5px;font-weight:800;color:#3A382E;line-height:1.45;letter-spacing:-.02em;
+    word-break:keep-all;overflow-wrap:anywhere}
+  .srow .note-line{font-size:10.5px;font-weight:700;color:#8C8672;letter-spacing:-.02em;line-height:1.4;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .srow.dragging{z-index:6;box-shadow:0 10px 20px rgba(30,27,60,.16);opacity:.97;transition:none}
+  body.sm-dragging .srow{transition:none}
+  body.sm-dragging{-webkit-user-select:none;user-select:none}
+  .sempty{padding:15px 6px;text-align:center;font-size:12px;font-weight:700;color:var(--muted);
+    line-height:1.6;list-style:none}
+  /* 카드 아래 큰 노란 추가 버튼 (부부 할일과 같은 모양) */
+  .card-add{width:100%;min-height:46px;border-radius:16px;display:flex;align-items:center;
+    justify-content:center;gap:6px;background:linear-gradient(180deg,#FDEC86,var(--yellow));
+    color:#2A2510;font-size:14.5px;font-weight:900;letter-spacing:-.03em;
+    box-shadow:0 2px 0 #E9C92C,0 5px 14px rgba(120,95,0,.16);transition:transform .1s,box-shadow .1s}
+  .card-add .plus{font-size:1.25em;line-height:1;font-weight:900;margin-top:-.06em}
+  .card-add:active{transform:translateY(2px);box-shadow:0 0 0 #E9C92C,0 3px 8px rgba(120,95,0,.14)}
 
   /* ================= 순자산 ================= */
   /* 1번: 부부 순자산 — 카드 폭 전체 크림 박스 */
@@ -562,6 +604,7 @@
   <main id="view"></main>
   <nav class="tabs" id="tabs">
     <button class="tab on" data-tab="vision"><span class="ic">🌼</span>비전</button>
+    <button class="tab" data-tab="strategy"><span class="ic">🧭</span>전략</button>
     <button class="tab" data-tab="networth"><span class="ic">💰</span>순자산</button>
   </nav>
 </div>
@@ -589,7 +632,7 @@ const VERIFY_HEX = 'c94584ef0ca10084ad0655e469418be1f0dad47b16e4762adc1d36b35c51
 const AUTH_KEY = 'bubudaisy.auth';
 const ROOM_KEY_RE = /^bubudaisy-[a-z0-9]{12,32}$/;
 
-const TABS = ['vision', 'networth'];
+const TABS = ['vision', 'strategy', 'networth'];
 
 /* ---------- 도우미 ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -642,7 +685,7 @@ function hex(buf) {
 /* ---------- 상태 ---------- */
 const ST = {
   vision: null, netWorth: {}, roadmap: {}, goals: {}, affirmations: {},
-  bucket: {}, tradeUp: {}, plan: {},
+  bucket: {}, tradeUp: {}, plan: {}, sm: {}, cashflow: {},
   tab: 'vision', loaded: false
 };
 let ROOM = '';
@@ -720,6 +763,7 @@ function lockNow(reload) {
   stopPolling();
   ST.loaded = false; ST.vision = null; ST.netWorth = {}; ST.roadmap = {};
   ST.goals = {}; ST.affirmations = {}; ST.bucket = {}; ST.tradeUp = {}; ST.plan = {};
+  ST.sm = {}; ST.cashflow = {};
   pin.buf = ''; paintPins();
   const msg = $('#pinMsg'); msg.className = 'pin-msg'; msg.textContent = '';
   $('#app').classList.add('hidden');
@@ -763,7 +807,14 @@ function absorb(d) {
   ST.bucket = (d.bucket && typeof d.bucket === 'object') ? d.bucket : {};
   ST.tradeUp = (d.tradeUpStrategies && typeof d.tradeUpStrategies === 'object') ? d.tradeUpStrategies : {};
   ST.plan = (d.masterPlan && typeof d.masterPlan === 'object') ? d.masterPlan : {};
+  const smNode = (d.strategyMind && typeof d.strategyMind === 'object') ? d.strategyMind : null;
+  ST.sm = smNode || {};
+  ST.cashflow = (d.cashflowBoxes && typeof d.cashflowBoxes === 'object') ? d.cashflowBoxes : {};
   ST.loaded = true;
+  /* 전략·마인드가 아직 하나도 없으면 전략 예시 2건을 한 번만 깔아 둔다 */
+  const smCount = Object.keys((smNode && smNode.strategy) || {}).length +
+    Object.keys((smNode && smNode.mind) || {}).length;
+  if (!smCount && !(smNode && smNode.meta)) seedStrategyMind();
 }
 async function syncNow(quiet) {
   try {
@@ -814,14 +865,15 @@ function connect() {
 }
 const NODE_TO_ST = {
   netWorth: 'netWorth', roadmap: 'roadmap', goals: 'goals', affirmations: 'affirmations',
-  bucket: 'bucket', tradeUpStrategies: 'tradeUp', masterPlan: 'plan'
+  bucket: 'bucket', tradeUpStrategies: 'tradeUp', masterPlan: 'plan',
+  strategyMind: 'sm', cashflowBoxes: 'cashflow'
 };
 function applyNode(name, data) {
   if (name === 'vision') {
     absorb({
       vision: data, netWorth: ST.netWorth, roadmap: ST.roadmap, goals: ST.goals,
       affirmations: ST.affirmations, bucket: ST.bucket, tradeUpStrategies: ST.tradeUp,
-      masterPlan: ST.plan
+      masterPlan: ST.plan, strategyMind: ST.sm, cashflowBoxes: ST.cashflow
     });
     return;
   }
@@ -992,6 +1044,7 @@ function fitGoalBadges(root) {
 }
 function render() {
   $$('#tabs .tab').forEach(b => b.classList.toggle('on', b.dataset.tab === ST.tab));
+  if (smG.active) { render.pending = true; return; }
   const view = $('#view');
   const keep = view.scrollTop;
   if (!ST.loaded) {
@@ -999,6 +1052,7 @@ function render() {
     return;
   }
   if (ST.tab === 'networth') { view.innerHTML = netWorthView(); fitAmounts(view); }
+  else if (ST.tab === 'strategy') { view.innerHTML = strategyView(); }
   else { view.innerHTML = visionView(); fitGoalBadges(view); }
   if (render.sameTab) view.scrollTop = keep;
   render.sameTab = true;
@@ -1142,6 +1196,8 @@ function visionView() {
   }
 
   const flow = v ? flowSection() : '';
+  /* 💸 현금흐름 — 올선등기 바로 아래, 세팅력 컨설턴트 위 */
+  const cf = v ? cashflowCard() : '';
 
   /* 📚 세팅력 컨설턴트 바로 아래 — 8대 핵심 목표 (체크박스 대신 원형 숫자, 보기 전용) */
   let core = '';
@@ -1161,10 +1217,10 @@ function visionView() {
   }
 
   const foot = (v && v.footer) ? '<p class="foot-note">' + esc(v.footer) + '</p>' : '';
-  return hero + flow + expertise + core + ms + foot;
+  return hero + flow + cf + expertise + core + ms + foot;
 }
 
-/* ---------- 🔄 갈아타기 전략 (비전 탭 · 편집 가능) ---------- */
+/* ---------- 🏠 올선등기 (구 갈아타기 · 비전 탭 · 편집 가능) ---------- */
 function flowData() {
   const f = ST.vision && ST.vision.roadmapFlow;
   return (f && typeof f === 'object') ? f : null;
@@ -1190,12 +1246,12 @@ function flowWays() {
 }
 function flowSection() {
   const f = flowData();
-  const head = '<div class="card-h"><h2>🔄 갈아타기</h2><div class="board-tools">' +
-    (f ? penBtn('v-flow-meta', '갈아타기 단계 수정') : '') + '</div></div>';
+  const head = '<div class="card-h"><h2>🏠 올림픽선수기자촌 등기</h2><div class="board-tools">' +
+    (f ? penBtn('v-flow-meta', '올선등기 단계 수정') : '') + '</div></div>';
   if (!f) {
     return '<section class="card">' + head +
-      '<p class="empty">아직 갈아타기 전략이 없어요<br>우리 집의 순서를 3단계로 적어 보세요</p>' +
-      '<button class="add-row" data-act="v-flow-init">＋ 갈아타기 전략 만들기</button>' +
+      '<p class="empty">아직 단계가 없어요<br>우리 집의 순서를 3단계로 적어 보세요</p>' +
+      '<button class="add-row" data-act="v-flow-init">＋ 올선등기 단계 만들기</button>' +
       '</section>';
   }
   const steps = flowSteps();
@@ -1208,6 +1264,79 @@ function flowSection() {
       '</button>').join('') + '</div>' : '';
   return '<section class="card">' + head + grid +
     '</section>';
+}
+
+/* ---------- 💸 현금흐름 6칸 (비전 탭 · 직접 입력) ----------
+   세팅력 컨설턴트와 같은 3열×2행 그리드. 칸을 누르면 이모지와 이름을 적고
+   Firebase(cashflowBoxes/b1~b6)에 바로 저장한다. 데이터가 없으면 빈칸으로 보인다. */
+const CF_N = 6;
+function cfBox(i) {
+  const d = (ST.cashflow && typeof ST.cashflow === 'object') ? ST.cashflow : {};
+  const v = d['b' + (i + 1)];
+  return (v && typeof v === 'object') ? v : {};
+}
+function cashflowCard() {
+  const cells = [];
+  for (let i = 0; i < CF_N; i++) {
+    const b = cfBox(i);
+    const label = String(b.label || '').trim();
+    const emoji = String(b.emoji || '').trim();
+    const empty = !label && !emoji;
+    cells.push('<button class="chip' + (empty ? ' empty' : '') + '" data-act="cf-edit" data-i="' + i +
+      '" aria-label="현금흐름 ' + (i + 1) + '번 칸 수정">' +
+      '<span class="ci">' + esc(emoji || '＋') + '</span>' +
+      '<span class="cf-l">' + esc(label || ('항목 ' + (i + 1))) + '</span></button>');
+  }
+  return '<section class="card">' +
+    '<div class="card-h"><h2>💸 현금흐름</h2><div class="board-tools"><span class="pill">' + CF_N + '개</span></div></div>' +
+    '<div class="chips cf">' + cells.join('') + '</div>' +
+    '<p class="cap" style="text-align:left">칸을 누르면 이모지와 이름을 직접 적을 수 있어요</p>' +
+    '</section>';
+}
+function openCfSheet(i) {
+  const idx = Math.max(0, Math.min(CF_N - 1, Number(i) || 0));
+  const cur = cfBox(idx);
+  const has = !!(String(cur.label || '').trim() || String(cur.emoji || '').trim());
+  const body =
+    '<label class="fld"><span>아이콘 (이모지 한 글자)</span><input class="inp" id="cfEmoji" style="text-align:center;font-size:22px" maxlength="12" value="' + esc(cur.emoji || '') + '" placeholder="💵"></label>' +
+    '<label class="fld"><span>이름</span><input class="inp" id="cfLabel" value="' + esc(cur.label || '') + '" placeholder="예: 월세 수입"></label>' +
+    '<p class="hint-in">💵 🏠 📈 처럼 짧은 이모지를 붙여 넣으면 돼요. 두 칸을 모두 비우고 저장하면 빈칸으로 돌아가요.</p>';
+  const acts = '<button class="sh-save" id="cfSave">저장</button>' +
+    (has ? '<button class="sh-del" id="cfClear">비우기</button>' : '');
+  openSheet('현금흐름 ' + (idx + 1) + '번 칸', body, acts);
+  const prevBox = (ST.cashflow && ST.cashflow['b' + (idx + 1)]) ? { ...ST.cashflow['b' + (idx + 1)] } : null;
+  async function clearBox() {
+    if (ST.cashflow && ST.cashflow['b' + (idx + 1)]) delete ST.cashflow['b' + (idx + 1)];
+    closeSheet(); render.sameTab = true; render();
+    try { await del('cashflowBoxes/b' + (idx + 1)); toast('칸을 비웠어요'); }
+    catch (e) {
+      if (!ST.cashflow || typeof ST.cashflow !== 'object') ST.cashflow = {};
+      if (prevBox) ST.cashflow['b' + (idx + 1)] = prevBox;
+      render.sameTab = true; render(); toast('저장하지 못했어요');
+    }
+  }
+  $('#cfSave').addEventListener('click', async () => {
+    const emoji = $('#cfEmoji').value.trim();
+    const label = $('#cfLabel').value.trim();
+    if (!label) {
+      if (!emoji) return clearBox();
+      toast('이름을 적어 주세요'); return;
+    }
+    const rec = { emoji: emoji || null, label: label, order: idx + 1, updatedAt: Date.now() };
+    if (!ST.cashflow || typeof ST.cashflow !== 'object') ST.cashflow = {};
+    ST.cashflow['b' + (idx + 1)] = rec;
+    closeSheet(); render.sameTab = true; render();
+    try { await put('cashflowBoxes/b' + (idx + 1), rec); toast('저장했어요'); }
+    catch (e) {
+      if (prevBox) ST.cashflow['b' + (idx + 1)] = prevBox;
+      else delete ST.cashflow['b' + (idx + 1)];
+      render.sameTab = true; render(); toast('저장하지 못했어요');
+    }
+  });
+  if (has) $('#cfClear').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    await clearBox();
+  });
 }
 
 /* ---------- 2. 월별 순자산 ---------- */
@@ -1287,142 +1416,281 @@ function goalsView() {
   return affCard + '<p class="foot-note">체크하면 두 분 폰에 바로 함께 반영돼요 🌼</p>';
 }
 
-/* ---------- 3. 하고 싶은 일 (버킷) ---------- */
-const BK_GROUPS = [
-  { id: 'g1', name: '핵심 자산 · 라이프' },
-  { id: 'g2', name: '일 · 커리어 · 현금흐름' },
-  { id: 'g3', name: '나 · 부부의 삶 · 경험' },
-  { id: 'g4', name: '가족' },
-  { id: 'g5', name: '지인' }
+/* ---------- 3. 🧭 전략 탭 — 전략 · 마인드 (strategyMind) ----------
+   부부 할일 앱과 같은 줄 모양: 이모지 + 제목 (+ 📝 메모는 있을 때만 아래 줄).
+   한 번 탭 → 제목·이모지·메모 수정 시트 / 왼쪽 스와이프 → 🗑 삭제 /
+   길게 눌러 끌기 → 같은 카드 안에서 순서 바꾸기. 데이터는 strategyMind 노드에만 쓴다. */
+const SM_LISTS = [
+  { key: 'strategy', title: '🧭 전략', label: '전략', ph: '예: 이주비 대출로 갈아탄다' },
+  { key: 'mind', title: '🧠 마인드', label: '마인드', ph: '예: 매일 아침 목표를 소리 내어 읽는다' }
 ];
-function bkGroups() {
-  const gs = (ST.bucket && typeof ST.bucket === 'object' && ST.bucket.groups) || {};
-  return BK_GROUPS.map((g, i) => {
-    const d = (gs[g.id] && typeof gs[g.id] === 'object') ? gs[g.id] : {};
-    const o = num(d.order);
-    return { id: g.id, name: d.name || g.name, order: o === null ? i + 1 : o };
-  }).sort((a, b) => a.order - b.order);
+/* 처음 한 번만 깔아 두는 전략 예시 — 기존 tradeUpStrategies에 있던 2건. 바로 고치고 지울 수 있다. */
+const SM_SEED = [
+  { id: 's1', emoji: '🏦', text: '집주인근저당 + 이자 더 주고 이주할 때 이주비 대출로 갈아탄다' },
+  { id: 's2', emoji: '🏠', text: '집주인근저당 + 2년 거주 후 세입자 들이고 전세금으로 반환한다' }
+];
+let smOpen = null;      /* 스와이프로 열린 줄 id */
+let smTapBlock = false; /* 방금 제스처가 스와이프·드래그였는지 — 뒤따르는 click 을 막는다 */
+let smSeeded = false;
+
+function smData() {
+  if (!ST.sm || typeof ST.sm !== 'object') ST.sm = {};
+  return ST.sm;
 }
-function bkItems() {
-  const it = (ST.bucket && typeof ST.bucket === 'object') ? ST.bucket.items : null;
-  return entries(it).map(([id, v]) => ({ id, ...v }));
-}
-function bkSorted() {
-  const order = {};
-  bkGroups().forEach((g, i) => { order[g.id] = i; });
-  return bkItems().sort((a, b) => {
-    const ga = order[a.group] === undefined ? 99 : order[a.group];
-    const gb = order[b.group] === undefined ? 99 : order[b.group];
-    const na = num(a.order), nb = num(b.order);
-    return (ga - gb) ||
-      ((na === null ? 999 : na) - (nb === null ? 999 : nb)) ||
-      String(a.text || '').localeCompare(String(b.text || ''));
+function smList(key) {
+  return entries(smData()[key]).map(([id, v]) => ({ id, ...v })).sort((a, b) => {
+    const oa = num(a.order), ob = num(b.order);
+    return ((oa === null ? 999 : oa) - (ob === null ? 999 : ob)) || a.id.localeCompare(b.id);
   });
 }
-function bkRow(it) {
-  const label = (it.text || '항목');
-  return '<div class="bk" data-id="' + esc(it.id) + '">' +
-    '<button class="bkh" aria-label="' + esc(label + ' 순서 바꾸기') + '" title="잡고 위아래로 끌면 순서가 바뀌어요">⋮⋮</button>' +
-    '<button class="bkbtn" data-act="bk-edit" data-id="' + esc(it.id) + '">' +
-      '<span class="bke">' + esc(it.emoji || '✨') + '</span>' +
-      '<span class="bkt">' + esc(it.text || '') +
-        (it.note ? '<span class="bkn">' + esc(it.note) + '</span>' : '') +
+/* 방에 전략·마인드가 아직 하나도 없으면 전략 예시 2건을 한 번만 넣는다.
+   meta.seededAt 을 남겨, 세은 님이 두 건을 모두 지워도 다시 생기지 않게 한다. */
+async function seedStrategyMind() {
+  if (smSeeded) return;
+  smSeeded = true;
+  const now = Date.now();
+  const strategy = {};
+  SM_SEED.forEach((s, i) => {
+    strategy[s.id] = { emoji: s.emoji, text: s.text, note: null, order: i, updatedAt: now };
+  });
+  const d = smData();
+  d.strategy = { ...(d.strategy || {}), ...strategy };
+  d.meta = { ...(d.meta || {}), seededAt: now };
+  render.sameTab = true; render();
+  try { await patch('strategyMind', { strategy: strategy, meta: { seededAt: now } }); }
+  catch (e) {}
+}
+function smRow(l, it) {
+  const id = esc(it.id);
+  const note = String(it.note == null ? '' : it.note).trim();
+  return '<li class="srow' + (smOpen === it.id ? ' open' : '') + '" data-id="' + id + '">' +
+    '<div class="srow-acts">' +
+      '<button class="act del" type="button" data-act="sm-del" data-list="' + l.key + '" data-id="' + id + '" aria-label="삭제">' +
+        '<span class="ai" aria-hidden="true">🗑</span>삭제</button>' +
+    '</div>' +
+    '<div class="srow-face">' +
+      '<span class="ico">' + esc(it.emoji || '✨') + '</span>' +
+      '<span class="body">' +
+        '<span class="txt">' + esc(it.text || '') + '</span>' +
+        (note ? '<span class="note-line">📝 ' + esc(note) + '</span>' : '') +
       '</span>' +
-      '<span class="bkchev">›</span>' +
-    '</button></div>';
+    '</div></li>';
 }
-/* ---------- 희망 탭(화면에서는 빠짐, bucket 데이터는 보존) — 핸들(⋮⋮) 드래그로 순서 바꾸기 ----------
-   같은 그룹 안에서만 옮겨지고, 손을 떼는 순간 Firebase(bucket/items)에 order를 저장한다.
-   핸들만 touch-action:none 이라 화면 세로 스크롤은 그대로 동작한다. */
-const bkDrag = { on: false, pid: null, id: null, row: null, box: null, from: -1, to: -1, lastY: 0 };
-let bkScrollRAF = null;
-function bkDragRows(box) { return Array.from(box.querySelectorAll('.bk[data-id]')); }
-function bkReorderAt(y) {
-  const box = bkDrag.box, row = bkDrag.row;
-  if (!box || !row) return;
-  const rows = bkDragRows(box);
-  let ref = null;
-  for (const r of rows) {
-    if (r === row) continue;
-    const b = r.getBoundingClientRect();
-    if (y < b.top + b.height / 2) { ref = r; break; }
+function smCard(l) {
+  const list = smList(l.key);
+  return '<section class="card">' +
+    '<div class="card-h"><h2>' + l.title + '</h2><span class="pill">' + list.length + '개</span></div>' +
+    '<ul class="srows" data-list="' + l.key + '">' +
+      (list.length ? list.map(it => smRow(l, it)).join('')
+        : '<li class="sempty">아직 ' + l.label + '이 없어요<br>아래 버튼으로 첫 ' + l.label + '을 적어 보세요</li>') +
+    '</ul>' +
+    '<button class="card-add" type="button" data-act="sm-add" data-list="' + l.key + '">' +
+      '<span class="plus" aria-hidden="true">+</span> ' + l.label + ' 추가</button>' +
+    '</section>';
+}
+function strategyView() { return SM_LISTS.map(smCard).join(''); }
+
+/* ---------- 전략 줄 제스처: 한 번 탭 / 왼쪽 스와이프 / 길게 눌러 끌기 ----------
+   손가락은 touch 로 직접 받아야 안드로이드 크롬이 스크롤·뒤로가기 제스처로 가져가지 않는다. */
+const SM_LONG_PRESS = 320;
+const SM_DELW = 84;
+const smG = { on: false, src: null, pid: null, id: null, row: null, list: null, face: null,
+  rowW: 0, actsW: SM_DELW, wasOpen: false, startX: 0, startY: 0, grab: 0,
+  active: false, moved: false, swipe: false, base: 0, off: 0, timer: null, lastY: 0 };
+
+function smRowEl(t) { return (t && t.closest) ? t.closest('.srow') : null; }
+function smCloseSwipe(row) {
+  if (!row) return;
+  const face = row.querySelector('.srow-face');
+  if (face) { row.classList.remove('swiping'); face.style.width = ''; }
+  row.classList.remove('open');
+  if (row.dataset.id === smOpen) smOpen = null;
+}
+function smCloseAll(except) {
+  $$('#view .srow.open, #view .srow.swiping').forEach(r => { if (r !== except) smCloseSwipe(r); });
+  if (!except) smOpen = null;
+}
+function smStart(x, y, target, src) {
+  if (smG.on) return;
+  const row = smRowEl(target);
+  if (!row) return;
+  if (target.closest('.srow-acts') || target.closest('.card-add')) return;
+  const face = row.querySelector('.srow-face');
+  const acts = row.querySelector('.srow-acts');
+  const rect = row.getBoundingClientRect();
+  smG.on = true; smG.src = src; smG.pid = null; smG.id = row.dataset.id;
+  smG.row = row; smG.list = row.parentElement; smG.face = face;
+  smG.rowW = rect.width;
+  smG.actsW = acts ? (acts.getBoundingClientRect().width || SM_DELW) : SM_DELW;
+  smG.wasOpen = row.classList.contains('open');
+  smG.startX = x; smG.startY = y; smG.grab = y - rect.top;
+  smG.active = false; smG.moved = false; smG.swipe = false; smG.off = 0; smG.lastY = y;
+  if (src === 'touch') {
+    smG.timer = setTimeout(() => { if (smG.on && !smG.active && !smG.swipe && !smG.moved) smBeginDrag(); }, SM_LONG_PRESS);
   }
-  if (ref) {
-    if (row.nextElementSibling !== ref) box.insertBefore(row, ref);
-  } else if (box.lastElementChild !== row) {
-    box.appendChild(row);
+}
+function smBlockScroll(e) { if (smG.active) e.preventDefault(); }
+function smBeginDrag() {
+  if (!smG.on || smG.active) return;
+  clearTimeout(smG.timer); smG.timer = null;
+  if (smG.wasOpen) { smCloseSwipe(smG.row); smG.wasOpen = false; }
+  smG.active = true;
+  if (smG.row) smG.row.classList.add('dragging');
+  document.body.classList.add('sm-dragging');
+  window.addEventListener('touchmove', smBlockScroll, { passive: false });
+  if (navigator.vibrate) { try { navigator.vibrate(8); } catch (e) {} }
+  smPaint(smG.lastY);
+}
+function smPaint(y) {
+  const d = smG;
+  if (!d.row || !d.list) return;
+  const listTop = d.list.getBoundingClientRect().top;
+  const dy = y - d.grab - (listTop - d.list.scrollTop + d.row.offsetTop);
+  d.row.style.transform = 'translateY(' + dy + 'px) scale(1.01)';
+}
+function smMove(x, y, ev) {
+  const d = smG; if (!d.on) return;
+  const dx = x - d.startX, dy = y - d.startY;
+  const adx = Math.abs(dx), ady = Math.abs(dy);
+  d.lastY = y;
+  if (d.timer && adx > 6) { clearTimeout(d.timer); d.timer = null; }
+  /* 길게 잡은 뒤라도 옆으로 밀면 스와이프로 바꾼다 */
+  if (d.active && !d.moved && adx > 16 && adx > ady * 1.5) {
+    d.active = false;
+    if (d.row) { d.row.classList.remove('dragging'); d.row.style.transform = ''; }
+    document.body.classList.remove('sm-dragging');
+    window.removeEventListener('touchmove', smBlockScroll);
   }
-  bkDrag.to = bkDragRows(box).indexOf(row);
-}
-/* 목록이 화면보다 길 때 — 손가락을 위·아래 끝에 대고 있으면 화면이 따라 내려간다 */
-function bkAutoScroll() {
-  if (!bkDrag.on) { bkScrollRAF = null; return; }
-  const view = $('#view');
-  if (!view) { bkScrollRAF = null; return; }
-  const y = bkDrag.lastY;
-  const topEdge = 96, botEdge = window.innerHeight - 150;
-  let d = 0;
-  if (y < topEdge) d = -Math.min(16, (topEdge - y) / 2.5);
-  else if (y > botEdge) d = Math.min(16, (y - botEdge) / 2.5);
-  /* 지금 순서를 바꾸고 있는 그룹의 끝을 넘어가면 더는 내리지 않는다 */
-  if (d > 0 && bkDrag.box && bkDrag.box.getBoundingClientRect().bottom <= window.innerHeight - 30) d = 0;
-  if (d < 0 && bkDrag.box && bkDrag.box.getBoundingClientRect().top >= 74) d = 0;
-  if (d) {
-    const before = view.scrollTop;
-    view.scrollTop = before + d;
-    if (view.scrollTop !== before) bkReorderAt(y);
+  if (!d.active && !d.swipe) {
+    if (adx > 10 && adx > ady * 1.4) {
+      clearTimeout(d.timer); d.timer = null;
+      d.swipe = true; d.moved = true; smTapBlock = true;
+      d.base = d.wasOpen ? -d.actsW : 0;
+      d.startX = x; d.startY = y; d.off = d.base;
+      d.row.classList.add('swiping');
+      smCloseAll(d.row);
+      if (ev && ev.cancelable) ev.preventDefault();
+    } else if (ady > 8) {
+      if (d.src === 'touch') { smEnd(false); return; }   /* 손가락이 먼저 위아래 → 스크롤에 맡긴다 */
+      smBeginDrag();
+    } else return;
   }
-  bkScrollRAF = requestAnimationFrame(bkAutoScroll);
+  if (d.swipe) {
+    if (ev && ev.cancelable) ev.preventDefault();
+    const nx = Math.max(-d.actsW, Math.min(0, d.base + (x - d.startX)));
+    d.off = nx;
+    if (d.face) d.face.style.width = Math.round(d.rowW - Math.abs(nx)) + 'px';
+    return;
+  }
+  d.moved = true; smTapBlock = true;
+  const others = Array.from(d.list.querySelectorAll('.srow')).filter(r => r !== d.row);
+  let before = null;
+  for (const r of others) {
+    const rc = r.getBoundingClientRect();
+    if (y < rc.top + rc.height / 2) { before = r; break; }
+  }
+  if (before !== d.row.nextElementSibling) d.list.insertBefore(d.row, before);
+  smPaint(y);
 }
-function bkDragStart(e) {
-  const handle = e.target.closest && e.target.closest('.bkh');
-  if (!handle) return;
-  const row = handle.closest('.bk'), box = row && row.closest('.bks');
-  if (!row || !box) return;
-  e.preventDefault();
-  bkDrag.on = true; bkDrag.pid = e.pointerId; bkDrag.id = row.dataset.id;
-  bkDrag.row = row; bkDrag.box = box; bkDrag.lastY = e.clientY;
-  bkDrag.from = bkDragRows(box).indexOf(row);
-  bkDrag.to = bkDrag.from;
-  row.classList.add('dragging');
-  const view = $('#view'); if (view) view.classList.add('bk-sorting');
-  try { handle.setPointerCapture(e.pointerId); } catch (err) {}
-  if (!bkScrollRAF) bkScrollRAF = requestAnimationFrame(bkAutoScroll);
+function smUp() {
+  const d = smG; if (!d.on) return;
+  if (d.timer) { clearTimeout(d.timer); d.timer = null; }
+  if (d.swipe) {
+    const open = d.off < -d.actsW * 0.4;
+    d.row.classList.remove('swiping');
+    if (d.face) d.face.style.width = '';
+    d.row.classList.toggle('open', open);
+    smOpen = open ? d.id : null;
+    smG.on = false;
+    if (open && navigator.vibrate) { try { navigator.vibrate(6); } catch (e) {} }
+    return;
+  }
+  const tapped = !d.active && !d.moved;
+  const wasOpen = d.wasOpen;
+  const row = d.row;
+  smEnd(true);
+  if (tapped && wasOpen) { smCloseSwipe(row); smTapBlock = true; }
 }
-function bkDragMove(e) {
-  if (!bkDrag.on || e.pointerId !== bkDrag.pid || !bkDrag.row) return;
-  e.preventDefault();
-  bkDrag.lastY = e.clientY;
-  bkReorderAt(e.clientY);
+function smEnd(commit) {
+  const d = smG; if (!d.on) return;
+  if (d.timer) { clearTimeout(d.timer); d.timer = null; }
+  window.removeEventListener('touchmove', smBlockScroll);
+  const wasActive = d.active, moved = d.moved, list = d.list;
+  smG.on = false; smG.active = false; smG.swipe = false;
+  if (d.row) { d.row.classList.remove('dragging'); d.row.style.transform = ''; }
+  document.body.classList.remove('sm-dragging');
+  if (wasActive && moved && commit && list) smSaveOrder(list);
+  else if (render.pending) { render.pending = false; render(); }
 }
-function bkDragEnd(e) {
-  if (!bkDrag.on) return;
-  if (e && e.pointerId != null && e.pointerId !== bkDrag.pid) return;
-  const row = bkDrag.row, box = bkDrag.box;
-  bkDrag.on = false; bkDrag.pid = null; bkDrag.row = null; bkDrag.box = null;
-  if (bkScrollRAF) { cancelAnimationFrame(bkScrollRAF); bkScrollRAF = null; }
-  if (row) row.classList.remove('dragging');
-  const view = $('#view'); if (view) view.classList.remove('bk-sorting');
-  if (!box || bkDrag.from === bkDrag.to) return;
-  return saveBkOrder(bkDragRows(box).map(r => r.dataset.id));
+function smCancel() {
+  const d = smG; if (!d.on) return;
+  if (d.timer) { clearTimeout(d.timer); d.timer = null; }
+  if (d.swipe) {
+    d.row.classList.remove('swiping');
+    if (d.face) d.face.style.width = '';
+    d.row.classList.toggle('open', d.wasOpen);
+    smOpen = d.wasOpen ? d.id : null;
+    smG.on = false;
+    return;
+  }
+  smEnd(false);
 }
-async function saveBkOrder(ids) {
-  const items = (ST.bucket && ST.bucket.items) || {};
+/* 마우스·펜 */
+function smOnDown(e) {
+  smTapBlock = false;
+  if (e.pointerType === 'touch') return;
+  if (e.button !== undefined && e.button > 0) return;
+  smStart(e.clientX, e.clientY, e.target, 'mouse');
+  if (smG.on) smG.pid = e.pointerId;
+}
+function smOnMove(e) {
+  if (!smG.on || smG.src !== 'mouse' || e.pointerId !== smG.pid) return;
+  smMove(e.clientX, e.clientY, e);
+}
+function smOnUp(e) {
+  if (!smG.on || smG.src !== 'mouse') return;
+  if (e && e.pointerId != null && e.pointerId !== smG.pid) return;
+  smUp();
+}
+function smOnCancel() { if (smG.on && smG.src === 'mouse') smCancel(); }
+/* 손가락 */
+function smOnTouchStart(e) {
+  if (!e.touches || e.touches.length !== 1) { if (smG.on && smG.src === 'touch') smCancel(); return; }
+  smTapBlock = false;
+  const t = e.touches[0];
+  smStart(t.clientX, t.clientY, e.target, 'touch');
+}
+function smOnTouchMove(e) {
+  if (!smG.on || smG.src !== 'touch') return;
+  const t = e.touches && e.touches[0]; if (!t) return;
+  smMove(t.clientX, t.clientY, e);
+}
+function smOnTouchEnd(e) {
+  if (!smG.on || smG.src !== 'touch') return;
+  if (e.touches && e.touches.length > 0) return;
+  smUp();
+}
+function smOnTouchCancel() { if (smG.on && smG.src === 'touch') smCancel(); }
+
+async function smSaveOrder(listEl) {
+  const key = listEl.dataset.list;
+  const ids = Array.from(listEl.querySelectorAll('.srow')).map(r => r.dataset.id);
+  const data = smData()[key] || {};
   const changes = {}, prev = {};
   ids.forEach((id, i) => {
-    const cur = items[id];
+    const cur = data[id];
     if (!cur) return;
-    const o = i + 1;
-    if (num(cur.order) === o) return;
+    if (num(cur.order) === i) return;
     prev[id] = { has: Object.prototype.hasOwnProperty.call(cur, 'order'), order: cur.order };
-    cur.order = o;
-    changes[id] = { order: o };
+    cur.order = i;
+    changes[id] = { order: i };
   });
+  render.sameTab = true; render();
   if (!Object.keys(changes).length) return;
-  try { await patch('bucket/items', changes); toast('순서를 저장했어요'); }
-  catch (err) {
+  try { await patch('strategyMind/' + key, changes); toast('순서를 저장했어요'); }
+  catch (e) {
     Object.entries(prev).forEach(([id, p]) => {
-      const cur = items[id];
+      const cur = data[id];
       if (!cur) return;
       if (p.has) cur.order = p.order; else delete cur.order;
     });
@@ -1430,34 +1698,61 @@ async function saveBkOrder(ids) {
     toast('순서를 저장하지 못했어요');
   }
 }
-function bucketView() {
-  const list = bkSorted();
-  const head = '<section class="card">' +
-    '<div class="card-h"><h2>🙏 돈 벌면 하고 싶은 일</h2><span class="pill">' + list.length + '개</span></div>' +
-    '<p class="cap" style="text-align:left">하고 싶은 일을 모아 두세요 · 항목을 누르면 이모지·문구·메모를 고칠 수 있어요 · 왼쪽 ⋮⋮를 끌면 순서가 바뀌어요</p>' +
-    '</section>';
-  if (!list.length) {
-    return head + '<section class="card"><p class="empty">아직 항목이 없어요<br>첫 항목을 추가해 보세요 🌼</p>' +
-      '<button class="add-row" data-act="bk-add" data-group="g1">＋ 항목 추가</button></section>';
+async function smDel(key, id) {
+  const data = smData()[key] || {};
+  const prev = data[id] ? { ...data[id] } : null;
+  if (!prev) return;
+  delete data[id];
+  smOpen = null;
+  render.sameTab = true; render();
+  try { await del('strategyMind/' + key + '/' + id); toast('삭제했어요'); }
+  catch (e) {
+    data[id] = prev;
+    render.sameTab = true; render();
+    toast('삭제하지 못했어요');
   }
-  const groups = bkGroups();
-  const known = {};
-  groups.forEach(g => { known[g.id] = true; });
-  const cards = groups.map(g => {
-    const its = list.filter(x => x.group === g.id);
-    return '<section class="card">' +
-      '<div class="card-h"><h2>' + esc(g.name) + '</h2><div class="board-tools">' +
-        (its.length ? '<span class="pill">' + its.length + '개</span>' : '') + '</div></div>' +
-      (its.length ? '<div class="bks">' + its.map(bkRow).join('') + '</div>' : '<p class="empty">아직 항목이 없어요</p>') +
-      '<button class="add-row" data-act="bk-add" data-group="' + g.id + '">＋ 항목 추가</button>' +
-      '</section>';
-  }).join('');
-  const etc = list.filter(x => !known[x.group]);
-  const etcCard = etc.length
-    ? '<section class="card"><div class="card-h"><h2>기타</h2><span class="pill">' + etc.length + '</span></div>' +
-      '<div class="bks">' + etc.map(bkRow).join('') + '</div></section>'
-    : '';
-  return head + cards + etcCard;
+}
+/* 한 번 탭 → 제목·이모지·메모 수정 시트 */
+function openSmSheet(key, id) {
+  const l = SM_LISTS.find(x => x.key === key) || SM_LISTS[0];
+  const isNew = !id;
+  const cur = isNew ? { emoji: '', text: '', note: '' } : ((smData()[l.key] || {})[id] || {});
+  draft.sm = { key: l.key, id: isNew ? null : id, base: { ...cur } };
+  const body =
+    '<label class="fld"><span>아이콘 (이모지 한 글자)</span><input class="inp" id="smEmoji" style="text-align:center;font-size:22px" maxlength="12" value="' + esc(cur.emoji || '') + '" placeholder="' + (l.key === 'mind' ? '🧠' : '🏦') + '"></label>' +
+    '<label class="fld"><span>' + l.label + ' 제목</span><textarea class="inp" id="smText" style="min-height:76px" placeholder="' + esc(l.ph) + '">' + esc(cur.text || '') + '</textarea></label>' +
+    '<label class="fld"><span>메모 (선택)</span><textarea class="inp" id="smNote" placeholder="조건·시기·확인할 것">' + esc(cur.note || '') + '</textarea></label>' +
+    '<p class="hint-in">메모는 제목 아래 📝 줄로 보여요. 줄을 왼쪽으로 밀면 삭제 버튼이 나와요.</p>';
+  const acts = '<button class="sh-save" id="smSave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="smDelBtn">삭제</button>');
+  openSheet(isNew ? l.label + ' 추가' : l.label + ' 수정', body, acts);
+  $('#smSave').addEventListener('click', async () => {
+    const text = $('#smText').value.trim();
+    if (!text) { toast('제목을 적어 주세요'); return; }
+    const emoji = $('#smEmoji').value.trim();
+    const note = $('#smNote').value.trim();
+    const data = smData();
+    if (!data[l.key] || typeof data[l.key] !== 'object') data[l.key] = {};
+    const key2 = isNew ? newKey('sm') : draft.sm.id;
+    let order = num(draft.sm.base.order);
+    if (order === null) {
+      let max = -1;
+      smList(l.key).forEach(x => { const n = num(x.order); if (n !== null && n > max) max = n; });
+      order = max + 1;
+    }
+    const rec = { emoji: emoji || null, text: text, note: note || null, order: order, updatedAt: Date.now() };
+    const prevAll = { ...(data[l.key] || {}) };
+    data[l.key][key2] = rec;
+    closeSheet(); render.sameTab = true; render();
+    try { await put('strategyMind/' + l.key + '/' + key2, rec); toast(isNew ? l.label + '을 추가했어요' : '저장했어요'); }
+    catch (e) { data[l.key] = prevAll; render.sameTab = true; render(); toast('저장하지 못했어요'); }
+  });
+  if (!isNew) $('#smDelBtn').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    const key2 = draft.sm.id;
+    closeSheet();
+    await smDel(l.key, key2);
+  });
 }
 
 /* ---------- 4. 갈아타기 전략 ---------- */
@@ -1501,8 +1796,9 @@ $('#view').addEventListener('click', async (e) => {
   if (act === 'v-flow-way') return openFlowWaySheet(el.dataset.i);
   if (act === 'v-flow-meta') return openFlowMetaSheet();
   if (act === 'v-flow-init') return createRoadFlow();
-  if (act === 'bk-add') return openBkSheet(null, el.dataset.group);
-  if (act === 'bk-edit') return openBkSheet(el.dataset.id);
+  if (act === 'cf-edit') return openCfSheet(el.dataset.i);
+  if (act === 'sm-add') return openSmSheet(el.dataset.list, null);
+  if (act === 'sm-del') return smDel(el.dataset.list, el.dataset.id);
   if (act === 'tt-add') return openTradeSheet(null);
   if (act === 'tt-edit') return openTradeSheet(el.dataset.id);
   if (act === 'nw-chart-dot') return nwChartSelect(el.dataset.month);
@@ -1524,11 +1820,26 @@ $('#view').addEventListener('click', async (e) => {
   if (act === 'pl-ch') return openPlanChapterSheet(el.dataset.c);
 });
 
-/* 희망 탭 드래그 — 핸들에서만 시작되고, 스크롤은 건드리지 않는다 */
-$('#view').addEventListener('pointerdown', bkDragStart, { passive: false });
-$('#view').addEventListener('pointermove', bkDragMove, { passive: false });
-$('#view').addEventListener('pointerup', bkDragEnd);
-$('#view').addEventListener('pointercancel', bkDragEnd);
+/* 전략 줄 제스처 — 한 번 탭(수정 시트) · 왼쪽 스와이프(삭제) · 길게 눌러 끌기(순서) */
+$('#view').addEventListener('pointerdown', smOnDown);
+window.addEventListener('pointermove', smOnMove, { passive: false });
+window.addEventListener('pointerup', smOnUp);
+window.addEventListener('pointercancel', smOnCancel);
+$('#view').addEventListener('touchstart', smOnTouchStart, { passive: true });
+$('#view').addEventListener('touchmove', smOnTouchMove, { passive: false });
+$('#view').addEventListener('touchend', smOnTouchEnd);
+$('#view').addEventListener('touchcancel', smOnTouchCancel);
+/* 스와이프·드래그 직후 따라오는 click 은 무시하고, 열린 줄을 탭하면 닫는다 */
+$('#view').addEventListener('click', (e) => {
+  const face = e.target.closest('.srow-face');
+  if (!face) return;
+  if (smTapBlock) { smTapBlock = false; return; }
+  const row = face.closest('.srow');
+  if (!row) return;
+  if (row.classList.contains('open')) { smCloseSwipe(row); return; }
+  smCloseAll();
+  openSmSheet(row.parentElement.dataset.list, row.dataset.id);
+});
 
 /* ============================================================
    시트
@@ -2141,68 +2452,6 @@ function todayStr() {
 function newKey(prefix) {
   return (prefix || 'k') + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
-function bkSet(id, rec) {
-  if (!ST.bucket || typeof ST.bucket !== 'object') ST.bucket = {};
-  if (!ST.bucket.items || typeof ST.bucket.items !== 'object') ST.bucket.items = {};
-  ST.bucket.items[id] = rec;
-}
-function bkDel(id) {
-  if (ST.bucket && ST.bucket.items) delete ST.bucket.items[id];
-}
-function nextBkOrder(group) {
-  let max = 0;
-  bkItems().forEach(x => {
-    if (x.group === group) { const n = num(x.order); if (n !== null && n > max) max = n; }
-  });
-  return max + 1;
-}
-function openBkSheet(id, group) {
-  const isNew = !id;
-  const cur = isNew
-    ? { emoji: '', text: '', note: '', group: group || 'g1', done: false }
-    : ((ST.bucket && ST.bucket.items && ST.bucket.items[id]) || {});
-  draft.bk = { id: isNew ? null : id, base: { ...cur }, group: cur.group || group || 'g1' };
-  const groups = bkGroups();
-  const body =
-    '<label class="fld"><span>아이콘 (이모지 한 글자)</span><input class="inp" id="bkEmoji" style="text-align:center;font-size:22px" maxlength="12" value="' + esc(cur.emoji || '') + '" placeholder="✨"></label>' +
-    '<label class="fld"><span>하고 싶은 일</span><textarea class="inp" id="bkText" style="min-height:80px" placeholder="서울아파트 2채를 갖고싶어">' + esc(cur.text || '') + '</textarea></label>' +
-    '<label class="fld"><span>메모 (선택)</span><textarea class="inp" id="bkNote" placeholder="왜 하고 싶은지, 조건, 시기">' + esc(cur.note || '') + '</textarea></label>' +
-    '<label class="fld"><span>그룹</span><select class="inp" id="bkGroup">' +
-      groups.map(g => '<option value="' + esc(g.id) + '"' + (g.id === draft.bk.group ? ' selected' : '') + '>' + esc(g.name) + '</option>').join('') +
-    '</select></label>' +
-    '<p class="hint-in">🏡 🚗 💵 처럼 짧은 이모지를 붙여 넣으면 돼요. 메모는 항목 문구 바로 아래 작은 글씨로 보여요.</p>';
-  const acts = '<button class="sh-save" id="bkSave">' + (isNew ? '추가' : '저장') + '</button>' +
-    (isNew ? '' : '<button class="sh-del" id="bkDel">삭제</button>');
-  openSheet(isNew ? '하고 싶은 일 추가' : '하고 싶은 일 수정', body, acts);
-  $('#bkSave').addEventListener('click', async () => {
-    const text = $('#bkText').value.trim();
-    if (!text) { toast('하고 싶은 일을 적어 주세요'); return; }
-    const emoji = $('#bkEmoji').value.trim() || '✨';
-    const grp = $('#bkGroup').value || draft.bk.group;
-    const key2 = isNew ? newKey('b') : draft.bk.id;
-    const rec = {
-      ...draft.bk.base, text: text, emoji: emoji, group: grp,
-      note: ($('#bkNote').value || '').trim() || null,
-      done: !!draft.bk.base.done, updatedAt: Date.now()
-    };
-    if (isNew) { rec.done = false; rec.order = nextBkOrder(grp); }
-    const prevItems = ST.bucket && ST.bucket.items ? { ...ST.bucket.items } : {};
-    bkSet(key2, rec);
-    closeSheet(); render.sameTab = true; render();
-    try { await put('bucket/items/' + key2, rec); toast(isNew ? '하고 싶은 일을 추가했어요' : '저장했어요'); }
-    catch (e) { ST.bucket.items = prevItems; render.sameTab = true; render(); toast('저장하지 못했어요'); }
-  });
-  if (!isNew) $('#bkDel').addEventListener('click', async (e) => {
-    if (!delArm(e.currentTarget)) return;
-    const id2 = draft.bk.id;
-    const prevItems = { ...(ST.bucket.items || {}) };
-    bkDel(id2);
-    closeSheet(); render.sameTab = true; render();
-    try { await del('bucket/items/' + id2); toast('삭제했어요'); }
-    catch (err) { ST.bucket.items = prevItems; render.sameTab = true; render(); toast('삭제하지 못했어요'); }
-  });
-}
-
 function openTradeSheet(id) {
   const isNew = !id;
   const cur = isNew ? { title: '', memo: '', date: todayStr() } : ((ST.tradeUp && ST.tradeUp[id]) || {});
@@ -2442,7 +2691,7 @@ function openPlanChapterSheet(cid) {
    ============================================================ */
 const MEMO_KEY = 'bubudaisy.memos';
 const TAB_NAMES = {
-  vision: '비전', networth: '순자산'
+  vision: '비전', strategy: '전략', networth: '순자산'
 };
 let MEMOS = loadMemos();
 function loadMemos() {
