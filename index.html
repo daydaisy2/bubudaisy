@@ -160,6 +160,7 @@
     margin-bottom:8px;padding:0 2px;border-radius:10px;text-align:left}
   .ms-h:active{opacity:.62}
   .ms-h .y{font-size:15px;font-weight:900;color:var(--navy);letter-spacing:-.03em}
+  .ms-h .ms-pen{background:#fff;width:26px;height:26px;font-size:11px;margin-left:2px}
   .ms-h .y.green{color:var(--green)}
   .ms-h .bd{font-size:10px;font-weight:900;color:#7C765C;background:#fff;padding:3px 8px;border-radius:999px}
   .ms-card.green .ms-h .bd{color:#2A6E3C}
@@ -1202,9 +1203,11 @@ function visionView() {
         const its = (Array.isArray(m.items) ? m.items : []).slice(0, 3);
         const done = Array.isArray(m.done) ? m.done : [];
         return '<div class="ms-card' + (m.tone === 'green' ? ' green' : '') + '">' +
-          '<button class="ms-h" data-act="v-ms" data-i="' + i + '" aria-label="연도 카드 수정"><span class="y' + (m.tone === 'green' ? ' green' : '') + '">' + esc(m.year) + '</span>' +
+          '<div class="ms-h" data-act="v-ms" data-i="' + i + '" role="button" tabindex="0" aria-label="연도 카드 수정">' +
+          '<span class="y' + (m.tone === 'green' ? ' green' : '') + '">' + esc(m.year) + '</span>' +
           '<span class="ms-hr">' + (m.badge ? '<span class="bd">' + esc(m.badge) + '</span>' : '') +
-          '<span class="li-chev">›</span></span></button>' +
+          '<button class="pen-btn ms-pen" data-act="v-ms" data-i="' + i + '" aria-label="' + esc(m.year || '') + ' 목표 수정">✏️</button>' +
+          '</span></div>' +
           (its.length ? '<div class="ms-grid">' + its.map((x, b) => '<button class="ms-box tap' + (done[b] ? ' done' : '') + '" data-act="v-ms-toggle" data-i="' + i + '" data-b="' + b + '" aria-pressed="' + (done[b] ? 'true' : 'false') + '">' + (done[b] ? '<span class="ck">✓</span>' : '') + esc(x) + '</button>').join('') + '</div>' : '') +
           '</div>';
       }).join('') + '</div>' : '<p class="empty">아직 연도 카드가 없어요</p>') +
@@ -2319,28 +2322,73 @@ function openVisionMsSheet(i, box) {
     if (!year) { toast('연도를 적어 주세요'); return; }
     const badge = $('#vmBadge').value.trim();
     const its = readBoxes();
-    const next = arr.slice();
-    const rec = { ...(isNew ? {} : next[idx]), year: year, badge: badge || null, tone: tone, items: its };
-    if (isNew) {
-      let at = next.length;
-      for (let k = 0; k < next.length; k++) {
-        if (msLead(next[k] && next[k].year) > msLead(year)) { at = k; break; }
-      }
-      next.splice(at, 0, rec);
-    } else {
-      next[idx] = rec;
-    }
-    await saveVisionKey('milestones', next, isNew ? '연도 카드를 추가했어요' : '연도 카드를 저장했어요');
+    const rec = { ...(isNew ? {} : arr[idx]), year: year, badge: badge || null, tone: tone, items: its };
+    await saveMsCard(isNew ? -1 : idx, rec);
   });
   if (!isNew) $('#vmDel').addEventListener('click', async (e) => {
     if (!delArm(e.currentTarget)) return;
-    const next = arr.slice();
-    next.splice(idx, 1);
-    await saveVisionKey('milestones', next, '연도 카드를 삭제했어요');
+    await deleteMsCard(idx);
   });
   if (box != null) {
     const el = $('#vmB' + (Number(box) + 1));
     if (el) setTimeout(() => { try { el.focus(); el.select(); } catch (e) {} }, 140);
+  }
+}
+
+/* 연도 카드 저장 — 목록(`vision/milestones`) 전체를 덮어쓰지 않고 카드 단위 경로
+   (`vision/milestones/{i}`)로만 PUT 한다. 카드 단위로 쓰면 나머지 연도의 `done`(성공 ✓)이
+   통째로 지워질 위험이 없다. (idx 가 -1 이면 새 카드) */
+async function saveMsCard(idx, rec) {
+  const arr = vArr(ST.vision, 'milestones');
+  const prev = ST.vision;
+  const isNew = idx < 0;
+  let next, at;
+  try {
+    if (isNew) {
+      next = arr.slice();
+      at = next.length;
+      for (let k = 0; k < next.length; k++) {
+        if (msLead(next[k] && next[k].year) > msLead(rec.year)) { at = k; break; }
+      }
+      next.splice(at, 0, rec);
+    } else {
+      next = arr.slice();
+      next[idx] = rec;
+    }
+    ST.vision = { ...(prev || {}), milestones: next };
+    closeSheet();
+    render.sameTab = true; render();
+    if (isNew) {
+      // 뒤에서부터 한 칸씩 카드 단위로 밀어 넣고, 마지막에 새 카드를 그 자리에 쓴다
+      for (let k = next.length - 2; k >= at; k--) await put('vision/milestones/' + k, next[k]);
+      await put('vision/milestones/' + at, rec);
+    } else {
+      await put('vision/milestones/' + idx, rec);
+    }
+    toast(isNew ? '연도 카드를 추가했어요' : '연도 카드를 저장했어요');
+  } catch (e) {
+    ST.vision = prev;
+    render.sameTab = true; render();
+    toast('저장하지 못했어요');
+  }
+}
+async function deleteMsCard(idx) {
+  const arr = vArr(ST.vision, 'milestones');
+  const prev = ST.vision;
+  const next = arr.slice();
+  next.splice(idx, 1);
+  try {
+    ST.vision = { ...(prev || {}), milestones: next };
+    closeSheet();
+    render.sameTab = true; render();
+    // 뒤 카드들을 한 칸씩 당기고 맨 끝 칸만 삭제 (목록 전체 덮어쓰기 없음)
+    for (let k = idx; k < next.length; k++) await put('vision/milestones/' + k, next[k]);
+    await del('vision/milestones/' + (arr.length - 1));
+    toast('연도 카드를 삭제했어요');
+  } catch (e) {
+    ST.vision = prev;
+    render.sameTab = true; render();
+    toast('저장하지 못했어요');
   }
 }
 
