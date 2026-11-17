@@ -292,7 +292,7 @@
     border-radius:14px;padding:9px 11px;box-shadow:0 8px 16px rgba(30,27,122,.18);text-wrap:balance}
   .flow-tip{margin:-2px 0 0;font-size:10px;font-weight:800;color:#A9A48D;text-align:center;letter-spacing:-.02em}
   @media (max-width:359px){
-    .flow4,.flow4.c4,.flow4.c3{grid-template-columns:repeat(2,1fr);gap:5px}
+    .flow4:not(.c2):not(.c3),.flow4.c4{grid-template-columns:repeat(2,1fr);gap:5px}
     .flow-down{display:none}
     .fs-emoji{font-size:18px}
   }
@@ -1043,9 +1043,20 @@ function flowData() {
   const f = ST.vision && ST.vision.roadmapFlow;
   return (f && typeof f === 'object') ? f : null;
 }
+/* 2번째 '입주권(분양권)' 단계는 카드에서 뺐다(2026-11-17 요청).
+   방 데이터는 그대로 두고 화면에서만 감춘 뒤, 남은 호기 배지를 1호기부터 다시 매긴다. */
+function isDroppedFlowStep(s) {
+  return String((s && s.label) || '').replace(/\s+/g, '').indexOf('입주권(분양권)') >= 0;
+}
 function flowSteps() {
   const f = flowData();
-  return (f && Array.isArray(f.steps)) ? f.steps.filter(x => x && typeof x === 'object') : [];
+  const all = (f && Array.isArray(f.steps)) ? f.steps.filter(x => x && typeof x === 'object') : [];
+  let n = 0;
+  return all.filter(s => !isDroppedFlowStep(s)).map(s => {
+    const badge = String(s.badge || '');
+    if (/^\d+호기$/.test(badge)) { n += 1; return { ...s, badge: n + '호기' }; }
+    return s;
+  });
 }
 function flowWays() {
   const f = flowData();
@@ -1054,15 +1065,14 @@ function flowWays() {
 function flowSection() {
   const f = flowData();
   const head = '<div class="card-h"><h2>🔄 갈아타기 전략</h2><div class="board-tools">' +
-    (f ? penBtn('v-flow-meta', '갈아타기 전략 문구 수정') : '') + '</div></div>';
+    (f ? penBtn('v-flow-meta', '갈아타기 단계 수정') : '') + '</div></div>';
   if (!f) {
     return '<section class="card">' + head +
-      '<p class="empty">아직 갈아타기 전략이 없어요<br>우리 집의 순서를 4단계로 적어 보세요</p>' +
+      '<p class="empty">아직 갈아타기 전략이 없어요<br>우리 집의 순서를 3단계로 적어 보세요</p>' +
       '<button class="add-row" data-act="v-flow-init">＋ 갈아타기 전략 만들기</button>' +
       '</section>';
   }
   const steps = flowSteps();
-  const ways = flowWays();
   const grid = steps.length ? '<div class="flow4 c' + steps.length + '">' +
     steps.map((s, i) =>
       '<button class="flow-step' + (s.tone === 'accent' ? ' last' : '') + '" data-act="v-flow-step" data-i="' + i + '">' +
@@ -1070,21 +1080,7 @@ function flowSection() {
         '<span class="fs-emoji">' + esc(s.emoji || '•') + '</span>' +
         '<span class="fs-label">' + esc(s.label || '이름 없음') + '</span>' +
       '</button>').join('') + '</div>' : '';
-  const conn = (steps.length === 4)
-    ? '<div class="flow-down c4">' +
-      [0, 1, 2, 3].map(i => '<span class="' + (i === 2 ? 'ln' : '') + '"></span>').join('') + '</div>'
-    : '';
-  const waysH = f.waysTitle ? '<div class="flow-way-h"><span>' + esc(f.waysTitle) + '</span></div>' : '';
-  const waysHtml = ways.length
-    ? '<div class="flow-ways">' + ways.map((w, i) =>
-      '<button class="way" data-act="v-flow-way" data-i="' + i + '">' +
-        '<span class="way-h"><b>' + esc(w.title || '이름 없음') + '</b><span class="way-x">✏️</span></span>' +
-        (w.desc ? '<span class="way-d">' + esc(w.desc) + '</span>' : '') +
-        (w.caution ? '<span class="way-c"><i>!</i>' + esc(w.caution) + '</span>' : '') +
-      '</button>').join('') + '</div>'
-    : (f.waysTitle ? '<p class="empty">복제 방법을 아직 적지 않았어요</p>' : '');
-  const note = f.note ? '<button class="flow-note" data-act="v-flow-meta">' + esc(f.note) + '</button>' : '';
-  return '<section class="card">' + head + grid + conn + waysH + waysHtml + note +
+  return '<section class="card">' + head + grid +
     '<p class="flow-tip">카드를 탭하면 바로 고칠 수 있어요</p>' +
     '</section>';
 }
@@ -1741,7 +1737,7 @@ function roadFlowNext(part) {
   return { ...f, ...part, updatedAt: Date.now() };
 }
 async function createRoadFlow() {
-  const steps = [0, 1, 2, 3].map(() => ({ badge: null, emoji: null, label: null, tone: 'basic' }));
+  const steps = [0, 1, 2].map(() => ({ badge: null, emoji: null, label: null, tone: 'basic' }));
   await saveRoadFlow({ steps: steps, ways: [], waysTitle: null, note: null, createdAt: Date.now() },
     '갈아타기 전략 카드를 만들었어요');
 }
@@ -1814,17 +1810,25 @@ function openFlowWaySheet(i) {
   });
 }
 function openFlowMetaSheet() {
-  const f = flowData() || {};
-  const body =
-    '<label class="fld"><span>복제 묶음 제목</span><input class="inp" id="fmTitle" value="' + esc(f.waysTitle || '') + '" placeholder="1주택 유지 + 하나 더"></label>' +
-    '<label class="fld"><span>맨 아래 강조 문구</span><textarea class="inp" id="fmNote" placeholder="사업시행인가 · 관리처분인가 · 준공 — 이 단계를 알면 복제 시점이 보입니다">' + esc(f.note || '') + '</textarea></label>' +
-    '<p class="hint-in">비워 두면 화면에서 빠져요. 카드 제목 오른쪽 ✏️ 나 맨 아래 남색 줄을 눌러도 여기가 열려요.</p>';
-  openSheet('갈아타기 전략 문구 수정', body, '<button class="sh-save" id="fmSave">저장</button>');
+  const steps = flowSteps();
+  const body = steps.map((s, i) =>
+    '<div class="fld"><span>단계 ' + (i + 1) + '</span>' +
+      '<div class="row-edit">' +
+        '<input class="inp" id="fbBadge' + i + '" style="flex:0 0 86px;text-align:center" value="' + esc(s.badge || '') + '" placeholder="' + (i + 1) + '호기">' +
+        '<input class="inp" id="fbLabel' + i + '" value="' + esc(s.label || '') + '" placeholder="단계 이름">' +
+      '</div></div>').join('') +
+    '<p class="hint-in">배지와 단계 이름을 고쳐 저장하면 카드에 바로 반영돼요. 카드를 누르면 아이콘·강조색까지 고칠 수 있어요.</p>';
+  openSheet('갈아타기 단계 수정', body, '<button class="sh-save" id="fmSave">저장</button>');
   $('#fmSave').addEventListener('click', async () => {
-    await saveRoadFlow(roadFlowNext({
-      waysTitle: $('#fmTitle').value.trim() || null,
-      note: $('#fmNote').value.trim() || null
-    }), '문구를 저장했어요');
+    const next = steps.map((s, i) => {
+      const label = ($('#fbLabel' + i).value || '').trim();
+      return {
+        ...s,
+        badge: ($('#fbBadge' + i).value || '').trim() || null,
+        label: label || s.label || null
+      };
+    });
+    await saveRoadFlow(roadFlowNext({ steps: next }), '단계를 저장했어요');
   });
 }
 
