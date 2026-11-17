@@ -89,13 +89,13 @@
     padding:2px 16px 20px;display:flex;flex-direction:column;gap:13px;scrollbar-width:none}
   #view > *{flex:0 0 auto}
   #view::-webkit-scrollbar{display:none}
-  .tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;
-    padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+  .tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;
+    padding:8px 12px calc(8px + env(safe-area-inset-bottom));
     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);
     border-radius:24px 24px 0 0;box-shadow:0 -6px 20px rgba(112,86,0,.12)}
-  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border-radius:16px;
-    font-size:11px;font-weight:800;color:#8F8A73;letter-spacing:-.02em;transition:background .18s,color .18s}
-  .tab .ic{font-size:17px;line-height:1;opacity:.55;transition:opacity .18s}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 0;border-radius:16px;
+    font-size:12.5px;font-weight:800;color:#8F8A73;letter-spacing:-.02em;transition:background .18s,color .18s}
+  .tab .ic{font-size:21px;line-height:1;opacity:.55;transition:opacity .18s}
   .tab.on{color:var(--navy);background:var(--white);box-shadow:0 3px 10px rgba(112,86,0,.13)}
   .tab.on .ic{opacity:1}
 
@@ -307,14 +307,8 @@
     .fs-emoji{font-size:18px}
   }
 
-  /* ================= 하단 탭 7개 (넘치면 가로 스크롤) ================= */
-  .tabs{grid-auto-flow:column;grid-auto-columns:minmax(45px,1fr);gap:2px;
-    padding:6px 5px calc(6px + env(safe-area-inset-bottom));
-    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;
-    scroll-snap-type:x proximity;scroll-padding:0 10px}
-  .tabs::-webkit-scrollbar{display:none}
-  .tab{font-size:9.5px;padding:5px 1px;gap:2px;white-space:nowrap;letter-spacing:-.03em;scroll-snap-align:center}
-  .tab .ic{font-size:15px}
+  /* ================= 하단 탭 2개 (비전 · 순자산) ================= */
+  .tabs{grid-template-columns:repeat(2,1fr);gap:8px;overflow:visible}
 
   /* ================= 하고 싶은 일 ================= */
   .bks{display:flex;flex-direction:column;gap:6px}
@@ -567,8 +561,6 @@
   <main id="view"></main>
   <nav class="tabs" id="tabs">
     <button class="tab on" data-tab="vision"><span class="ic">🌼</span>비전</button>
-    <button class="tab" data-tab="goals"><span class="ic">💬</span>확언</button>
-    <button class="tab" data-tab="bucket"><span class="ic">🙏</span>희망</button>
     <button class="tab" data-tab="networth"><span class="ic">💰</span>순자산</button>
   </nav>
 </div>
@@ -596,7 +588,7 @@ const VERIFY_HEX = 'c94584ef0ca10084ad0655e469418be1f0dad47b16e4762adc1d36b35c51
 const AUTH_KEY = 'bubudaisy.auth';
 const ROOM_KEY_RE = /^bubudaisy-[a-z0-9]{12,32}$/;
 
-const TABS = ['vision', 'networth', 'goals', 'bucket', 'trade', 'plan'];
+const TABS = ['vision', 'networth'];
 
 /* ---------- 도우미 ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1005,10 +997,8 @@ function render() {
     view.innerHTML = '<div class="skeleton">불러오는 중…</div>';
     return;
   }
-  if (ST.tab === 'vision') { view.innerHTML = visionView(); fitGoalBadges(view); }
-  else if (ST.tab === 'networth') { view.innerHTML = netWorthView(); fitAmounts(view); }
-  else if (ST.tab === 'goals') view.innerHTML = goalsView();
-  else view.innerHTML = bucketView();
+  if (ST.tab === 'networth') { view.innerHTML = netWorthView(); fitAmounts(view); }
+  else { view.innerHTML = visionView(); fitGoalBadges(view); }
   if (render.sameTab) view.scrollTop = keep;
   render.sameTab = true;
 }
@@ -1278,7 +1268,7 @@ function netWorthView() {
   return sum + addBtn + chart + mlist;
 }
 
-/* ---------- 3. 확언 (8대 핵심 목표는 비전 탭으로 옮겼다 — 방 데이터는 그대로) ---------- */
+/* ---------- 3. 확언 (탭에서 빠져 화면에는 안 나옴 — 방 데이터 affirmations 는 그대로 보존) ---------- */
 function goalsView() {
   const affs = affList();
 
@@ -1340,7 +1330,7 @@ function bkRow(it) {
       '<span class="bkchev">›</span>' +
     '</button></div>';
 }
-/* ---------- 희망 탭 — 핸들(⋮⋮) 드래그로 순서 바꾸기 ----------
+/* ---------- 희망 탭(화면에서는 빠짐, bucket 데이터는 보존) — 핸들(⋮⋮) 드래그로 순서 바꾸기 ----------
    같은 그룹 안에서만 옮겨지고, 손을 떼는 순간 Firebase(bucket/items)에 order를 저장한다.
    핸들만 touch-action:none 이라 화면 세로 스크롤은 그대로 동작한다. */
 const bkDrag = { on: false, pid: null, id: null, row: null, box: null, from: -1, to: -1, lastY: 0 };
@@ -2451,8 +2441,7 @@ function openPlanChapterSheet(cid) {
    ============================================================ */
 const MEMO_KEY = 'bubudaisy.memos';
 const TAB_NAMES = {
-  vision: '비전', networth: '순자산', goals: '확언',
-  bucket: '희망', trade: '갈아타기', plan: '플랜'
+  vision: '비전', networth: '순자산'
 };
 let MEMOS = loadMemos();
 function loadMemos() {
@@ -2497,7 +2486,7 @@ async function copyText(t) {
 function openMemoSheet() {
   const body =
     '<div class="fld"><span>요청 내용 · 지금 탭 [' + esc(memoTabName(ST.tab)) + ']</span>' +
-      '<textarea class="inp" id="memoText" style="min-height:78px" placeholder="예: 플랜 탭 항목 글자가 조금 작아요"></textarea></div>' +
+      '<textarea class="inp" id="memoText" style="min-height:78px" placeholder="예: 순자산 탭 글자가 조금 작아요"></textarea></div>' +
     '<button class="add-row" id="memoAdd">＋ 메모 추가</button>' +
     '<div class="memo-list" id="memoList">' + memoRows() + '</div>' +
     '<p class="hint-in">탭 이름이 앞에 자동으로 붙어요. 메모는 이 기기에만 저장되고, 탭을 옮겨도 그대로 남아요.</p>';
