@@ -147,14 +147,27 @@
   .chip .ci{font-size:18px;line-height:1}
   .cap{font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;letter-spacing:-.02em}
   .ms{display:flex;flex-direction:column;gap:8px}
-  .ms-card{border-radius:16px;background:var(--cream);padding:11px 13px 10px}
-  .ms-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+  .ms-card{border-radius:16px;background:var(--cream);padding:11px 11px 11px;transition:background .15s}
+  .ms-card:active{background:#F6EFD6}
+  .ms-card.green:active{background:#E4F3E1}
+  .ms-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;padding:0 2px}
   .ms-h .y{font-size:15px;font-weight:900;color:var(--navy);letter-spacing:-.03em}
   .ms-h .y.green{color:var(--green)}
   .ms-h .bd{font-size:10px;font-weight:900;color:#7C765C;background:#fff;padding:3px 8px;border-radius:999px}
-  .ms ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-  .ms li{display:flex;gap:6px;font-size:11.5px;font-weight:700;color:#3A382E;letter-spacing:-.02em;line-height:1.4}
-  .ms li .tk{color:var(--green);font-weight:900}
+  .ms-card.green .ms-h .bd{color:#2A6E3C}
+  .ms-hr{display:flex;align-items:center;gap:6px;min-width:0}
+  .ms-hr .li-chev{padding-left:0}
+  .ms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .ms-box{background:#fff;border-radius:12px;min-height:52px;padding:8px 6px;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-size:11px;font-weight:900;color:#3A382E;letter-spacing:-.03em;line-height:1.32}
+  .ms-card.green .ms-box{background:var(--green-soft);color:#265C33}
+  .ms-in3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .ms-in3 label{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .ms-in3 i{font-style:normal;font-size:10px;font-weight:900;color:#9A947C;letter-spacing:-.01em;padding-left:3px}
+  .ms-in3 .inp{padding:11px 8px;font-size:12.5px;font-weight:800;text-align:center}
+  .ms-prev{background:var(--cream);border-radius:14px;padding:8px}
+  .ms-prev .ms-box{min-height:44px;font-size:10.5px}
   .foot-note{margin:2px 4px 6px;font-size:10.5px;font-weight:700;color:#7E7448;text-align:center;letter-spacing:-.02em}
 
   /* ================= 비전 탭 직접 편집 ================= */
@@ -179,6 +192,15 @@
   .grow .gsub{display:block;font-size:10.5px;font-weight:700;color:#B6B1EE;letter-spacing:-.02em;
     line-height:1.4;margin-top:3px}
   .grow .gchev{flex:0 0 auto;align-self:center;color:rgba(255,255,255,.45);font-size:12px}
+  /* 비전 탭은 보기 전용 — 순자산 목표 줄 오른쪽의 현재 순자산 뱃지 */
+  .grow.ro{cursor:default}
+  .grow.ro:active{background:rgba(255,255,255,.10)}
+  .nwpill{flex:0 0 auto;align-self:center;display:inline-flex;align-items:baseline;gap:4px;
+    background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.26);border-radius:999px;
+    padding:5px 9px;font-size:10px;font-weight:900;color:#D6D3F7;letter-spacing:-.02em;white-space:nowrap}
+  .nwpill .v{font-size:11.5px;font-weight:900;color:#FFE680;letter-spacing:-.03em}
+  .nwpill.none{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18);color:#B6B1EE}
+  .nwpill.none .v{color:#CFCBF3;font-size:11px}
   .gadd{width:100%;min-height:36px;border-radius:12px;border:1.5px dashed rgba(255,255,255,.26);
     color:#CCC8F2;font-size:11.5px;font-weight:900;letter-spacing:-.02em;
     display:flex;align-items:center;justify-content:center;gap:4px}
@@ -847,11 +869,14 @@ function freeGoals() {
   if (t.cashflow) out.push({ value: '월 ' + fmtMan(t.cashflow), label: '월급 외 현금흐름', note: '' });
   return out;
 }
+function nwBadge() {
+  const nw = latestNw();
+  if (!nw) return '<span class="nwpill none"><span class="k">현재 순자산</span><span class="v">기록 전</span></span>';
+  const total = (num(nw.seeun) || 0) + (num(nw.chankyu) || 0);
+  return '<span class="nwpill"><span class="k">현재</span><span class="v">' + esc(fmtMan(total)) + '</span></span>';
+}
 function visionView() {
   const v = ST.vision;
-  const nw = latestNw();
-  const total = nw ? nw.seeun + nw.chankyu : null;
-  const pct = pctOf(total);
   const target = targetMan();
 
   let hero;
@@ -862,39 +887,22 @@ function visionView() {
   } else {
     const t = (v.target && typeof v.target === 'object') ? v.target : {};
     const topTxt = (t.year ? t.year + '년' : '') + (t.age ? (t.year ? ' · ' : '') + '만 ' + t.age + '세' : '');
-    const note = goalNote();
     const rows = [];
-    rows.push('<button class="grow" data-act="v-gnet"><span class="gn">1</span><span class="gt">' +
+    // 1번 목표: 순자산 30억 + 오른쪽에 현재 순자산 뱃지
+    rows.push('<div class="grow ro"><span class="gn">1</span><span class="gt">' +
       '<span class="gl">순자산</span>' +
       '<span class="gv">' + (target ? esc(fmtMan(target)) : '목표 정하기') + '</span>' +
-      (note ? '<span class="gsub">' + esc(note) + '</span>' : '') +
-      '</span><span class="gchev">›</span></button>');
+      '</span>' + nwBadge() + '</div>');
     freeGoals().forEach((fg, i) => {
-      rows.push('<button class="grow" data-act="v-grow" data-i="' + i + '"><span class="gn">' + (i + 2) + '</span><span class="gt">' +
+      rows.push('<div class="grow ro"><span class="gn">' + (i + 2) + '</span><span class="gt">' +
         (fg.label ? '<span class="gl">' + esc(fg.label) + '</span>' : '') +
         '<span class="gv">' + esc(fg.value || '') + '</span>' +
         (fg.note ? '<span class="gsub">' + esc(fg.note) + '</span>' : '') +
-        '</span><span class="gchev">›</span></button>');
+        '</span></div>');
     });
-    hero = '<section class="hero goalcard" data-act="v-card">' +
-      '<div class="hero-top"><span>🚩</span><span>' + esc(topTxt || '우리의 목표') + '</span>' +
-      penBtn('v-card', '목표 카드 수정') + '</div>' +
+    hero = '<section class="hero goalcard">' +
+      '<div class="hero-top"><span>🚩</span><span>' + esc(topTxt || '우리의 목표') + '</span></div>' +
       '<div class="grows">' + rows.join('') + '</div>' +
-      '<button class="gadd" data-act="v-grow" data-i="new">＋ 목표 추가</button>' +
-      '</section>' +
-      '<p class="hint">카드를 누르거나 ✏️ 를 누르면 바로 고칠 수 있어요</p>';
-  }
-
-  let progress = '';
-  if (v && target) {
-    progress = '<section class="card">' +
-      '<div class="card-h"><h2>지금 우리의 순자산</h2>' +
-        (nw ? '<span class="pill">' + esc(monthLabel(nw.month)) + ' 기준</span>' : '') + '</div>' +
-      '<div class="big">' + (total === null ? '<span class="big-none">아직 기록 전</span>' : esc(fmtMan(total))) + '</div>' +
-      '<div class="bar"><i style="width:' + (pct === null ? 0 : Math.min(100, Math.max(0, pct)).toFixed(1)) + '%"></i></div>' +
-      '<div class="bar-meta"><span>달성률 <b>' + (pct === null ? '—' : pct.toFixed(1) + '%') + '</b></span>' +
-      '<span>' + (total === null ? '이번 달부터 기록해 보세요' : '남은 금액 <b>' + esc(fmtMan(Math.max(0, target - total))) + '</b>') + '</span></div>' +
-      (total === null ? '<button class="rowline" data-go="networth" style="justify-content:center"><span class="v" style="text-align:center"><b>이번 달 순자산 기록하러 가기 →</b></span></button>' : '') +
       '</section>';
   }
 
@@ -904,26 +912,9 @@ function visionView() {
     expertise = '<section class="card">' +
       '<div class="card-h"><h2>📚 전문성 영역</h2><div class="board-tools">' +
         (arr.length ? '<span class="pill">' + arr.length + '개</span>' : '') + '</div></div>' +
-      (arr.length ? '<div class="chips">' + arr.map((x, i) =>
-        '<button class="chip tap" data-act="v-expertise" data-i="' + i + '"><span class="ci">' + esc(x.emoji || '•') + '</span>' + esc(x.label || '') + '</button>').join('') + '</div>' : '<p class="empty">아직 영역이 없어요</p>') +
-      '<button class="cap capbtn tap" data-act="v-excaption">' +
-        (v.expertiseCaption ? esc(v.expertiseCaption) + ' <span style="font-style:normal">✏️</span>' : '＋ 한 줄 설명 추가') +
-      '</button>' +
-      '<button class="add-row" data-act="v-expertise" data-i="new">＋ 영역 추가</button>' +
-      '</section>';
-  }
-
-  let pledge = '';
-  if (v) {
-    const arr = vArr(v, 'pledge');
-    pledge = '<section class="card">' +
-      '<div class="card-h"><h2>💛 우리의 다짐</h2><div class="board-tools">' +
-        (arr.length ? '<span class="pill">' + arr.length + '개</span>' : '') + '</div></div>' +
-      (arr.length ? '<ul class="checks">' + arr.map((p, i) =>
-        '<li class="tap" data-act="v-pledge" data-i="' + i + '"><span class="tk">✓</span>' +
-        '<span style="flex:1 1 auto;min-width:0">' + esc(p) + '</span>' +
-        '<span class="li-chev">›</span></li>').join('') + '</ul>' : '<p class="empty">아직 다짐이 없어요</p>') +
-      '<button class="add-row" data-act="v-pledge" data-i="new">＋ 다짐 추가</button>' +
+      (arr.length ? '<div class="chips">' + arr.map((x) =>
+        '<div class="chip"><span class="ci">' + esc(x.emoji || '•') + '</span>' + esc(x.label || '') + '</div>').join('') + '</div>' : '<p class="empty">아직 영역이 없어요</p>') +
+      (v.expertiseCaption ? '<p class="cap">' + esc(v.expertiseCaption) + '</p>' : '') +
       '</section>';
   }
 
@@ -933,21 +924,21 @@ function visionView() {
     ms = '<section class="card">' +
       '<div class="card-h"><h2>🗓️ 연도별 이정표</h2><div class="board-tools">' +
         (arr.length ? '<span class="pill">' + esc(arr[0].year || '') + '~</span>' : '') + '</div></div>' +
-      (arr.length ? '<div class="ms">' + arr.map((m, i) =>
-        '<div class="ms-card tap" data-act="v-ms" data-i="' + i + '"><div class="ms-h">' +
-        '<span class="y' + (m.tone === 'green' ? ' green' : '') + '">' + esc(m.year) + '</span>' +
-        '<span style="display:flex;align-items:center;gap:6px;min-width:0">' +
-          (m.badge ? '<span class="bd">' + esc(m.badge) + '</span>' : '') +
+      (arr.length ? '<div class="ms">' + arr.map((m, i) => {
+        const its = (Array.isArray(m.items) ? m.items : []).slice(0, 3);
+        return '<div class="ms-card' + (m.tone === 'green' ? ' green' : '') + ' tap" data-act="v-ms" data-i="' + i + '">' +
+          '<div class="ms-h"><span class="y' + (m.tone === 'green' ? ' green' : '') + '">' + esc(m.year) + '</span>' +
+          '<span class="ms-hr">' + (m.badge ? '<span class="bd">' + esc(m.badge) + '</span>' : '') +
           '<span class="li-chev">›</span></span></div>' +
-        '<ul>' + (Array.isArray(m.items) ? m.items : []).map(i2 => '<li><span class="tk">✓</span><span>' + esc(i2) + '</span></li>').join('') + '</ul></div>').join('') + '</div>' : '<p class="empty">아직 이정표가 없어요</p>') +
+          (its.length ? '<div class="ms-grid">' + its.map(x => '<div class="ms-box">' + esc(x) + '</div>').join('') + '</div>' : '') +
+          '</div>';
+      }).join('') + '</div>' : '<p class="empty">아직 이정표가 없어요</p>') +
       '<button class="add-row" data-act="v-ms" data-i="new">＋ 이정표 추가</button>' +
       '</section>';
   }
 
-  const foot = (v && v.footer)
-    ? '<p class="foot-note"><button class="foot-btn tap" data-act="v-footer">' + esc(v.footer) + ' ✏️</button></p>'
-    : '';
-  return hero + progress + expertise + pledge + ms + foot;
+  const foot = (v && v.footer) ? '<p class="foot-note">' + esc(v.footer) + '</p>' : '';
+  return hero + expertise + ms + foot;
 }
 
 /* ---------- 2. 월별 순자산 ---------- */
@@ -1211,14 +1202,7 @@ $('#view').addEventListener('click', async (e) => {
   if (!el) return;
   if (el.dataset.go) { go(el.dataset.go); return; }
   const act = el.dataset.act;
-  if (act === 'v-card') return openVisionCardSheet();
-  if (act === 'v-gnet') return openVisionNetGoalSheet();
-  if (act === 'v-grow') return openVisionGoalRowSheet(el.dataset.i);
-  if (act === 'v-expertise') return openVisionExpertiseSheet(el.dataset.i);
-  if (act === 'v-excaption') return openVisionTextSheet('expertiseCaption', '전문성 영역 한 줄 설명', false);
-  if (act === 'v-pledge') return openVisionPledgeSheet(el.dataset.i);
   if (act === 'v-ms') return openVisionMsSheet(el.dataset.i);
-  if (act === 'v-footer') return openVisionTextSheet('footer', '맨 아래 문구', true);
   if (act === 'bk-add') return openBkSheet(null, el.dataset.group);
   if (act === 'bk-edit') return openBkSheet(el.dataset.id);
   if (act === 'bk-toggle') {
@@ -1590,32 +1574,6 @@ function openVisionExpertiseSheet(i) {
   });
 }
 
-/* ---------- 우리의 다짐 ---------- */
-function openVisionPledgeSheet(i) {
-  const arr = vArr(ST.vision, 'pledge');
-  const isNew = i === 'new' || i === undefined || arr[Number(i)] === undefined;
-  const idx = isNew ? -1 : Number(i);
-  const cur = isNew ? '' : arr[idx];
-  draft.vpl = { idx: idx, arr: arr };
-  const body = '<label class="fld"><span>다짐 문장</span><textarea class="inp" id="vpText" style="min-height:90px" placeholder="매일 배우고 꾸준히 기록하기">' + esc(cur) + '</textarea></label>';
-  const acts = '<button class="sh-save" id="vpSave">' + (isNew ? '추가' : '저장') + '</button>' +
-    (isNew ? '' : '<button class="sh-del" id="vpDel">삭제</button>');
-  openSheet(isNew ? '다짐 추가' : '다짐 수정', body, acts);
-  $('#vpSave').addEventListener('click', async () => {
-    const text = $('#vpText').value.trim();
-    if (!text) { toast('다짐 문장을 적어 주세요'); return; }
-    const next = arr.slice();
-    if (isNew) next.push(text); else next[idx] = text;
-    await saveVisionKey('pledge', next, isNew ? '다짐을 추가했어요' : '다짐을 저장했어요');
-  });
-  if (!isNew) $('#vpDel').addEventListener('click', async (e) => {
-    if (!delArm(e.currentTarget)) return;
-    const next = arr.slice();
-    next.splice(idx, 1);
-    await saveVisionKey('pledge', next, '다짐을 삭제했어요');
-  });
-}
-
 /* ---------- 연도별 이정표 ---------- */
 function msLead(y) {
   const m = /\d{4}/.exec(String(y == null ? '' : y));
@@ -1628,6 +1586,8 @@ function openVisionMsSheet(i) {
   const cur = isNew ? { year: '', badge: '', tone: 'navy', items: [] } : arr[idx];
   const items = Array.isArray(cur.items) ? cur.items : [];
   let tone = cur.tone === 'green' ? 'green' : 'navy';
+  const boxIn = (n, ph) => '<label><i>' + n + (n === 3 ? ' (선택)' : '') + '</i>' +
+    '<input class="inp" id="vmB' + n + '" value="' + esc(items[n - 1] || '') + '" placeholder="' + ph + '"></label>';
   const body =
     '<div class="fld"><span>연도 · 배지</span><div class="ym-row">' +
       '<input class="inp" id="vmYear" value="' + esc(cur.year || '') + '" placeholder="2031~2035">' +
@@ -1637,21 +1597,35 @@ function openVisionMsSheet(i) {
       '<button data-t="navy" class="' + (tone === 'green' ? '' : 'on') + '">남색</button>' +
       '<button data-t="green" class="' + (tone === 'green' ? 'on' : '') + '">초록 (완성의 해)</button>' +
     '</div></div>' +
-    '<label class="fld"><span>이정표 항목 (한 줄에 하나씩)</span><textarea class="inp" id="vmItems" style="min-height:120px" placeholder="첫 집 마련&#10;결혼식">' + esc(items.join('\n')) + '</textarea></label>' +
-    '<p class="hint-in">줄을 지우면 그 항목이 삭제되고, 새 줄을 쓰면 추가돼요. 빈 줄은 무시합니다.</p>';
+    '<div class="fld"><span>이정표 박스 3개</span><div class="ms-in3">' +
+      boxIn(1, '올선 등기') + boxIn(2, '결혼식') + boxIn(3, '경제적 자유') +
+    '</div></div>' +
+    '<div class="fld"><span>이렇게 보여요</span><div class="ms-prev"><div class="ms-grid" id="vmPrev"></div></div></div>' +
+    '<p class="hint-in">짧은 키워드로 한 칸에 하나씩 넣어 주세요. 비워 둔 칸은 화면에서 빠져요. (최대 3개)</p>';
   const acts = '<button class="sh-save" id="vmSave">' + (isNew ? '추가' : '저장') + '</button>' +
     (isNew ? '' : '<button class="sh-del" id="vmDel">삭제</button>');
   openSheet(isNew ? '이정표 추가' : (cur.year || '') + ' 이정표 수정', body, acts);
+  const readBoxes = () => [1, 2, 3].map(n => ($('#vmB' + n).value || '').trim()).filter(Boolean).slice(0, 3);
+  const upd = () => {
+    const its = readBoxes();
+    const prev = $('#vmPrev');
+    prev.className = 'ms-grid' + (tone === 'green' ? ' green' : '');
+    prev.innerHTML = its.map(x => '<div class="ms-box">' + esc(x) + '</div>').join('') ||
+      '<div class="ms-box" style="color:#B4AE97">박스를 채워 보세요</div>';
+  };
+  upd();
+  ['#vmB1', '#vmB2', '#vmB3'].forEach(sel => $(sel).addEventListener('input', upd));
   $('#vmTone').addEventListener('click', (e) => {
     const b = e.target.closest('[data-t]'); if (!b) return;
     tone = b.dataset.t;
     $$('#vmTone button').forEach(x => x.classList.toggle('on', x === b));
+    upd();
   });
   $('#vmSave').addEventListener('click', async () => {
     const year = $('#vmYear').value.trim();
     if (!year) { toast('연도를 적어 주세요'); return; }
     const badge = $('#vmBadge').value.trim();
-    const its = $('#vmItems').value.split('\n').map(s => s.trim()).filter(Boolean);
+    const its = readBoxes();
     const next = arr.slice();
     const rec = { ...(isNew ? {} : next[idx]), year: year, badge: badge || null, tone: tone, items: its };
     if (isNew) {
