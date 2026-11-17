@@ -358,7 +358,8 @@
   .srow.open .srow-face{width:calc(100% - var(--delw))}
   .srow.swiping .srow-face{transition:none}
   .srow-acts{position:absolute;top:0;right:0;height:100%;display:flex;z-index:1;
-    border-radius:inherit;overflow:hidden}
+    border-radius:inherit;overflow:hidden;opacity:0;transition:opacity .15s}
+  .srow.open .srow-acts,.srow.swiping .srow-acts{opacity:1}
   .srow-acts .act{width:var(--delw);height:100%;display:flex;flex-direction:column;
     align-items:center;justify-content:center;gap:2px;background:#C0392B;color:#fff;
     font-size:11px;font-weight:900;letter-spacing:-.03em;line-height:1}
