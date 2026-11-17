@@ -160,7 +160,9 @@
   .ms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .ms-box{background:#fff;border-radius:12px;min-height:52px;padding:8px 6px;
     display:flex;align-items:center;justify-content:center;text-align:center;
-    font-size:11px;font-weight:900;color:#3A382E;letter-spacing:-.03em;line-height:1.32}
+    font-size:11px;font-weight:900;color:#3A382E;letter-spacing:-.03em;line-height:1.32;
+    transition:background .15s}
+  .ms-box:active{background:#F6EFD6}
   .ms-card.green .ms-box{background:var(--green-soft);color:#265C33}
   .ms-in3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .ms-in3 label{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -228,6 +230,60 @@
   .hint-in{font-size:10.5px;font-weight:800;color:#9A947C;letter-spacing:-.02em;
     line-height:1.5;padding-left:2px}
 
+  /* ================= 비전 · 🔄 갈아타기 전략 카드 ================= */
+  .flow4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .flow4.c4{grid-template-columns:repeat(3,1fr) 1.45fr}
+  .flow4.c3{grid-template-columns:repeat(3,1fr)}
+  .flow4.c2{grid-template-columns:repeat(2,1fr)}
+  .flow-step{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;
+    background:var(--cream);border:1.5px solid var(--cream-line);border-radius:16px;
+    padding:9px 4px 10px;transition:background .15s,border-color .15s}
+  .flow-step:active{background:#F6EFD6;border-color:#E7DDBC}
+  .fs-badge{max-width:100%;font-size:9.5px;font-weight:900;color:var(--navy);background:#fff;
+    border-radius:999px;padding:3px 7px;line-height:1.3;letter-spacing:-.02em;
+    text-align:center;overflow-wrap:anywhere}
+  .fs-emoji{font-size:20px;line-height:1}
+  .fs-label{font-size:10.5px;font-weight:900;color:var(--navy);text-align:center;line-height:1.28;
+    letter-spacing:-.03em;overflow-wrap:anywhere}
+  .flow-step.last{background:linear-gradient(160deg,#2E2AA0,#1E1B7A 72%);border-color:transparent;
+    box-shadow:0 9px 18px rgba(30,27,122,.24)}
+  .flow-step.last:active{background:linear-gradient(160deg,#3531AC,#242086 72%)}
+  .flow-step.last .fs-badge{background:var(--yellow);color:#2A2694}
+  .flow-step.last .fs-label{color:#fff;font-size:9.5px}
+  .flow-down{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;height:20px;margin:-3px 0 -4px}
+  .flow-down.c4{grid-template-columns:repeat(3,1fr) 1.45fr}
+  .flow-down span{position:relative}
+  .flow-down span.ln:before{content:'';position:absolute;left:50%;top:0;width:2px;height:13px;
+    margin-left:-1px;background:var(--cream-line);border-radius:2px}
+  .flow-down span.ln:after{content:'';position:absolute;left:50%;bottom:0;width:7px;height:7px;
+    margin-left:-3.5px;border-right:2px solid #C6BFA6;border-bottom:2px solid #C6BFA6;
+    transform:rotate(45deg)}
+  .flow-way-h{display:flex;align-items:center;gap:8px}
+  .flow-way-h:before,.flow-way-h:after{content:'';flex:1 1 auto;height:1px;background:var(--cream-line)}
+  .flow-way-h span{flex:0 0 auto;font-size:10.5px;font-weight:900;color:var(--navy);
+    background:var(--cream);border-radius:999px;padding:5px 10px;letter-spacing:-.02em;text-align:center}
+  .flow-ways{display:flex;flex-direction:column;gap:6px}
+  .way{width:100%;display:flex;flex-direction:column;gap:5px;text-align:left;
+    background:var(--cream);border-radius:15px;padding:10px 11px;transition:background .15s}
+  .way:active{background:#F6EFD6}
+  .way-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .way-h b{font-size:12.5px;font-weight:900;color:var(--navy);letter-spacing:-.03em;line-height:1.35}
+  .way-x{flex:0 0 auto;font-size:10px;opacity:.45;line-height:1}
+  .way-d{font-size:11px;font-weight:800;color:#5A5647;letter-spacing:-.02em;line-height:1.45}
+  .way-c{display:flex;align-items:flex-start;gap:5px;background:#FFF4D8;border-radius:10px;
+    padding:6px 8px;font-size:10.5px;font-weight:800;color:#8A5A14;line-height:1.42;letter-spacing:-.02em}
+  .way-c i{flex:0 0 auto;font-style:normal;display:grid;place-items:center;width:13px;height:13px;
+    margin-top:1px;border-radius:50%;background:#E0A03C;color:#fff;font-size:9px;font-weight:900;line-height:1}
+  .flow-note{width:100%;background:linear-gradient(120deg,#2E2AA0,#1E1B7A 70%);color:#fff;
+    font-size:11px;font-weight:900;line-height:1.5;letter-spacing:-.02em;text-align:center;
+    border-radius:14px;padding:9px 11px;box-shadow:0 8px 16px rgba(30,27,122,.18);text-wrap:balance}
+  .flow-tip{margin:-2px 0 0;font-size:10px;font-weight:800;color:#A9A48D;text-align:center;letter-spacing:-.02em}
+  @media (max-width:359px){
+    .flow4,.flow4.c4,.flow4.c3{grid-template-columns:repeat(2,1fr);gap:5px}
+    .flow-down{display:none}
+    .fs-emoji{font-size:18px}
+  }
+
   /* ================= 하단 탭 7개 (넘치면 가로 스크롤) ================= */
   .tabs{grid-auto-flow:column;grid-auto-columns:minmax(45px,1fr);gap:2px;
     padding:6px 5px calc(6px + env(safe-area-inset-bottom));
@@ -240,15 +296,12 @@
   /* ================= 하고 싶은 일 ================= */
   .bks{display:flex;flex-direction:column;gap:6px}
   .bk{display:flex;align-items:flex-start;background:var(--cream);border-radius:14px;
-    padding:9px 11px;transition:background .18s}
-  .bk.done{background:var(--green-soft)}
-  .bkck{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:2px solid #DDD6BD;color:transparent;
-    font-size:11px;font-weight:900;display:grid;place-items:center;margin:1px 0 0}
-  .bk.done .bkck{background:var(--green);border-color:var(--green);color:#fff}
-  .bkbtn{flex:1 1 auto;min-width:0;display:flex;align-items:flex-start;gap:7px;text-align:left;padding-left:8px}
+    padding:10px 12px;transition:background .18s}
+  .bk:active{background:#F6EFD6}
+  .bkbtn{flex:1 1 auto;min-width:0;display:flex;align-items:flex-start;gap:8px;text-align:left}
   .bke{flex:0 0 auto;font-size:15px;line-height:1.35}
-  .bkt{flex:1 1 auto;min-width:0;font-size:12.5px;font-weight:700;color:#3A382E;line-height:1.45;letter-spacing:-.02em}
-  .bk.done .bkt{color:#2A6E3C;font-weight:800}
+  .bkt{flex:1 1 auto;min-width:0;font-size:12.5px;font-weight:800;color:#3A382E;line-height:1.45;letter-spacing:-.02em}
+  .bkn{display:block;margin-top:3px;font-size:10.5px;font-weight:700;color:#8A8674;line-height:1.45;letter-spacing:-.02em}
   .bkchev{flex:0 0 auto;align-self:center;color:#C6BFA6;font-size:12px;padding-left:2px}
 
   /* ================= 갈아타기 ================= */
@@ -288,38 +341,9 @@
   .mli .ch{flex:0 0 auto;color:#BDB79B;font-size:14px}
   .empty{padding:14px 6px;text-align:center;font-size:12px;font-weight:700;color:var(--muted);line-height:1.6}
 
-  /* ================= 로드맵 ================= */
-  .ycard{background:var(--white);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
-  .yhead{width:100%;display:flex;align-items:center;gap:8px;padding:13px 15px;text-align:left}
-  .ynum{flex:0 0 auto;font-size:16px;font-weight:900;color:var(--navy);letter-spacing:-.03em}
-  .ynum.done{color:var(--green)}
-  .ymeta{flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;gap:4px}
-  .mtag{font-size:10px;font-weight:800;color:#7C765C;background:var(--cream);border-radius:999px;
-    padding:3px 7px;letter-spacing:-.02em;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .mtag.green{color:#fff;background:var(--green)}
-  .ychev{flex:0 0 auto;color:#BDB79B;font-size:12px;padding-right:2px;transition:transform .2s}
-  .ycard.open .ychev{transform:rotate(180deg)}
-  .ybody{display:none;padding:0 15px 13px;flex-direction:column;gap:7px}
-  .ycard.open .ybody{display:flex}
-  .ygoal{font-size:11.5px;font-weight:800;color:#4A4738;letter-spacing:-.02em;line-height:1.45;
-    display:flex;gap:6px;background:var(--cream);border-radius:13px;padding:8px 11px}
-  .ygoal .wk{flex:0 0 auto;font-size:10px;font-weight:900;color:#8F8A73;margin-top:1px}
-  .ygrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-  .ygrid.one{grid-template-columns:1fr}
-  .ycell{background:var(--cream);border-radius:12px;padding:8px 10px}
-  .ycell .l{font-size:9.5px;font-weight:900;color:#948E75;letter-spacing:-.01em}
-  .ycell .v{font-size:11.5px;font-weight:900;color:var(--ink);letter-spacing:-.02em;margin-top:2px}
-  .ycell.navy .v{color:var(--navy)}
-  .yplan{font-size:11px;font-weight:700;color:#4A4738;line-height:1.55;letter-spacing:-.02em;
-    background:var(--cream);border-radius:13px;padding:9px 11px}
-  .yplan .l{display:block;font-size:9.5px;font-weight:900;color:#948E75;margin-bottom:3px}
+  /* ================= 메모 한 줄 (순자산 · 기타) ================= */
   .ynote{font-size:11px;font-weight:700;color:#7C765C;background:#FFFBF0;border:1px dashed var(--cream-line);
     border-radius:12px;padding:8px 10px;line-height:1.5}
-  .yacts{display:flex;gap:6px;margin-top:2px}
-  .yacts button{flex:1 1 0;height:36px;border-radius:12px;background:var(--cream);font-size:11.5px;
-    font-weight:900;color:#6E6851;letter-spacing:-.02em}
-  .yacts button.on{background:var(--green-soft);color:var(--green)}
-  .yacts button.pen{background:#EFECFB;color:var(--navy)}
 
   /* ================= 목표 ================= */
   .goals{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
@@ -375,6 +399,15 @@
     align-items:center;justify-content:space-between;gap:8px}
   .sum-preview .k{font-size:11.5px;font-weight:900;color:#2A6039}
   .sum-preview .v{font-size:15px;font-weight:900;color:var(--green);letter-spacing:-.03em}
+  .sum-preview.net{background:#EFECFB}
+  .sum-preview.net .k{color:#4A46A8}
+  .sum-preview.net .v{color:var(--navy)}
+  .nwcost{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    background:var(--cream);border-radius:12px;padding:8px 11px;font-size:11.5px;font-weight:900;
+    color:#8A8674;letter-spacing:-.02em}
+  .nwcost b{font-size:12.5px;font-weight:900;color:#BE5A45;letter-spacing:-.03em}
+  .goalcard .goal-top{justify-content:center;gap:0;padding:2px 0 3px;
+    font-size:15.5px;font-weight:900;color:#fff;letter-spacing:-.03em}
   .sh-acts{flex:0 0 auto;display:flex;gap:8px;padding-top:10px}
   .sh-save{flex:1 1 auto;height:50px;border-radius:16px;background:var(--navy);color:#fff;
     font-size:14.5px;font-weight:900;letter-spacing:-.02em;box-shadow:0 10px 20px rgba(30,27,122,.24)}
@@ -454,7 +487,7 @@
 <!-- ===== 앱 ===== -->
 <div id="app" class="hidden">
   <div class="top">
-    <h1 class="brand">BUBUDAISY<span class="fl">🌼</span></h1>
+    <h1 class="brand"><span class="fl">🌼</span>BUBUDAISY<span class="fl">🌼</span></h1>
     <div class="top-right">
       <span class="dot" id="dot" title="연결 확인 중"></span>
       <button class="memo-btn" id="memoBtn" aria-label="수정 요청 메모">📝<span class="memo-cnt hidden" id="memoCnt">0</span></button>
@@ -465,7 +498,6 @@
   <nav class="tabs" id="tabs">
     <button class="tab on" data-tab="vision"><span class="ic">🌼</span>비전</button>
     <button class="tab" data-tab="networth"><span class="ic">💰</span>순자산</button>
-    <button class="tab" data-tab="roadmap"><span class="ic">🗓️</span>로드맵</button>
     <button class="tab" data-tab="goals"><span class="ic">🎯</span>목표</button>
     <button class="tab" data-tab="bucket"><span class="ic">✨</span>하고싶은일</button>
     <button class="tab" data-tab="trade"><span class="ic">🔄</span>갈아타기</button>
@@ -496,7 +528,7 @@ const VERIFY_HEX = 'c94584ef0ca10084ad0655e469418be1f0dad47b16e4762adc1d36b35c51
 const AUTH_KEY = 'bubudaisy.auth';
 const ROOM_KEY_RE = /^bubudaisy-[a-z0-9]{12,32}$/;
 
-const TABS = ['vision', 'networth', 'roadmap', 'goals', 'bucket', 'trade', 'plan'];
+const TABS = ['vision', 'networth', 'goals', 'bucket', 'trade', 'plan'];
 
 /* ---------- 도우미 ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -554,7 +586,6 @@ const ST = {
 };
 let ROOM = '';
 let es = null, retry = 0, pollTimer = null;
-const OPEN_YEARS = new Set();
 const draft = {};
 
 /* ============================================================
@@ -658,6 +689,10 @@ function absorb(d) {
     if (Array.isArray(v.milestones)) v.milestones = v.milestones.filter(Boolean);
     if (Array.isArray(v.expertise)) v.expertise = v.expertise.filter(Boolean);
     if (v.goal && Array.isArray(v.goal.items)) v.goal.items = v.goal.items.filter(Boolean);
+    if (v.roadmapFlow && typeof v.roadmapFlow === 'object') {
+      if (Array.isArray(v.roadmapFlow.steps)) v.roadmapFlow.steps = v.roadmapFlow.steps.filter(Boolean);
+      if (Array.isArray(v.roadmapFlow.ways)) v.roadmapFlow.ways = v.roadmapFlow.ways.filter(Boolean);
+    }
   }
   ST.vision = v;
   ST.netWorth = d.netWorth || {};
@@ -774,6 +809,8 @@ function nwSorted() {
       month: m,
       seeun: num(v.seeun) || 0,
       chankyu: num(v.chankyu) || 0,
+      expense: num(v.expense) || 0,
+      net: (num(v.seeun) || 0) + (num(v.chankyu) || 0) - (num(v.expense) || 0),
       memo: v.memo || '',
       updatedAt: v.updatedAt || 0
     }))
@@ -788,11 +825,6 @@ function pctOf(total) {
   const t = targetMan();
   if (!t || total == null) return null;
   return total / t * 100;
-}
-function yearSorted() {
-  return entries(ST.roadmap)
-    .map(([y, v]) => ({ year: y, ...v }))
-    .sort((a, b) => Number(a.year) - Number(b.year));
 }
 function goalList() {
   return entries(ST.goals).map(([id, v]) => ({ id, ...v }))
@@ -821,7 +853,6 @@ function render() {
   }
   if (ST.tab === 'vision') view.innerHTML = visionView();
   else if (ST.tab === 'networth') view.innerHTML = netWorthView();
-  else if (ST.tab === 'roadmap') view.innerHTML = roadmapView();
   else if (ST.tab === 'goals') view.innerHTML = goalsView();
   else if (ST.tab === 'bucket') view.innerHTML = bucketView();
   else if (ST.tab === 'plan') view.innerHTML = planView();
@@ -872,7 +903,7 @@ function freeGoals() {
 function nwBadge() {
   const nw = latestNw();
   if (!nw) return '<span class="nwpill none"><span class="k">현재 순자산</span><span class="v">기록 전</span></span>';
-  const total = (num(nw.seeun) || 0) + (num(nw.chankyu) || 0);
+  const total = (num(nw.seeun) || 0) + (num(nw.chankyu) || 0) - (num(nw.expense) || 0);
   return '<span class="nwpill"><span class="k">현재</span><span class="v">' + esc(fmtMan(total)) + '</span></span>';
 }
 function visionView() {
@@ -890,8 +921,7 @@ function visionView() {
     const rows = [];
     // 1번 목표: 순자산 30억 + 오른쪽에 현재 순자산 뱃지
     rows.push('<div class="grow ro"><span class="gn">1</span><span class="gt">' +
-      '<span class="gl">순자산</span>' +
-      '<span class="gv">' + (target ? esc(fmtMan(target)) : '목표 정하기') + '</span>' +
+      '<span class="gv">' + (target ? '순자산 ' + esc(fmtMan(target)) : '순자산 목표 정하기') + '</span>' +
       '</span>' + nwBadge() + '</div>');
     freeGoals().forEach((fg, i) => {
       rows.push('<div class="grow ro"><span class="gn">' + (i + 2) + '</span><span class="gt">' +
@@ -901,7 +931,7 @@ function visionView() {
         '</span></div>');
     });
     hero = '<section class="hero goalcard">' +
-      '<div class="hero-top"><span>🚩</span><span>' + esc(topTxt || '우리의 목표') + '</span></div>' +
+      '<div class="hero-top goal-top"><span>' + esc(topTxt || '우리의 목표') + '</span></div>' +
       '<div class="grows">' + rows.join('') + '</div>' +
       '</section>';
   }
@@ -922,7 +952,7 @@ function visionView() {
   if (v) {
     const arr = vArr(v, 'milestones');
     ms = '<section class="card">' +
-      '<div class="card-h"><h2>🗓️ 연도별 이정표</h2><div class="board-tools">' +
+      '<div class="card-h"><h2>🗓️ 연도별 TOP3 목표</h2><div class="board-tools">' +
         (arr.length ? '<span class="pill">' + esc(arr[0].year || '') + '~</span>' : '') + '</div></div>' +
       (arr.length ? '<div class="ms">' + arr.map((m, i) => {
         const its = (Array.isArray(m.items) ? m.items : []).slice(0, 3);
@@ -930,15 +960,67 @@ function visionView() {
           '<div class="ms-h"><span class="y' + (m.tone === 'green' ? ' green' : '') + '">' + esc(m.year) + '</span>' +
           '<span class="ms-hr">' + (m.badge ? '<span class="bd">' + esc(m.badge) + '</span>' : '') +
           '<span class="li-chev">›</span></span></div>' +
-          (its.length ? '<div class="ms-grid">' + its.map(x => '<div class="ms-box">' + esc(x) + '</div>').join('') + '</div>' : '') +
+          (its.length ? '<div class="ms-grid">' + its.map((x, b) => '<button class="ms-box tap" data-act="v-ms-cell" data-i="' + i + '" data-b="' + b + '">' + esc(x) + '</button>').join('') + '</div>' : '') +
           '</div>';
-      }).join('') + '</div>' : '<p class="empty">아직 이정표가 없어요</p>') +
-      '<button class="add-row" data-act="v-ms" data-i="new">＋ 이정표 추가</button>' +
+      }).join('') + '</div>' : '<p class="empty">아직 연도 카드가 없어요</p>') +
+      '<button class="add-row" data-act="v-ms" data-i="new">＋ 연도 추가</button>' +
       '</section>';
   }
 
+  const flow = v ? flowSection() : '';
   const foot = (v && v.footer) ? '<p class="foot-note">' + esc(v.footer) + '</p>' : '';
-  return hero + expertise + ms + foot;
+  return hero + expertise + flow + ms + foot;
+}
+
+/* ---------- 🔄 갈아타기 전략 (비전 탭 · 편집 가능) ---------- */
+function flowData() {
+  const f = ST.vision && ST.vision.roadmapFlow;
+  return (f && typeof f === 'object') ? f : null;
+}
+function flowSteps() {
+  const f = flowData();
+  return (f && Array.isArray(f.steps)) ? f.steps.filter(x => x && typeof x === 'object') : [];
+}
+function flowWays() {
+  const f = flowData();
+  return (f && Array.isArray(f.ways)) ? f.ways.filter(x => x && typeof x === 'object') : [];
+}
+function flowSection() {
+  const f = flowData();
+  const head = '<div class="card-h"><h2>🔄 갈아타기 전략</h2><div class="board-tools">' +
+    (f ? penBtn('v-flow-meta', '갈아타기 전략 문구 수정') : '') + '</div></div>';
+  if (!f) {
+    return '<section class="card">' + head +
+      '<p class="empty">아직 갈아타기 전략이 없어요<br>우리 집의 순서를 4단계로 적어 보세요</p>' +
+      '<button class="add-row" data-act="v-flow-init">＋ 갈아타기 전략 만들기</button>' +
+      '</section>';
+  }
+  const steps = flowSteps();
+  const ways = flowWays();
+  const grid = steps.length ? '<div class="flow4 c' + steps.length + '">' +
+    steps.map((s, i) =>
+      '<button class="flow-step' + (s.tone === 'accent' ? ' last' : '') + '" data-act="v-flow-step" data-i="' + i + '">' +
+        '<span class="fs-badge">' + esc(s.badge || '단계') + '</span>' +
+        '<span class="fs-emoji">' + esc(s.emoji || '•') + '</span>' +
+        '<span class="fs-label">' + esc(s.label || '이름 없음') + '</span>' +
+      '</button>').join('') + '</div>' : '';
+  const conn = (steps.length === 4)
+    ? '<div class="flow-down c4">' +
+      [0, 1, 2, 3].map(i => '<span class="' + (i === 2 ? 'ln' : '') + '"></span>').join('') + '</div>'
+    : '';
+  const waysH = f.waysTitle ? '<div class="flow-way-h"><span>' + esc(f.waysTitle) + '</span></div>' : '';
+  const waysHtml = ways.length
+    ? '<div class="flow-ways">' + ways.map((w, i) =>
+      '<button class="way" data-act="v-flow-way" data-i="' + i + '">' +
+        '<span class="way-h"><b>' + esc(w.title || '이름 없음') + '</b><span class="way-x">✏️</span></span>' +
+        (w.desc ? '<span class="way-d">' + esc(w.desc) + '</span>' : '') +
+        (w.caution ? '<span class="way-c"><i>!</i>' + esc(w.caution) + '</span>' : '') +
+      '</button>').join('') + '</div>'
+    : (f.waysTitle ? '<p class="empty">복제 방법을 아직 적지 않았어요</p>' : '');
+  const note = f.note ? '<button class="flow-note" data-act="v-flow-meta">' + esc(f.note) + '</button>' : '';
+  return '<section class="card">' + head + grid + conn + waysH + waysHtml + note +
+    '<p class="flow-tip">카드를 탭하면 바로 고칠 수 있어요</p>' +
+    '</section>';
 }
 
 /* ---------- 2. 월별 순자산 ---------- */
@@ -946,7 +1028,7 @@ function netWorthView() {
   const list = nwSorted();
   const latest = list[0] || null;
   const target = targetMan();
-  const total = latest ? latest.seeun + latest.chankyu : null;
+  const total = latest ? latest.net : null;
   const pct = pctOf(total);
 
   let sum;
@@ -963,6 +1045,7 @@ function netWorthView() {
         '<div class="mini"><span class="who">👩🏻 세은</span><b>' + esc(fmtMan(latest.seeun)) + '</b></div>' +
         '<div class="mini chankyu"><span class="who">👨🏻 찬규</span><b>' + esc(fmtMan(latest.chankyu)) + '</b></div>' +
       '</div>' +
+      '<div class="nwcost"><span class="k">부부총비용</span><b>−' + esc(fmtMan(latest.expense)) + '</b></div>' +
       (target ? '<div class="bar green"><i style="width:' + (pct === null ? 0 : Math.min(100, Math.max(0, pct)).toFixed(1)) + '%"></i></div>' +
         '<div class="bar-meta"><span>' + (tYear() ? tYear() + '년 목표 대비 ' : '목표 대비 ') + '<b>' + (pct === null ? '—' : pct.toFixed(1) + '%') + '</b></span><span>목표 ' + esc(fmtMan(target)) + '</span></div>' : '') +
       (latest.memo ? '<div class="ynote">📝 ' + esc(latest.memo) + '</div>' : '') +
@@ -974,11 +1057,11 @@ function netWorthView() {
   let chart = '';
   if (list.length >= 2) {
     const recent = list.slice(0, 6).slice().reverse();
-    const max = Math.max(...recent.map(x => Math.max(1, x.seeun + x.chankyu)));
+    const max = Math.max(...recent.map(x => Math.max(1, x.net)));
     chart = '<section class="card">' +
       '<div class="card-h"><h2>순자산 추이</h2><span class="pill">최근 ' + recent.length + '개월</span></div>' +
       '<div class="chart">' + recent.map(x => {
-        const t = x.seeun + x.chankyu;
+        const t = x.net;
         const w = Math.max(4, Math.round(t / max * 100));
         return '<div class="crow"><span class="cm">' + esc(monthLabel(x.month)) + '</span>' +
           '<span class="cbar"><i style="width:' + w + '%"></i></span>' +
@@ -993,74 +1076,16 @@ function netWorthView() {
       '<ul class="mlist">' + list.map(x =>
         '<li><button class="mli" data-act="nw-edit" data-month="' + esc(x.month) + '">' +
         '<span class="mm">' + esc(monthLabel(x.month)) + '</span>' +
-        '<span class="mid"><span class="tot">' + esc(fmtMan(x.seeun + x.chankyu)) + '</span>' +
-        '<span class="sub">세은 ' + esc(fmtMan(x.seeun)) + ' · 찬규 ' + esc(fmtMan(x.chankyu)) + '</span></span>' +
+        '<span class="mid"><span class="tot">' + esc(fmtMan(x.net)) + '</span>' +
+        '<span class="sub">세은 ' + esc(fmtMan(x.seeun)) + ' · 찬규 ' + esc(fmtMan(x.chankyu)) +
+          (x.expense ? ' · 총비용 ' + esc(fmtMan(x.expense)) : '') + '</span></span>' +
         '<span class="ch">›</span></button></li>').join('') +
       '</ul></section>';
   }
   return sum + addBtn + chart + mlist;
 }
 
-/* ---------- 3. 연도별 로드맵 ---------- */
-function roadmapView() {
-  const list = yearSorted();
-  if (!list.length) {
-    return '<section class="card"><div class="card-h"><h2>연도별 로드맵</h2></div>' +
-      '<p class="empty">로드맵 데이터를 기다리고 있어요</p></section>';
-  }
-  const curYear = String(new Date().getFullYear());
-  const cards = list.map(y => {
-    const year = y.year;
-    const open = OPEN_YEARS.has(year) || year === curYear;
-    const tags = [];
-    if (y.live) tags.push(y.live);
-    if (y.life) tags.push(y.life);
-    if (y.buy) tags.push('매수 ' + y.buy);
-    const ageTxt = (num(y.age_seeun) !== null && num(y.age_chankyu) !== null)
-      ? '👩🏻' + y.age_seeun + ' · 👨🏻' + y.age_chankyu : '';
-    const salaryCells = [
-      num(y.salary_seeun) !== null ? '<div class="ycell navy"><div class="l">세은 월급</div><div class="v">' + fmtNum(y.salary_seeun, '만') + '</div></div>' : '',
-      num(y.salary_chankyu) !== null ? '<div class="ycell navy"><div class="l">찬규 월급</div><div class="v">' + fmtNum(y.salary_chankyu, '만') + '</div></div>' : '',
-      num(y.saving) !== null ? '<div class="ycell"><div class="l">저축 여력</div><div class="v">' + fmtNum(y.saving, '백만') + '</div></div>' : '',
-      y.cashflow ? '<div class="ycell"><div class="l">월급외</div><div class="v">' + esc(y.cashflow) + '</div></div>' : ''
-    ].filter(Boolean);
-    const salaryRows = salaryCells.join('');
-    const goalRows = [
-      y.goal_seeun ? '<div class="ygoal"><span class="wk">세은</span><span>' + esc(y.goal_seeun) + '</span></div>' : '',
-      y.goal_chankyu ? '<div class="ygoal"><span class="wk">찬규</span><span>' + esc(y.goal_chankyu) + '</span></div>' : ''
-    ].join('');
-    const dealCells = [
-      y.buy ? '<div class="ycell navy"><div class="l">매수</div><div class="v">' + esc(y.buy) + '</div></div>' : '',
-      y.sell ? '<div class="ycell"><div class="l">매도</div><div class="v">' + esc(y.sell) + '</div></div>' : '',
-      y.taxfree ? '<div class="ycell"><div class="l">비과세</div><div class="v">' + esc(y.taxfree) + '</div></div>' : ''
-    ].filter(Boolean);
-    const dealRows = dealCells.join('');
-    return '<article class="ycard' + (open ? ' open' : '') + '" data-year="' + esc(year) + '">' +
-      '<button class="yhead" data-act="y-toggle" data-year="' + esc(year) + '">' +
-        '<span class="ynum' + (y.done ? ' done' : '') + '">' + esc(year) + (y.done ? ' ✓' : '') + '</span>' +
-        '<span class="ymeta">' +
-          (ageTxt ? '<span class="mtag">' + esc(ageTxt) + '</span>' : '') +
-          tags.slice(0, 2).map(t => '<span class="mtag">' + esc(t) + '</span>').join('') +
-          (y.memo ? '<span class="mtag green">📝 메모</span>' : '') +
-        '</span>' +
-        '<span class="ychev">▾</span>' +
-      '</button>' +
-      '<div class="ybody">' +
-        goalRows +
-        (dealRows ? '<div class="ygrid' + (dealCells.length === 1 ? ' one' : '') + '">' + dealRows + '</div>' : '') +
-        (y.plan ? '<div class="yplan"><span class="l">매수방안</span>' + esc(y.plan) + '</div>' : '') +
-        (salaryRows ? '<div class="ygrid' + (salaryCells.length === 1 ? ' one' : '') + '">' + salaryRows + '</div>' : '') +
-        (y.memo ? '<div class="ynote">📝 ' + esc(y.memo) + '</div>' : '') +
-        '<div class="yacts">' +
-          '<button data-act="y-done" data-year="' + esc(year) + '" class="' + (y.done ? 'on' : '') + '">' + (y.done ? '✓ 완료함' : '✓ 완료 표시') + '</button>' +
-          '<button data-act="y-edit" data-year="' + esc(year) + '" class="pen">✏️ 수정 · 메모</button>' +
-        '</div>' +
-      '</div></article>';
-  }).join('');
-  return cards;
-}
-
-/* ---------- 4. 핵심 목표 ---------- */
+/* ---------- 3. 핵심 목표 ---------- */
 function goalsView() {
   const goals = goalList();
   const affs = affList();
@@ -1093,7 +1118,7 @@ function goalsView() {
   return goalCard + affCard + '<p class="foot-note">체크하면 두 분 폰에 바로 함께 반영돼요 🌼</p>';
 }
 
-/* ---------- 5. 하고 싶은 일 (버킷) ---------- */
+/* ---------- 3. 하고 싶은 일 (버킷) ---------- */
 const BK_GROUPS = [
   { id: 'g1', name: '핵심 자산 · 라이프' },
   { id: 'g2', name: '일 · 커리어 · 현금흐름' },
@@ -1126,22 +1151,20 @@ function bkSorted() {
   });
 }
 function bkRow(it) {
-  return '<div class="bk' + (it.done ? ' done' : '') + '">' +
-    '<button class="bkck" data-act="bk-toggle" data-id="' + esc(it.id) + '" aria-label="달성 체크">✓</button>' +
+  return '<div class="bk">' +
     '<button class="bkbtn" data-act="bk-edit" data-id="' + esc(it.id) + '">' +
       '<span class="bke">' + esc(it.emoji || '✨') + '</span>' +
-      '<span class="bkt">' + esc(it.text || '') + '</span>' +
+      '<span class="bkt">' + esc(it.text || '') +
+        (it.note ? '<span class="bkn">' + esc(it.note) + '</span>' : '') +
+      '</span>' +
       '<span class="bkchev">›</span>' +
     '</button></div>';
 }
 function bucketView() {
   const list = bkSorted();
-  const doneN = list.filter(x => x.done).length;
-  const pctB = list.length ? Math.round(doneN / list.length * 100) : 0;
   const head = '<section class="card">' +
-    '<div class="card-h"><h2>✨ 돈 벌면 하고 싶은 일</h2><span class="pill green">' + doneN + ' / ' + list.length + '</span></div>' +
-    '<div class="bar green"><i style="width:' + pctB + '%"></i></div>' +
-    '<p class="cap" style="text-align:left">이룬 것은 체크해서 연초록으로 바꿔 두세요 · 항목을 누르면 고칠 수 있어요</p>' +
+    '<div class="card-h"><h2>✨ 돈 벌면 하고 싶은 일</h2><span class="pill">' + list.length + '개</span></div>' +
+    '<p class="cap" style="text-align:left">하고 싶은 일을 모아 두세요 · 항목을 누르면 이모지·문구·메모를 고칠 수 있어요</p>' +
     '</section>';
   if (!list.length) {
     return head + '<section class="card"><p class="empty">아직 항목이 없어요<br>첫 항목을 추가해 보세요 🌼</p>' +
@@ -1152,10 +1175,9 @@ function bucketView() {
   groups.forEach(g => { known[g.id] = true; });
   const cards = groups.map(g => {
     const its = list.filter(x => x.group === g.id);
-    const dn = its.filter(x => x.done).length;
     return '<section class="card">' +
       '<div class="card-h"><h2>' + esc(g.name) + '</h2><div class="board-tools">' +
-        (its.length ? '<span class="pill">' + dn + '/' + its.length + '</span>' : '') + '</div></div>' +
+        (its.length ? '<span class="pill">' + its.length + '개</span>' : '') + '</div></div>' +
       (its.length ? '<div class="bks">' + its.map(bkRow).join('') + '</div>' : '<p class="empty">아직 항목이 없어요</p>') +
       '<button class="add-row" data-act="bk-add" data-group="' + g.id + '">＋ 항목 추가</button>' +
       '</section>';
@@ -1168,7 +1190,7 @@ function bucketView() {
   return head + cards + etcCard;
 }
 
-/* ---------- 6. 갈아타기 전략 ---------- */
+/* ---------- 4. 갈아타기 전략 ---------- */
 function tradeList() {
   return entries(ST.tradeUp).map(([id, v]) => ({ id, ...v })).sort((a, b) => {
     const da = String(a.date || ''), db = String(b.date || '');
@@ -1203,40 +1225,17 @@ $('#view').addEventListener('click', async (e) => {
   if (el.dataset.go) { go(el.dataset.go); return; }
   const act = el.dataset.act;
   if (act === 'v-ms') return openVisionMsSheet(el.dataset.i);
+  if (act === 'v-ms-cell') return openVisionMsSheet(el.dataset.i, el.dataset.b);
+  if (act === 'v-flow-step') return openFlowStepSheet(el.dataset.i);
+  if (act === 'v-flow-way') return openFlowWaySheet(el.dataset.i);
+  if (act === 'v-flow-meta') return openFlowMetaSheet();
+  if (act === 'v-flow-init') return createRoadFlow();
   if (act === 'bk-add') return openBkSheet(null, el.dataset.group);
   if (act === 'bk-edit') return openBkSheet(el.dataset.id);
-  if (act === 'bk-toggle') {
-    const id = el.dataset.id;
-    const cur0 = ST.bucket && ST.bucket.items ? ST.bucket.items[id] : null;
-    if (!cur0) return;
-    const next0 = !cur0.done;
-    bkSet(id, { ...cur0, done: next0, doneAt: next0 ? Date.now() : null });
-    render.sameTab = true; render();
-    try { await patch('bucket/items/' + id, { done: next0, doneAt: next0 ? Date.now() : null }); }
-    catch (err) { bkSet(id, cur0); render.sameTab = true; render(); toast('저장하지 못했어요'); }
-    return;
-  }
   if (act === 'tt-add') return openTradeSheet(null);
   if (act === 'tt-edit') return openTradeSheet(el.dataset.id);
   if (act === 'nw-add') return openNwSheet(thisMonth());
   if (act === 'nw-edit') return openNwSheet(el.dataset.month);
-  if (act === 'y-toggle') {
-    const y = el.dataset.year;
-    if (OPEN_YEARS.has(y)) OPEN_YEARS.delete(y); else OPEN_YEARS.add(y);
-    render.sameTab = true; render();
-    return;
-  }
-  if (act === 'y-done') {
-    const y = el.dataset.year;
-    const cur = ST.roadmap[y] || {};
-    const next = !cur.done;
-    ST.roadmap[y] = { ...cur, done: next, doneAt: next ? Date.now() : null };
-    render.sameTab = true; render();
-    try { await patch('roadmap/' + y, { done: next, doneAt: next ? Date.now() : null }); toast(next ? y + ' 완료로 표시했어요' : '완료를 풀었어요'); }
-    catch (err) { ST.roadmap[y] = cur; render.sameTab = true; render(); toast('저장하지 못했어요'); }
-    return;
-  }
-  if (act === 'y-edit') return openRoadSheet(el.dataset.year);
   if (act === 'g-toggle') {
     const kind = el.dataset.kind, id = el.dataset.id;
     const cur = ST[kind][id]; if (!cur) return;
@@ -1293,8 +1292,9 @@ function openNwSheet(month) {
     month: month || thisMonth(),
     seeun: cur ? num(cur.seeun) ?? 0 : null,
     chankyu: cur ? num(cur.chankyu) ?? 0 : null,
+    expense: cur ? num(cur.expense) ?? 0 : null,
     memo: cur ? (cur.memo || '') : '',
-    unit: { seeun: 'man', chankyu: 'man' },
+    unit: { seeun: 'man', chankyu: 'man', expense: 'man' },
     editing: !!cur
   };
   const d = draft.nw;
@@ -1318,9 +1318,14 @@ function openNwSheet(month) {
       '<input class="inp" type="number" inputmode="decimal" id="nwChankyu" placeholder="0" value="' + esc(fromMan(d.chankyu, 'man')) + '">' +
       '<div class="unit-seg" data-who="chankyu"><button data-u="man" class="on">만원</button><button data-u="eok">억원</button></div>' +
     '</div></div>' +
-    '<div class="sum-preview"><span class="k">부부 합계</span><span class="v" id="nwSum">—</span></div>' +
+    '<div class="fld"><span>부부총비용</span><div class="unit-row">' +
+      '<input class="inp" type="number" inputmode="decimal" id="nwCost" placeholder="0" value="' + esc(fromMan(d.expense, 'man')) + '">' +
+      '<div class="unit-seg" data-who="expense"><button data-u="man" class="on">만원</button><button data-u="eok">억원</button></div>' +
+    '</div></div>' +
+    '<div class="sum-preview"><span class="k">세은 + 찬규</span><span class="v" id="nwSum">—</span></div>' +
+    '<div class="sum-preview net"><span class="k">부부 순자산</span><span class="v" id="nwNet">—</span></div>' +
     '<label class="fld"><span>메모 (선택)</span><textarea class="inp" id="nwMemo" placeholder="예: 예금·주식·부동산 합계">' + esc(d.memo) + '</textarea></label>' +
-    '<p class="cap" style="text-align:left">대출·부채를 뺀 순수 자산으로 적어 주세요. 만원 단위로 저장돼요.</p>';
+    '<p class="cap" style="text-align:left">부부 순자산 = 세은 + 찬규 − 부부총비용. 대출·부채를 뺀 순수 자산으로 적어 주세요. 만원 단위로 저장돼요.</p>';
 
   const acts = '<button class="sh-save" id="nwSave">' + (d.editing ? '수정 저장' : '저장') + '</button>' +
     (d.editing ? '<button class="sh-del" id="nwDel">삭제</button>' : '');
@@ -1330,8 +1335,11 @@ function openNwSheet(month) {
   const upd = () => {
     const s = toMan($('#nwSeeun').value, d.unit.seeun);
     const c = toMan($('#nwChankyu').value, d.unit.chankyu);
-    const total = (s === null ? 0 : s) + (c === null ? 0 : c);
-    $('#nwSum').textContent = (s === null && c === null) ? '—' : fmtMan(total);
+    const e = toMan($('#nwCost').value, d.unit.expense);
+    const gross = (s === null ? 0 : s) + (c === null ? 0 : c);
+    const net = gross - (e === null ? 0 : e);
+    $('#nwSum').textContent = (s === null && c === null) ? '—' : fmtMan(gross);
+    $('#nwNet').textContent = (s === null && c === null && e === null) ? '—' : fmtMan(net);
   };
   upd();
   const syncMonth = () => { d.month = $('#nwYear').value + '-' + $('#nwMon').value; };
@@ -1339,12 +1347,13 @@ function openNwSheet(month) {
   $('#nwMon').addEventListener('change', syncMonth);
   $('#nwSeeun').addEventListener('input', upd);
   $('#nwChankyu').addEventListener('input', upd);
+  $('#nwCost').addEventListener('input', upd);
   $$('.unit-seg', $('#shBody')).forEach(seg => {
     seg.addEventListener('click', (e) => {
       const b = e.target.closest('[data-u]'); if (!b) return;
       const who = seg.dataset.who;
       if (d.unit[who] === b.dataset.u) return;
-      const input = who === 'seeun' ? $('#nwSeeun') : $('#nwChankyu');
+      const input = who === 'seeun' ? $('#nwSeeun') : who === 'chankyu' ? $('#nwChankyu') : $('#nwCost');
       const man = toMan(input.value, d.unit[who]);
       d.unit[who] = b.dataset.u;
       input.value = fromMan(man, d.unit[who]);
@@ -1376,10 +1385,11 @@ function openNwSheet(month) {
     if (!/^\d{4}-\d{2}$/.test(m)) { toast('년-월을 선택해 주세요'); return; }
     const s = toMan($('#nwSeeun').value, d.unit.seeun) ?? 0;
     const c = toMan($('#nwChankyu').value, d.unit.chankyu) ?? 0;
+    const e = toMan($('#nwCost').value, d.unit.expense) ?? 0;
     const memo = $('#nwMemo').value.trim();
     const prev = ST.netWorth[m];
     if (prev && m !== draft.nw.month) { toast('그 달 기록이 이미 있어요'); return; }
-    const rec = { seeun: s, chankyu: c, memo: memo || null, updatedAt: Date.now() };
+    const rec = { seeun: s, chankyu: c, expense: e, memo: memo || null, updatedAt: Date.now() };
     ST.netWorth[m] = rec;
     closeSheet(); go('networth'); render.sameTab = true; render();
     try { await put('netWorth/' + m, rec); toast(monthLabel(m) + ' 순자산을 저장했어요'); }
@@ -1579,7 +1589,7 @@ function msLead(y) {
   const m = /\d{4}/.exec(String(y == null ? '' : y));
   return m ? Number(m[0]) : 9999;
 }
-function openVisionMsSheet(i) {
+function openVisionMsSheet(i, box) {
   const arr = vArr(ST.vision, 'milestones');
   const isNew = i === 'new' || i === undefined || !arr[Number(i)];
   const idx = isNew ? -1 : Number(i);
@@ -1604,7 +1614,7 @@ function openVisionMsSheet(i) {
     '<p class="hint-in">짧은 키워드로 한 칸에 하나씩 넣어 주세요. 비워 둔 칸은 화면에서 빠져요. (최대 3개)</p>';
   const acts = '<button class="sh-save" id="vmSave">' + (isNew ? '추가' : '저장') + '</button>' +
     (isNew ? '' : '<button class="sh-del" id="vmDel">삭제</button>');
-  openSheet(isNew ? '이정표 추가' : (cur.year || '') + ' 이정표 수정', body, acts);
+  openSheet(isNew ? '연도 카드 추가' : (cur.year || '') + ' 목표 수정', body, acts);
   const readBoxes = () => [1, 2, 3].map(n => ($('#vmB' + n).value || '').trim()).filter(Boolean).slice(0, 3);
   const upd = () => {
     const its = readBoxes();
@@ -1637,13 +1647,118 @@ function openVisionMsSheet(i) {
     } else {
       next[idx] = rec;
     }
-    await saveVisionKey('milestones', next, isNew ? '이정표를 추가했어요' : '이정표를 저장했어요');
+    await saveVisionKey('milestones', next, isNew ? '연도 카드를 추가했어요' : '연도 카드를 저장했어요');
   });
   if (!isNew) $('#vmDel').addEventListener('click', async (e) => {
     if (!delArm(e.currentTarget)) return;
     const next = arr.slice();
     next.splice(idx, 1);
-    await saveVisionKey('milestones', next, '이정표를 삭제했어요');
+    await saveVisionKey('milestones', next, '연도 카드를 삭제했어요');
+  });
+  if (box != null) {
+    const el = $('#vmB' + (Number(box) + 1));
+    if (el) setTimeout(() => { try { el.focus(); el.select(); } catch (e) {} }, 140);
+  }
+}
+
+/* ---------- 🔄 갈아타기 전략 수정 시트 (비전 탭) ---------- */
+async function saveRoadFlow(next, msg) {
+  const prev = ST.vision;
+  ST.vision = { ...(prev || {}), roadmapFlow: next };
+  closeSheet();
+  render.sameTab = true; render();
+  try { await put('vision/roadmapFlow', next); toast(msg); }
+  catch (e) { ST.vision = prev; render.sameTab = true; render(); toast('저장하지 못했어요'); }
+}
+function roadFlowNext(part) {
+  const f = flowData() || {};
+  return { ...f, ...part, updatedAt: Date.now() };
+}
+async function createRoadFlow() {
+  const steps = [0, 1, 2, 3].map(() => ({ badge: null, emoji: null, label: null, tone: 'basic' }));
+  await saveRoadFlow({ steps: steps, ways: [], waysTitle: null, note: null, createdAt: Date.now() },
+    '갈아타기 전략 카드를 만들었어요');
+}
+function openFlowStepSheet(i) {
+  const steps = flowSteps();
+  const idx = Number(i);
+  const cur = steps[idx];
+  if (!cur) return;
+  let tone = cur.tone === 'accent' ? 'accent' : 'basic';
+  const body =
+    '<label class="fld"><span>배지 (순서 이름)</span><input class="inp" id="fsBadge" value="' + esc(cur.badge || '') + '" placeholder="1호기"></label>' +
+    '<label class="fld"><span>아이콘 (이모지 한 글자)</span><input class="inp" id="fsEmoji" style="text-align:center;font-size:22px" maxlength="12" value="' + esc(cur.emoji || '') + '" placeholder="🏠"></label>' +
+    '<label class="fld"><span>단계 이름</span><input class="inp" id="fsLabel" value="' + esc(cur.label || '') + '" placeholder="첫 집"></label>' +
+    '<div class="fld"><span>강조</span><div class="seg2" id="fsTone">' +
+      '<button data-t="basic" class="' + (tone === 'basic' ? 'on' : '') + '">기본 (연크림)</button>' +
+      '<button data-t="accent" class="' + (tone === 'accent' ? 'on' : '') + '">강조 (진남색)</button>' +
+    '</div></div>' +
+    '<div class="fld"><span>이렇게 보여요</span><div class="flow4" id="fsPrev"></div></div>' +
+    '<p class="hint-in">배지는 카드 맨 위 작은 알약, 단계 이름은 카드 맨 아래 글씨예요. 🏠 🔄 📄 🏙️ 처럼 짧은 이모지를 붙여 넣으면 돼요.</p>';
+  openSheet('갈아타기 단계 수정', body, '<button class="sh-save" id="fsSave">저장</button>');
+  const upd = () => {
+    const badge = ($('#fsBadge').value || '').trim();
+    const emoji = ($('#fsEmoji').value || '').trim();
+    const label = ($('#fsLabel').value || '').trim();
+    $('#fsPrev').innerHTML = '<div class="flow-step' + (tone === 'accent' ? ' last' : '') + '" style="grid-column:1 / -1">' +
+      '<span class="fs-badge">' + esc(badge || '단계') + '</span>' +
+      '<span class="fs-emoji">' + esc(emoji || '•') + '</span>' +
+      '<span class="fs-label">' + esc(label || '이름 없음') + '</span></div>';
+  };
+  upd();
+  ['#fsBadge', '#fsEmoji', '#fsLabel'].forEach(sel => $(sel).addEventListener('input', upd));
+  $('#fsTone').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-t]'); if (!b) return;
+    tone = b.dataset.t === 'accent' ? 'accent' : 'basic';
+    $$('#fsTone button').forEach(x => x.classList.toggle('on', x === b));
+    upd();
+  });
+  $('#fsSave').addEventListener('click', async () => {
+    const label = $('#fsLabel').value.trim();
+    if (!label) { toast('단계 이름을 적어 주세요'); return; }
+    const next = steps.map((x, k) => k === idx ? {
+      ...x,
+      badge: $('#fsBadge').value.trim() || null,
+      emoji: $('#fsEmoji').value.trim() || null,
+      label: label, tone: tone
+    } : x);
+    await saveRoadFlow(roadFlowNext({ steps: next }), '단계를 저장했어요');
+  });
+}
+function openFlowWaySheet(i) {
+  const ways = flowWays();
+  const idx = Number(i);
+  const cur = ways[idx];
+  if (!cur) return;
+  const body =
+    '<label class="fld"><span>제목</span><input class="inp" id="fwTitle" value="' + esc(cur.title || '') + '" placeholder="1주택 + 1분양권"></label>' +
+    '<label class="fld"><span>설명</span><input class="inp" id="fwDesc" value="' + esc(cur.desc || '') + '" placeholder="새로 짓는 집을 분양받아 복제"></label>' +
+    '<label class="fld"><span>주의 문구 (선택)</span><textarea class="inp" id="fwCaution" placeholder="1년 안에 분양권을 사면 비과세가 어렵습니다">' + esc(cur.caution || '') + '</textarea></label>' +
+    '<p class="hint-in">주의 문구를 비우면 노란 박스가 화면에서 빠져요.</p>';
+  openSheet('복제 방법 수정', body, '<button class="sh-save" id="fwSave">저장</button>');
+  $('#fwSave').addEventListener('click', async () => {
+    const title = $('#fwTitle').value.trim();
+    if (!title) { toast('제목을 적어 주세요'); return; }
+    const next = ways.map((x, k) => k === idx ? {
+      ...x, title: title,
+      desc: $('#fwDesc').value.trim() || null,
+      caution: $('#fwCaution').value.trim() || null
+    } : x);
+    await saveRoadFlow(roadFlowNext({ ways: next }), '복제 방법을 저장했어요');
+  });
+}
+function openFlowMetaSheet() {
+  const f = flowData() || {};
+  const body =
+    '<label class="fld"><span>복제 묶음 제목</span><input class="inp" id="fmTitle" value="' + esc(f.waysTitle || '') + '" placeholder="1주택 유지 + 하나 더"></label>' +
+    '<label class="fld"><span>맨 아래 강조 문구</span><textarea class="inp" id="fmNote" placeholder="사업시행인가 · 관리처분인가 · 준공 — 이 단계를 알면 복제 시점이 보입니다">' + esc(f.note || '') + '</textarea></label>' +
+    '<p class="hint-in">비워 두면 화면에서 빠져요. 카드 제목 오른쪽 ✏️ 나 맨 아래 남색 줄을 눌러도 여기가 열려요.</p>';
+  openSheet('갈아타기 전략 문구 수정', body, '<button class="sh-save" id="fmSave">저장</button>');
+  $('#fmSave').addEventListener('click', async () => {
+    await saveRoadFlow(roadFlowNext({
+      waysTitle: $('#fmTitle').value.trim() || null,
+      note: $('#fmNote').value.trim() || null
+    }), '문구를 저장했어요');
   });
 }
 
@@ -1693,17 +1808,18 @@ function nextBkOrder(group) {
 function openBkSheet(id, group) {
   const isNew = !id;
   const cur = isNew
-    ? { emoji: '', text: '', group: group || 'g1', done: false }
+    ? { emoji: '', text: '', note: '', group: group || 'g1', done: false }
     : ((ST.bucket && ST.bucket.items && ST.bucket.items[id]) || {});
   draft.bk = { id: isNew ? null : id, base: { ...cur }, group: cur.group || group || 'g1' };
   const groups = bkGroups();
   const body =
     '<label class="fld"><span>아이콘 (이모지 한 글자)</span><input class="inp" id="bkEmoji" style="text-align:center;font-size:22px" maxlength="12" value="' + esc(cur.emoji || '') + '" placeholder="✨"></label>' +
     '<label class="fld"><span>하고 싶은 일</span><textarea class="inp" id="bkText" style="min-height:80px" placeholder="서울아파트 2채를 갖고싶어">' + esc(cur.text || '') + '</textarea></label>' +
+    '<label class="fld"><span>메모 (선택)</span><textarea class="inp" id="bkNote" placeholder="왜 하고 싶은지, 조건, 시기">' + esc(cur.note || '') + '</textarea></label>' +
     '<label class="fld"><span>그룹</span><select class="inp" id="bkGroup">' +
       groups.map(g => '<option value="' + esc(g.id) + '"' + (g.id === draft.bk.group ? ' selected' : '') + '>' + esc(g.name) + '</option>').join('') +
     '</select></label>' +
-    '<p class="hint-in">🏡 🚗 💵 처럼 짧은 이모지를 붙여 넣으면 돼요. 체크는 목록에서 바로 할 수 있어요.</p>';
+    '<p class="hint-in">🏡 🚗 💵 처럼 짧은 이모지를 붙여 넣으면 돼요. 메모는 항목 문구 바로 아래 작은 글씨로 보여요.</p>';
   const acts = '<button class="sh-save" id="bkSave">' + (isNew ? '추가' : '저장') + '</button>' +
     (isNew ? '' : '<button class="sh-del" id="bkDel">삭제</button>');
   openSheet(isNew ? '하고 싶은 일 추가' : '하고 싶은 일 수정', body, acts);
@@ -1715,6 +1831,7 @@ function openBkSheet(id, group) {
     const key2 = isNew ? newKey('b') : draft.bk.id;
     const rec = {
       ...draft.bk.base, text: text, emoji: emoji, group: grp,
+      note: ($('#bkNote').value || '').trim() || null,
       done: !!draft.bk.base.done, updatedAt: Date.now()
     };
     if (isNew) { rec.done = false; rec.order = nextBkOrder(grp); }
@@ -1774,53 +1891,6 @@ function openTradeSheet(id) {
     closeSheet(); render.sameTab = true; render();
     try { await del('tradeUpStrategies/' + id2); toast('삭제했어요'); }
     catch (err) { ST.tradeUp = prevAll; render.sameTab = true; render(); toast('삭제하지 못했어요'); }
-  });
-}
-
-/* ---------- 로드맵 수정 시트 ---------- */
-const ROAD_FIELDS = [
-  { k: 'goal_seeun', label: '세은 올해 목표', type: 'text' },
-  { k: 'goal_chankyu', label: '찬규 올해 목표', type: 'text' },
-  { k: 'age_seeun', label: '세은 만나이', type: 'number' },
-  { k: 'age_chankyu', label: '찬규 만나이', type: 'number' },
-  { k: 'buy', label: '매수', type: 'text' },
-  { k: 'sell', label: '매도', type: 'text' },
-  { k: 'taxfree', label: '비과세', type: 'text' },
-  { k: 'plan', label: '매수방안', type: 'textarea' },
-  { k: 'cashflow', label: '월급외', type: 'text' },
-  { k: 'salary_seeun', label: '세은 월급 (만원)', type: 'number' },
-  { k: 'salary_chankyu', label: '찬규 월급 (만원)', type: 'number' },
-  { k: 'saving', label: '저축 여력 (백만원)', type: 'number' },
-  { k: 'live', label: '거주', type: 'text' },
-  { k: 'life', label: '생활', type: 'text' },
-  { k: 'memo', label: '메모', type: 'textarea' }
-];
-function openRoadSheet(year) {
-  const cur = ST.roadmap[year] || {};
-  draft.road = { year, base: { ...cur } };
-  const body = ROAD_FIELDS.map(f => {
-    const val = cur[f.k] == null ? '' : cur[f.k];
-    const id = 'rd_' + f.k;
-    const input = f.type === 'textarea'
-      ? '<textarea class="inp" id="' + id + '">' + esc(val) + '</textarea>'
-      : '<input class="inp" type="' + f.type + '" ' + (f.type === 'number' ? 'inputmode="numeric"' : '') + ' id="' + id + '" value="' + esc(val) + '">';
-    return '<label class="fld"><span>' + esc(f.label) + '</span>' + input + '</label>';
-  }).join('');
-  openSheet(year + '년 수정', body, '<button class="sh-save" id="rdSave">저장</button>');
-  $('#rdSave').addEventListener('click', async () => {
-    const next = { ...draft.road.base };
-    ROAD_FIELDS.forEach(f => {
-      const raw = ($('#rd_' + f.k) || {}).value;
-      const v = raw == null ? '' : String(raw).trim();
-      if (!v) { if (f.type !== 'number') next[f.k] = null; else next[f.k] = null; return; }
-      next[f.k] = f.type === 'number' ? (Number(v) || 0) : v;
-    });
-    next.updatedAt = Date.now();
-    ST.roadmap[year] = next;
-    OPEN_YEARS.add(year);
-    closeSheet(); render.sameTab = true; render();
-    try { await put('roadmap/' + year, next); toast(year + '년 내용을 저장했어요'); }
-    catch (err) { ST.roadmap[year] = draft.road.base; render.sameTab = true; render(); toast('저장하지 못했어요'); }
   });
 }
 
@@ -2021,7 +2091,7 @@ function openPlanChapterSheet(cid) {
    ============================================================ */
 const MEMO_KEY = 'bubudaisy.memos';
 const TAB_NAMES = {
-  vision: '비전', networth: '순자산', roadmap: '로드맵', goals: '목표',
+  vision: '비전', networth: '순자산', goals: '목표',
   bucket: '하고싶은일', trade: '갈아타기', plan: '플랜'
 };
 let MEMOS = loadMemos();
