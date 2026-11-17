@@ -1030,7 +1030,6 @@ function visionView() {
           (its.length ? '<div class="ms-grid">' + its.map((x, b) => '<button class="ms-box tap" data-act="v-ms-cell" data-i="' + i + '" data-b="' + b + '">' + esc(x) + '</button>').join('') + '</div>' : '') +
           '</div>';
       }).join('') + '</div>' : '<p class="empty">아직 연도 카드가 없어요</p>') +
-      '<button class="add-row" data-act="v-ms" data-i="new">＋ 연도 추가</button>' +
       '</section>';
   }
 
