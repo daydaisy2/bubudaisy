@@ -1065,7 +1065,7 @@ function flowWays() {
 }
 function flowSection() {
   const f = flowData();
-  const head = '<div class="card-h"><h2>🔄 갈아타기 전략</h2><div class="board-tools">' +
+  const head = '<div class="card-h"><h2>🔄 갈아타기</h2><div class="board-tools">' +
     (f ? penBtn('v-flow-meta', '갈아타기 단계 수정') : '') + '</div></div>';
   if (!f) {
     return '<section class="card">' + head +
@@ -1082,7 +1082,6 @@ function flowSection() {
         '<span class="fs-label">' + esc(s.label || '이름 없음') + '</span>' +
       '</button>').join('') + '</div>' : '';
   return '<section class="card">' + head + grid +
-    '<p class="flow-tip">카드를 탭하면 바로 고칠 수 있어요</p>' +
     '</section>';
 }
 
