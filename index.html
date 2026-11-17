@@ -1035,7 +1035,7 @@ function visionView() {
 
   const flow = v ? flowSection() : '';
   const foot = (v && v.footer) ? '<p class="foot-note">' + esc(v.footer) + '</p>' : '';
-  return hero + expertise + flow + ms + foot;
+  return hero + flow + expertise + ms + foot;
 }
 
 /* ---------- 🔄 갈아타기 전략 (비전 탭 · 편집 가능) ---------- */
