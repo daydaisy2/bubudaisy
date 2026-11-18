@@ -599,9 +599,10 @@
     white-space:nowrap;overflow:hidden;letter-spacing:-.02em}
   .nw3 .mini b{display:block;margin-top:3px;font-size:12.5px;font-weight:900;color:var(--navy);
     letter-spacing:-.045em;white-space:nowrap;overflow:hidden;line-height:1.25}
-  .nw3 .mini.chankyu b{color:#2A6E3C}
-  .nw3 .mini.cost b{color:#BE5A45}
-  .add-btn{width:100%;height:52px;border-radius:18px;background:var(--navy);color:#fff;
+  /* 세 칸 숫자색을 그래프 선·칩 색과 똑같이 — 세은 오렌지 / 찬규 청록 / 부부 총비용 슬레이트 */
+  .nw3 .mini.seeun b{color:#EA580C}
+  .nw3 .mini.chankyu b{color:#0D9488}
+  .nw3 .mini.cost b{color:#6B7280}  .add-btn{width:100%;height:52px;border-radius:18px;background:var(--navy);color:#fff;
     font-size:14.5px;font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;justify-content:center;gap:7px;
     box-shadow:0 12px 24px rgba(30,27,122,.26);transition:transform .12s}
   .add-btn:active{transform:scale(.985)}
@@ -624,21 +625,12 @@
   .nwchart .cml{font-size:10px;font-weight:800;fill:#8A8674;letter-spacing:-.02em}
   .nwchart rect.hit{fill:transparent;cursor:pointer}
   .nwchart circle.pt{transition:r .12s}
-  /* 요약 — 탭한 달의 부부·세은·찬규 금액을 세 줄로 (모바일에서 정확히 읽히게) */
-  .nwsel{background:var(--cream);border-radius:16px;padding:9px 11px 9px;margin-top:7px}
-  .nwsel-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding-bottom:5px;
-    border-bottom:1px solid #F0E8CE}
-  .nwsel-h b{font-size:11px;font-weight:900;color:#7C765C;letter-spacing:-.02em}
-  .nwsel-h em{font-style:normal;font-size:9.5px;font-weight:800;color:#A29C82;letter-spacing:-.03em;white-space:nowrap}
-  .nwsel ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
-  .nwsel li{display:grid;grid-template-columns:8px 28px 1fr;align-items:center;gap:7px}
-  .nwsel li i{width:8px;height:8px;border-radius:50%;background:var(--c)}
-  .nwsel li span{font-size:10.5px;font-weight:900;color:#7C765C;letter-spacing:-.02em}
-  .nwsel li b{font-size:12.5px;font-weight:900;color:var(--ink);text-align:right;
-    letter-spacing:-.03em;white-space:nowrap;line-height:1.25}
-  .nwsel li.net b{color:var(--navy)}
-  .nwsel li.se b{color:#B45309}
-  .nwsel li.ck b{color:#0F766E}
+  /* 점 옆 금액 — 흰 테두리(paint-order)로 선·영역 위에서도 또렷하게 읽힌다 */
+  .nwchart .vl{font-weight:900;letter-spacing:-.03em;paint-order:stroke;stroke:#FFFDF6;
+    stroke-width:2.6px;stroke-linejoin:round;pointer-events:none}
+  .nwchart .vl.net{font-size:9.6px;fill:#1E1B7A}
+  .nwchart .vl.se{font-size:8.2px;fill:#EA580C}
+  .nwchart .vl.ck{font-size:8.2px;fill:#0D9488}
   .crow{display:grid;grid-template-columns:54px 1fr 76px;align-items:center;gap:8px}
   .crow .cm{font-size:10.5px;font-weight:800;color:#7C765C;letter-spacing:-.02em}
   .crow .cbar{height:14px;background:var(--cream);border-radius:999px;overflow:hidden}
@@ -905,10 +897,18 @@ function fmtMan(v) {
   }
   return sign + a.toLocaleString('ko-KR') + '만원';
 }
-function fmtNum(v, unit) {
-  const n = num(v);
+function fmtNum(v, unit) {  const n = num(v);
   if (n === null) return '—';
   return Math.round(n).toLocaleString('ko-KR') + (unit || '');
+}
+/* 그래프 점 옆에 붙는 짧은 금액 — 9.5억 / 3.0억 (1억 미만은 8,500만) */
+function fmtAx(v) {
+  const n = num(v);
+  if (n === null) return '';
+  const sign = n < 0 ? '-' : '';
+  const a = Math.abs(n);
+  if (a >= 10000) return sign + (Math.round(a / 1000) / 10).toFixed(1) + '억';
+  return sign + Math.round(a).toLocaleString('ko-KR') + '만';
 }
 function monthLabel(m) {
   const mm = /^(\d{4})-(\d{2})$/.exec(String(m || ''));
@@ -1344,7 +1344,8 @@ function nwChartInner(all, latest) {
   const n = recent.length;
   const sel = recent.some(x => x.month === nwMonth) ? nwMonth : latest.month;
   const on = NW_SERIES.filter(s => nwOn[s.k]);
-  const VW = 320, VH = 150, PT = 14, PB = 22, PX = 14;
+  /* 위·아래에 금액 숫자가 들어갈 자리를 비워 둔다 — 좌우도 점이 가장자리에 붙지 않게 */
+  const VW = 320, VH = 172, PT = 26, PB = 28, PX = 26;
   const plotW = VW - PX * 2, plotH = VH - PT - PB, base = PT + plotH;
   const val = (d, k) => Number(d[k]) || 0;
   /* Y축: 지금 켜진 선들의 값 전체에서 최솟값~최댓값 (+ 위아래 여백) */
@@ -1378,6 +1379,24 @@ function nwChartInner(all, latest) {
       '" r="' + (isSel ? 5 : 3) + '" fill="' + (isSel ? '#FFFFFF' : s.c) + '" stroke="' + (isSel ? s.c : '#FFFFFF') +
       '" stroke-width="' + (isSel ? 2.4 : 1.6) + '"></circle>';
   }).join('')).join('');
+  /* 점 옆에 그 달의 금액을 바로 — 부부는 점 위에 크고 굵게, 세은·찬규는 점 아래에 작게.
+     같은 달에서 세은·찬규 점이 거의 같은 높이면 찬규 숫자를 한 줄 더 내려 서로 겹치지 않게 한다.
+     칩으로 선을 끄면 그 선의 숫자도 같이 사라진다. */
+  const vlabels = recent.map((d, i) => {
+    const x = Math.min(Math.max(xs[i], PX), VW - PX).toFixed(1);
+    let out = '';
+    if (nwOn.net) out += '<text class="vl net" x="' + x + '" y="' + (yAt(val(d, 'net')) - 10).toFixed(1) +
+      '" text-anchor="middle">' + esc(fmtAx(d.net)) + '</text>';
+    const ys = yAt(val(d, 'seeun')), yc = yAt(val(d, 'chankyu'));
+    if (nwOn.seeun) out += '<text class="vl se" x="' + x + '" y="' + (ys + 14).toFixed(1) +
+      '" text-anchor="middle">' + esc(fmtAx(d.seeun)) + '</text>';
+    if (nwOn.chankyu) {
+      const near = nwOn.seeun && Math.abs(yc - ys) < 11;
+      out += '<text class="vl ck" x="' + x + '" y="' + (yc + (near ? 25 : 14)).toFixed(1) +
+        '" text-anchor="middle">' + esc(fmtAx(d.chankyu)) + '</text>';
+    }
+    return out;
+  }).join('');
   /* 달마다 세로 띠 — 점을 정확히 누르지 않아도 그 달이 선택된다.
      띠는 이웃한 달과 겹치지 않게 나누고, 양 끝 달은 그래프 가장자리까지 맡는다. */
   const step = n > 1 ? plotW / (n - 1) : plotW;
@@ -1402,14 +1421,6 @@ function nwChartInner(all, latest) {
     '" aria-pressed="' + (nwOn[s.k] ? 'true' : 'false') + '" style="--c:' + s.c + '">' +
     '<i class="ndot"></i>' + s.nm + '</button>').join('');
 
-  const l = recent.find(x => x.month === sel) || latest;
-  const sel3 = '<div class="nwsel" id="nwChartSel">' +
-    '<div class="nwsel-h"><b>' + esc(monthLabel(l.month)) + '</b>' +
-      (l.expense ? '<em>부부 총비용 ' + esc(fmtMan(l.expense)) + '</em>' : '') + '</div>' +
-    '<ul>' + NW_SERIES.map(s =>
-      '<li class="' + s.cls + '" style="--c:' + s.c + '"><i></i><span>' + s.nm + '</span><b>' +
-      esc(fmtMan(l[s.k])) + '</b></li>').join('') + '</ul></div>';
-
   return '<div class="card-h"><h2>순자산 추이</h2><span class="pill">최근 ' + n + '개월</span></div>' +
     '<div class="nwchips" role="group" aria-label="그래프에 그릴 순자산">' + chips + '</div>' +
     '<div class="nwchart"><svg viewBox="0 0 ' + VW + ' ' + VH + '" role="img" aria-label="순자산 추이 그래프 — 부부·세은·찬규">' +
@@ -1421,8 +1432,8 @@ function nwChartInner(all, latest) {
       '<line class="axis" x1="' + PX + '" y1="' + base.toFixed(1) + '" x2="' + (VW - PX) + '" y2="' + base.toFixed(1) + '"></line>' +
       guide +
       (area ? '<path d="' + area + '" fill="url(#nwGrad)"></path>' : '') +
-      lines + dots + hits + mlabels +
-    '</svg></div>' + sel3;
+      lines + dots + hits + vlabels + mlabels +
+    '</svg></div>';
 }
 function goalList() {
   return entries(ST.goals).map(([id, v]) => ({ id, ...v }))
@@ -1850,7 +1861,7 @@ function netWorthView() {
         '</div>' +
       '</div>' +
       '<div class="nw3">' +
-        '<div class="mini"><span class="who">👩🏻 세은</span><b data-fit>' + esc(fmtMan(latest.seeun)) + '</b></div>' +
+        '<div class="mini seeun"><span class="who">👩🏻 세은</span><b data-fit>' + esc(fmtMan(latest.seeun)) + '</b></div>' +
         '<div class="mini chankyu"><span class="who">👨🏻 찬규</span><b data-fit>' + esc(fmtMan(latest.chankyu)) + '</b></div>' +
         '<div class="mini cost"><span class="who">부부 총비용</span><b data-fit>−' + esc(fmtMan(latest.expense)) + '</b></div>' +
       '</div>' +
