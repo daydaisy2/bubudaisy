@@ -484,6 +484,8 @@
   /* 제목이 비어 있을 때 — 예시 대신 옅은 「제목 입력」 자리표시(✏️ 버튼은 그대로) */
   .ck-tph{color:#C6C0A8;font-weight:900}
   .ck-tph.on-dark{color:#9C97E2;font-weight:900}
+  .ck-tph-h{cursor:pointer}
+  .ck-tph-h:active .ck-tph{color:#A9A288}
   .goals .gnum{border:0;padding:0;cursor:pointer}
   /* 현금흐름 칸 완료 색칠 — 세은 탭 현금흐름 칸과 같은 결(연두 + 초록 테두리) */
   .chips.cf .chip.done{background:#DFF2DD;color:#1E5A2C;box-shadow:inset 0 0 0 1.5px #72B676}
@@ -2071,8 +2073,12 @@ function ckHead(key, extra) {
   const s = ckSec(key), d = CK_SEC_DEF[key] || {};
   const em = String(s.emoji == null ? '' : s.emoji).trim();
   const ti = String(s.title == null ? '' : s.title).trim();
-  return '<div class="card-h"><h2>' + (em ? esc(em) + ' ' : '') +
-    (ti ? esc(ti) : '<span class="ck-tph">제목 입력</span>') + '</h2>' +
+  /* 제목이 비어 있으면 「제목 입력」 자리표시만 — 자리표시를 눌러도 제목 입력 시트가 열린다 */
+  const h2 = ti
+    ? '<h2>' + (em ? esc(em) + ' ' : '') + esc(ti) + '</h2>'
+    : '<h2 class="ck-tph-h" data-act="ck-' + key + '-meta" role="button" tabindex="0" aria-label="카드 제목 입력">' +
+        (em ? esc(em) + ' ' : '') + '<span class="ck-tph">제목 입력</span></h2>';
+  return '<div class="card-h">' + h2 +
     '<div class="board-tools">' + (extra || '') +
     '<button class="pen-btn" data-act="ck-' + key + '-meta" aria-label="' + esc(ti || d.name || '카드') + ' 제목·아이콘 수정">✏️</button></div></div>';
 }
@@ -2096,7 +2102,8 @@ function ckHeroCard() {
       '</button>';
   }).join('') || '<p class="hint-in" style="color:#C6C2F2">아직 목표 줄이 없어요</p>';
   return '<section class="hero goalcard">' +
-    '<div class="hero-top goal-top ck-hero-top"><span>' +
+    '<div class="hero-top goal-top ck-hero-top"><span' +
+      (String(s.title == null ? '' : s.title).trim() ? '' : ' data-act="ck-hero-meta" role="button" tabindex="0"') + '>' +
       (String(s.title == null ? '' : s.title).trim() ? esc(s.title) : '<span class="ck-tph on-dark">제목 입력</span>') + '</span>' +
       '<button class="pen-btn" data-act="ck-hero-meta" aria-label="목표 카드 제목 수정">✏️</button></div>' +
     '<div class="grows">' + rows +
