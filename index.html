@@ -612,7 +612,6 @@
   .nwchart{margin:6px 0 0}
   .nwchart svg{width:100%;height:auto;display:block;overflow:visible;touch-action:manipulation}
   .nwchart .axis{stroke:#EDE7D2;stroke-width:1;stroke-dasharray:3 4}
-  .nwchart .guide{stroke:#EDE6D2;stroke-width:1;stroke-dasharray:2 3}
   .nwchart .ln{filter:drop-shadow(0 2px 3px rgba(30,27,122,.10))}
   /* 세은·찬규 선은 연하게 — 부부 선이 한눈에 주인공으로 보이게 */
   .nwchart .ln.subln{filter:none;opacity:.5}
@@ -1303,7 +1302,8 @@ function pctOf(total) {
    세은(연한 오렌지)·찬규(연한 청록) 막대를 나란히 세우고, 그 위쪽 띠를 지나는 부부 진남색 선에
    흰 점을 얹고 월마다 부부 총액을 진남색 알약 배지로 선 위에 표시한다. 범례 줄은 두지 않는다
    (위 3칸과 색이 이미 통일돼 있다). 막대 띠와 선 띠를 위아래로 나눠 잡아 부부 총액이 0이거나
-   음수여도 선과 막대가 겹치지 않는다. 달 칸(막대+점)을 누르면 그 달 가이드선이 서고 아래가 바뀐다. */
+   음수여도 선과 막대가 겹치지 않는다. 달마다 모양이 똑같이 보이도록 세로 가이드(점선)는 두지 않고,
+   달 칸(막대+점)을 누르면 그 달 점과 달 이름만 살짝 진해진다. */
 const NW_MONTHS = 6;     /* 그래프에 그릴 최근 개월 수 */
 const NW_NAVY = '#1E1B7A';
 const NW_BAR = {         /* 막대 파스텔 색 · 숫자색 */
@@ -1459,14 +1459,10 @@ function nwChartInner(all, latest) {
     const on = d.month === sel;
     return '<text class="cml' + (on ? ' on' : '') + '" x="' + xs[i].toFixed(1) + '" y="' + LAB_Y + '" text-anchor="middle">' + txt + '</text>';
   }).join('');
-  const guide = sIdx >= 0
-    ? '<line class="guide" x1="' + xs[sIdx].toFixed(1) + '" y1="' + (LINE_TOP - 8) + '" x2="' + xs[sIdx].toFixed(1) + '" y2="' + BASE.toFixed(1) + '"></line>'
-    : '';
-
   return '<div class="card-h"><h2>순자산 추이</h2><span class="pill">최근 ' + n + '개월</span></div>' +
     '<div class="nwchart"><svg viewBox="0 0 ' + VW + ' ' + VH + '" role="img" aria-label="순자산 추이 그래프 — 세은·찬규 막대와 부부 꺾은선">' +
       '<line class="axis" x1="' + PX + '" y1="' + BASE.toFixed(1) + '" x2="' + (VW - PX) + '" y2="' + BASE.toFixed(1) + '"></line>' +
-      guide + bars + blabels + line + dots + badges + hits + mlabels +
+      bars + blabels + line + dots + badges + hits + mlabels +
     '</svg></div>';
 }
 
