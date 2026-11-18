@@ -2111,7 +2111,7 @@ function ckFlowCard() {
   const grid = n ? '<div class="' + cls + '">' + steps.map(st =>
     '<button type="button" class="flow-step' + (st.deep ? ' last' : '') + '" data-act="ck-flow-step" data-id="' + esc(st.id) + '" aria-label="단계 수정">' +
       '<span class="fs-badge">' + esc(st.badge || '단계') + '</span>' +
-      '<span class="fs-emoji">' + esc(st.emoji || '•') + '</span>' +
+      '<span class="fs-emoji">' + (String(st.emoji || '').trim() ? esc(st.emoji) : '<i class="ck-ph">＋</i>') + '</span>' +
       '<span class="fs-label">' + esc(st.label || '이름 없음') + '</span></button>').join('') + '</div>'
     : '<p class="empty">아직 단계가 없어요<br>아래 「＋ 단계 추가」로 첫 단계를 만들어 보세요</p>';
   return '<section class="card">' + ckHead('flow', n ? '<span class="pill">' + n + '개</span>' : '') +
