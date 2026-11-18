@@ -251,11 +251,36 @@
     color:var(--navy)}
   .ms-card.deep .ms-subbox:active{background:rgba(46,42,160,.24)}
   .ms-card.deep .ms-subbox .ph{color:rgba(46,42,160,.45)}
+  /* 얇은 칸 완료 ✓ — 위 목표 칸 `.ms-box.done` 과 같은 결(연두 바탕 + 초록 테두리 + 진초록 글씨).
+     높이가 20px 뿐이라 모서리 체크 배지는 달지 않고, 글자 앞에 아주 작은 ✓ 만 붙여 글씨를 가리지 않는다 */
+  .ms-subbox.done{background:#DFF2DD;box-shadow:inset 0 0 0 1.5px #72B676;color:#1E5A2C}
+  .ms-subbox.done:active{background:#D3EBD0}
+  .ms-subbox.done .st{color:#1E5A2C}
+  .ms-subbox .sk{flex:0 0 auto;font-size:8.5px;font-weight:900;line-height:1;margin-right:2px;
+    color:#2A6E3C;letter-spacing:0}
+  .ms-subbox .sk.only{font-size:11px;margin-right:0}
+  /* 초록 카드는 바탕이 이미 연두라 한 단계 더 진하게 칠해야 완료가 눈에 띈다 */
+  .ms-card.green .ms-subbox.done{background:#C9E8C3;box-shadow:inset 0 0 0 1.5px #72B676;color:#1B4F27}
+  .ms-card.green .ms-subbox.done:active{background:#BDE0B6}
+  .ms-card.green .ms-subbox.done .st{color:#1B4F27}
+  .ms-card.green .ms-subbox.done .sk{color:#1B4F27}
+  /* 진남색 카드(2035년) — 노란 바탕 + 노란 테두리 + 진남색 글씨 */
+  .ms-card.deep .ms-subbox.done{background:#FBE049;box-shadow:inset 0 0 0 1.5px #E0BC12;color:var(--navy)}
+  .ms-card.deep .ms-subbox.done:active{background:#F6D92F}
+  .ms-card.deep .ms-subbox.done .st{color:var(--navy)}
+  .ms-card.deep .ms-subbox.done .sk{color:var(--navy)}
   /* 시트 `이렇게 보여요` 미리보기 — 얇은 칸은 여기서는 따로 3열 그리드로 보여 준다 */
   .ms-subprev{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:5px}
   .ms-subprev .ms-subbox{grid-row:auto;min-height:18px;padding:2px 4px;font-size:9.5px}
   .ms-subprev.deep .ms-subbox{background:rgba(46,42,160,.18);box-shadow:inset 0 0 0 1px rgba(46,42,160,.28);color:var(--navy)}
   .ms-subprev.green .ms-subbox{background:#F4FAF2;box-shadow:inset 0 0 0 1px #DCEBD8;color:#265C33}
+  /* 시트 미리보기에서도 완료 색칠이 그대로 보이게 */
+  .ms-subprev .ms-subbox.done{background:#DFF2DD;box-shadow:inset 0 0 0 1.5px #72B676;color:#1E5A2C}
+  .ms-subprev .ms-subbox.done .st{color:#1E5A2C}
+  .ms-subprev.green .ms-subbox.done{background:#C9E8C3;box-shadow:inset 0 0 0 1.5px #72B676;color:#1B4F27}
+  .ms-subprev.green .ms-subbox.done .st{color:#1B4F27}
+  .ms-subprev.deep .ms-subbox.done{background:#FBE049;box-shadow:inset 0 0 0 1.5px #E0BC12;color:var(--navy)}
+  .ms-subprev.deep .ms-subbox.done .st{color:var(--navy)}
   .ms-prev.deep{background:var(--cream)}
   .ms-prev.deep .ms-box{background:linear-gradient(160deg,#2E2AA0,#1E1B7A 72%);color:var(--yellow);
     box-shadow:0 2px 7px rgba(30,27,122,.2)}
@@ -264,6 +289,25 @@
   .ms-in3 label{display:flex;flex-direction:column;gap:3px;min-width:0}
   .ms-in3 i{font-style:normal;font-size:10px;font-weight:900;color:#9A947C;letter-spacing:-.01em;padding-left:3px}
   .ms-in3 .inp{padding:11px 8px;font-size:12.5px;font-weight:800;text-align:center}
+  /* 하위 메모 입력란 위 줄 — 번호(`1`) 옆에 작은 ✓ 완료 토글을 같이 둔다 */
+  .ms-in3 .ms-inh{display:flex;align-items:center;justify-content:space-between;gap:4px;
+    padding:0 0 0 3px;min-height:20px}
+  .ms-in3 .ms-inh i{padding-left:0}
+  .mtog{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:#EFEDE3;color:#B7B096;
+    font-size:10px;font-weight:900;line-height:1;display:grid;place-items:center;
+    transition:background .15s,color .15s}
+  .mtog.on{background:#2A6E3C;color:#fff}
+  /* 하위 메모 시트의 큰 완료 토글 — 한 번 누르면 바로 칠해지고 바로 저장된다 */
+  .sh-done{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;height:46px;
+    border-radius:15px;background:var(--cream);box-shadow:inset 0 0 0 1.5px var(--cream-line);
+    font-size:13.5px;font-weight:900;color:#8F8A73;letter-spacing:-.02em;
+    transition:background .15s,color .15s,box-shadow .15s}
+  .sh-done:active{background:#F6EFD6}
+  .sh-done.on{background:#DFF2DD;box-shadow:inset 0 0 0 1.5px #72B676;color:#1E5A2C}
+  .sh-done.on:active{background:#D3EBD0}
+  .sh-done.deep{color:#4A46A8}
+  .sh-done.deep.on{background:#FBE049;box-shadow:inset 0 0 0 1.5px #E0BC12;color:var(--navy)}
+  .sh-done.deep.on:active{background:#F6D92F}
   .ms-prev{background:var(--cream);border-radius:14px;padding:8px}
   .ms-prev .ms-box{min-height:44px;font-size:10.5px}
   .foot-note{margin:2px 4px 6px;font-size:10.5px;font-weight:700;color:#7E7448;text-align:center;letter-spacing:-.02em}
@@ -1323,6 +1367,8 @@ function visionView() {
         const done = Array.isArray(m.done) ? m.done : [];
         /* 하위 메모 3칸 — 목표 칸 바로 아래 얇은 칸. 비어 있어도 자리를 지켜 3칸이 늘 보인다 */
         const subs = msSubArr(m);
+        /* 하위 칸 완료 ✓ — 위 목표 칸의 done 과 별개 배열(헤더의 `1/3` 진행률에는 넣지 않는다) */
+        const sdone = msSubDoneArr(m);
         /* 접힘 상태 키 — 연도를 쓰고, 연도가 비었을 때만 자리(i)를 쓴다 */
         const fk = msFoldKey(m, i);
         const fold = !!MS_FOLD[fk];
@@ -1337,8 +1383,9 @@ function visionView() {
           '</span></div>' +
           '<div class="ms-grid">' + its.map((x, b) => '<button class="ms-box tap' + (done[b] ? ' done' : '') + '" data-act="v-ms-toggle" data-i="' + i + '" data-b="' + b + '" aria-pressed="' + (done[b] ? 'true' : 'false') + '">' + (done[b] ? '<span class="ck">✓</span>' : '') + esc(x) + '</button>').join('') +
           '<div class="ms-subgrid">' + subs.map((t, b) =>
-            '<button class="ms-subbox tap" data-act="v-ms-sub" data-i="' + i + '" data-b="' + b + '" aria-label="' + esc(m.year || '') + ' ' + (b + 1) + '번 칸 하위 메모">' +
-            (t ? '<span class="st">' + esc(t) + '</span>' : '<span class="ph">＋</span>') + '</button>').join('') + '</div>' +
+            '<button class="ms-subbox tap' + (sdone[b] ? ' done' : '') + '" data-act="v-ms-sub" data-i="' + i + '" data-b="' + b + '" aria-pressed="' + (sdone[b] ? 'true' : 'false') + '" aria-label="' + esc(m.year || '') + ' ' + (b + 1) + '번 칸 하위 메모' + (sdone[b] ? ' · 완료' : '') + '">' +
+            (sdone[b] ? '<span class="sk' + (t ? '' : ' only') + '" aria-hidden="true">✓</span>' : '') +
+            (t ? '<span class="st">' + esc(t) + '</span>' : (sdone[b] ? '' : '<span class="ph">＋</span>')) + '</button>').join('') + '</div>' +
           '</div>' +
           '</div>';
       }).join('') + '</div>' : '<p class="empty">아직 연도 카드가 없어요</p>') +
@@ -2466,6 +2513,34 @@ function msSubArr(m) {
   const raw = (m && Array.isArray(m.subItems)) ? m.subItems : [];
   return [0, 1, 2].map(b => String(raw[b] == null ? '' : raw[b]));
 }
+/* 하위 얇은 칸 완료 ✓ — `vision/milestones/{i}/subDone` 의 3칸 불리언 배열.
+   위 목표 칸의 `done` 과는 완전히 따로 둔다(헤더 `1/3` 진행률은 목표 3칸만 센다) */
+function msSubDoneArr(m) {
+  const raw = (m && Array.isArray(m.subDone)) ? m.subDone : [];
+  return [0, 1, 2].map(b => !!raw[b]);
+}
+/* 하위 칸 완료 하나만 저장 — 잎 경로 `subDone/{b}` 만 PUT */
+async function setMsSubDone(i, b, val) {
+  const arr = vArr(ST.vision, 'milestones');
+  const idx = Number(i), k = Math.max(0, Math.min(2, Number(b) || 0));
+  const m = arr[idx];
+  if (!m) return null;
+  const before = msSubDoneArr(m);
+  const next = before.slice();
+  next[k] = !!val;
+  m.subDone = next;
+  render.sameTab = true; render();
+  try {
+    await put('vision/milestones/' + idx + '/subDone/' + k, next[k]);
+    toast(next[k] ? '하위 칸을 완료로 칠했어요 ✓' : '하위 칸 완료를 풀었어요');
+    return next[k];
+  } catch (e) {
+    m.subDone = before;
+    render.sameTab = true; render();
+    toast('저장하지 못했어요');
+    return null;
+  }
+}
 /* 얇은 칸 하나만 저장 — 카드 전체를 덮어쓰지 않고 잎 경로 `subItems/{b}` 만 PUT 해서
    같은 카드의 목표 3칸·성공 ✓·다른 하위 칸은 그대로 둔다 */
 async function saveMsSub(i, b, text) {
@@ -2492,13 +2567,28 @@ function openMsSubSheet(i, b) {
   if (!m) return;
   const cur = msSubArr(m)[k];
   const goal = (Array.isArray(m.items) ? m.items : [])[k] || '';
-  const body =
+  const isDone = msSubDoneArr(m)[k];
+  const tone = msTone(m.tone);
+  const doneBtn = '<button class="sh-done' + (isDone ? ' on' : '') + (tone === 'deep' ? ' deep' : '') + '" id="msSubDone" aria-pressed="' + (isDone ? 'true' : 'false') + '">' +
+    (isDone ? '✓ 완료됨' : '✓ 완료로 표시') + '</button>';
+  const body = doneBtn +
     '<label class="fld"><span>하위 메모</span><input class="inp" id="msSubInp" maxlength="60" value="' + esc(cur) + '" placeholder="예: 서류 준비"></label>' +
     '<p class="hint-in">' + (goal ? '위 칸 「' + esc(goal) + '」 바로 아래 얇은 칸에 한 줄로 보여요. ' : '') +
       '짧게 한 줄로 적어 주세요. 비우고 저장하면 칸이 다시 빈다.</p>';
   const acts = '<button class="sh-save" id="msSubSave">저장</button>' +
     (cur ? '<button class="sh-del" id="msSubClear">비우기</button>' : '');
   openSheet((m.year || '') + ' · 하위 메모 ' + (k + 1), body, acts);
+  $('#msSubDone').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    if (btn.disabled) return;
+    btn.disabled = true;
+    const on = await setMsSubDone(idx, k, !btn.classList.contains('on'));
+    btn.disabled = false;
+    if (on === null) return;
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? '✓ 완료됨' : '✓ 완료로 표시';
+  });
   $('#msSubSave').addEventListener('click', () =>
     saveMsSub(idx, k, ($('#msSubInp').value || '').trim()));
   if (cur) $('#msSubClear').addEventListener('click', (e) => {
@@ -2515,10 +2605,12 @@ function openVisionMsSheet(i, box) {
   const cur = isNew ? { year: '', badge: '', tone: 'navy', items: [] } : arr[idx];
   const items = Array.isArray(cur.items) ? cur.items : [];
   const subs0 = msSubArr(cur);
+  const sdone = msSubDoneArr(cur);
   let tone = msTone(cur.tone);
   const boxIn = (n, ph) => '<label><i>' + n + (n === 3 ? ' (선택)' : '') + '</i>' +
     '<input class="inp" id="vmB' + n + '" value="' + esc(items[n - 1] || '') + '" placeholder="' + ph + '"></label>';
-  const subIn = (n) => '<label><i>' + n + '</i>' +
+  const subIn = (n) => '<label><span class="ms-inh"><i>' + n + '</i>' +
+    '<button class="mtog' + (sdone[n - 1] ? ' on' : '') + '" data-sd="' + (n - 1) + '" aria-pressed="' + (sdone[n - 1] ? 'true' : 'false') + '" aria-label="' + n + '번 하위 칸 완료 토글">✓</button></span>' +
     '<input class="inp" id="vmS' + n + '" maxlength="60" value="' + esc(subs0[n - 1] || '') + '" placeholder="하위 메모"></label>';
   const body =
     '<div class="fld"><span>연도 · 배지</span><div class="ym-row">' +
@@ -2533,11 +2625,11 @@ function openVisionMsSheet(i, box) {
     '<div class="fld"><span>TOP3 목표 3칸</span><div class="ms-in3">' +
       boxIn(1, '올선 등기') + boxIn(2, '결혼식') + boxIn(3, '경제적 자유') +
     '</div></div>' +
-    '<div class="fld"><span>하위 메모 3칸 (선택)</span><div class="ms-in3">' +
+    '<div class="fld"><span>하위 메모 3칸 (선택)</span><div class="ms-in3" id="vmSubs">' +
       subIn(1) + subIn(2) + subIn(3) +
     '</div></div>' +
     '<div class="fld"><span>이렇게 보여요</span><div class="ms-prev" id="vmPrevBox"><div class="ms-grid" id="vmPrev"></div><div class="ms-subprev" id="vmPrevSub"></div></div></div>' +
-    '<p class="hint-in">짧은 키워드로 한 칸에 하나씩 넣어 주세요. 비워 둔 칸은 화면에서 빠져요. (최대 3개) 하위 메모는 목표 칸 바로 아래 얇은 칸에 한 줄로 보여요.</p>';
+    '<p class="hint-in">짧은 키워드로 한 칸에 하나씩 넣어 주세요. 비워 둔 칸은 화면에서 빠져요. (최대 3개) 하위 메모는 목표 칸 바로 아래 얇은 칸에 한 줄로 보여요. 하위 칸의 작은 ✓ 를 누르면 그 칸이 완료 색으로 칠해져요.</p>';
   const acts = '<button class="sh-save" id="vmSave">' + (isNew ? '추가' : '저장') + '</button>' +
     (isNew ? '' : '<button class="sh-del" id="vmDel">삭제</button>');
   openSheet(isNew ? '연도 카드 추가' : (cur.year || '') + ' 목표 수정', body, acts);
@@ -2557,12 +2649,21 @@ function openVisionMsSheet(i, box) {
     const sub = $('#vmPrevSub');
     if (sub) {
       sub.className = 'ms-subprev' + (tone === 'green' ? ' green' : (tone === 'deep' ? ' deep' : ''));
-      sub.innerHTML = readSubs().map(t => '<div class="ms-subbox">' +
-        (t ? '<span class="st">' + esc(t) + '</span>' : '<span class="ph">＋</span>') + '</div>').join('');
+      sub.innerHTML = readSubs().map((t, b) => '<div class="ms-subbox' + (sdone[b] ? ' done' : '') + '">' +
+        (t ? '<span class="st">' + esc(t) + '</span>' : (sdone[b] ? '<span class="sk only">✓</span>' : '<span class="ph">＋</span>')) + '</div>').join('');
     }
   };
   upd();
   ['#vmB1', '#vmB2', '#vmB3', '#vmS1', '#vmS2', '#vmS3'].forEach(sel => $(sel).addEventListener('input', upd));
+  /* 하위 칸 작은 ✓ — 저장을 누를 때 카드와 함께 `subDone` 으로 같이 저장된다 */
+  $('#vmSubs').addEventListener('click', (e) => {
+    const b = e.target.closest('.mtog'); if (!b) return;
+    const k = Number(b.dataset.sd);
+    sdone[k] = !sdone[k];
+    b.classList.toggle('on', sdone[k]);
+    b.setAttribute('aria-pressed', sdone[k] ? 'true' : 'false');
+    upd();
+  });
   $('#vmTone').addEventListener('click', (e) => {
     const b = e.target.closest('[data-t]'); if (!b) return;
     tone = b.dataset.t;
@@ -2574,7 +2675,7 @@ function openVisionMsSheet(i, box) {
     if (!year) { toast('연도를 적어 주세요'); return; }
     const badge = $('#vmBadge').value.trim();
     const its = readBoxes();
-    const rec = { ...(isNew ? {} : arr[idx]), year: year, badge: badge || null, tone: tone, items: its, subItems: readSubs() };
+    const rec = { ...(isNew ? {} : arr[idx]), year: year, badge: badge || null, tone: tone, items: its, subItems: readSubs(), subDone: sdone.slice() };
     await saveMsCard(isNew ? -1 : idx, rec);
   });
   if (!isNew) $('#vmDel').addEventListener('click', async (e) => {
