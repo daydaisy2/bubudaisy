@@ -120,7 +120,7 @@
     padding:2px 16px 20px;display:flex;flex-direction:column;gap:13px;scrollbar-width:none}
   #view > *{flex:0 0 auto}
   #view::-webkit-scrollbar{display:none}
-  .tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  .tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
     padding:8px 12px calc(8px + env(safe-area-inset-bottom));
     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);
     border-radius:24px 24px 0 0;box-shadow:0 -6px 20px rgba(112,86,0,.12)}
@@ -470,8 +470,8 @@
     .fs-emoji{font-size:18px}
   }
 
-  /* ================= 하단 탭 3개 (비전 · 전략 · 순자산) ================= */
-  .tabs{grid-template-columns:repeat(3,1fr);gap:8px;overflow:visible}
+  /* ================= 하단 탭 4개 (비전 · 전략 · 찬규 · 순자산) ================= */
+  .tabs{grid-template-columns:repeat(4,1fr);gap:8px;overflow:visible}
 
   /* ================= 하고 싶은 일 ================= */
   .bks{display:flex;flex-direction:column;gap:6px}
@@ -777,6 +777,7 @@
   <nav class="tabs" id="tabs">
     <button class="tab on" data-tab="vision"><span class="ic">🌼</span>비전</button>
     <button class="tab" data-tab="strategy"><span class="ic">🍯</span>전략</button>
+    <button class="tab" data-tab="chankyu"><span class="ic">👨🏻</span>찬규</button>
     <button class="tab" data-tab="networth"><span class="ic">💰</span>순자산</button>
   </nav>
 </div>
@@ -804,7 +805,7 @@ const VERIFY_HEX = 'c94584ef0ca10084ad0655e469418be1f0dad47b16e4762adc1d36b35c51
 const AUTH_KEY = 'bubudaisy.auth';
 const ROOM_KEY_RE = /^bubudaisy-[a-z0-9]{12,32}$/;
 
-const TABS = ['vision', 'strategy', 'networth'];
+const TABS = ['vision', 'strategy', 'chankyu', 'networth'];
 
 /* ---------- 🗓️ 연도 카드 접기/펼치기 (이 기기에만 저장) ----------
    연도 카드 헤더(✏️ 제외)를 누르면 그 연도의 3칸이 접힌다. 기본값은 펼침이고,
@@ -1356,9 +1357,10 @@ function render() {
     view.innerHTML = '<div class="skeleton">불러오는 중…</div>';
     return;
   }
-  view.classList.toggle('fix-half', ST.tab === 'strategy');
+  view.classList.toggle('fix-half', ST.tab === 'strategy' || ST.tab === 'chankyu');
   if (ST.tab === 'networth') { view.innerHTML = netWorthView(); fitAmounts(view); }
   else if (ST.tab === 'strategy') { view.innerHTML = strategyView(); }
+  else if (ST.tab === 'chankyu') { view.innerHTML = chankyuView(); }
   else { view.innerHTML = visionView(); fitGoalBadges(view); }
   if (render.sameTab) view.scrollTop = keep;
   render.sameTab = true;
@@ -1788,8 +1790,13 @@ function goalsView() {
    방에 저장된 emoji 값과 상관없이 화면은 항상 이 아이콘으로 그린다(데이터는 건드리지 않는다). */
 const SM_LISTS = [
   { key: 'strategy', title: '🍯 전략', label: '전략', emoji: '🍯', empty: '아직 전략이 없어요', ph: '예: 이주비 대출로 갈아탄다' },
-  { key: 'mind', title: '💛 마인드', label: '마인드', emoji: '💛', empty: '아직 마인드가 없어요', ph: '예: 매일 아침 목표를 소리 내어 읽는다' }
+  { key: 'mind', title: '💛 마인드', label: '마인드', emoji: '💛', empty: '아직 마인드가 없어요', ph: '예: 매일 아침 목표를 소리 내어 읽는다' },
+  /* 👨🏻 찬규 탭 — 전략 탭과 같은 줄·시트·스와이프·끌기를 그대로 쓰고, 같은 strategyMind 노드의 다른 키에 저장한다 */
+  { key: 'ck_affirm', title: '🔮 확언', label: '확언', emoji: '🔮', empty: '아직 확언이 없어요', ph: '예: 나는 매달 현금흐름 1,000만원을 만든다' },
+  { key: 'ck_action', title: '🎯 실행', label: '실행', emoji: '🎯', empty: '아직 실행이 없어요', ph: '예: 이번 주 안에 임장 3곳 다녀오기' }
 ];
+const SM_STRATEGY_KEYS = ['strategy', 'mind'];
+const SM_CHANKYU_KEYS = ['ck_affirm', 'ck_action'];
 /* 처음 한 번만 깔아 두는 전략 예시 — 기존 tradeUpStrategies에 있던 2건. 바로 고치고 지울 수 있다. */
 const SM_SEED = [
   { id: 's1', emoji: '🏦', text: '집주인근저당 + 이자 더 주고 이주할 때 이주비 대출로 갈아탄다' },
@@ -1858,7 +1865,8 @@ function smCard(l) {
       '<span class="plus" aria-hidden="true">+</span> ' + l.label + ' 추가</button>' +
     '</section>';
 }
-function strategyView() { return SM_LISTS.map(smCard).join(''); }
+function strategyView() { return SM_LISTS.filter(l => SM_STRATEGY_KEYS.includes(l.key)).map(smCard).join(''); }
+function chankyuView() { return SM_LISTS.filter(l => SM_CHANKYU_KEYS.includes(l.key)).map(smCard).join(''); }
 
 /* ---------- 전략 줄 제스처: 한 번 탭 / 왼쪽 스와이프 / 길게 눌러 끌기 ----------
    손가락은 touch 로 직접 받아야 안드로이드 크롬이 스크롤·뒤로가기 제스처로 가져가지 않는다. */
@@ -3253,7 +3261,7 @@ function openPlanChapterSheet(cid) {
    ============================================================ */
 const MEMO_KEY = 'bubudaisy.memos';
 const TAB_NAMES = {
-  vision: '비전', strategy: '전략', networth: '순자산'
+  vision: '비전', strategy: '전략', chankyu: '찬규', networth: '순자산'
 };
 let MEMOS = loadMemos();
 function loadMemos() {
