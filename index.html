@@ -470,8 +470,23 @@
     .fs-emoji{font-size:18px}
   }
 
-  /* ================= 하단 탭 4개 (비전 · 전략 · 찬규 · 순자산) ================= */
+  /* ================= 하단 탭 4개 (세은 · 찬규 · 전략 · 순자산) ================= */
   .tabs{grid-template-columns:repeat(4,1fr);gap:8px;overflow:visible}
+
+  /* ================= 👨🏻 찬규 탭 보드 (세은 탭과 같은 6섹션 · 제목부터 전부 편집) ================= */
+  /* 목표 카드 제목 — 가운데 정렬을 지키면서 오른쪽에 ✏️ 만 띄운다 */
+  .ck-hero-top{position:relative;justify-content:center}
+  .ck-hero-top .pen-btn{position:absolute;right:-2px;top:50%;transform:translateY(-50%);margin:0}
+  /* 등기 3칸 카드 — 단계가 1개뿐일 때 */
+  .flow4.c1{grid-template-columns:1fr}
+  .grow.ck-empty .gv{color:#C9C2A6}
+  .ck-ph{color:#B4AE97;font-weight:800}
+  .goals .gnum{border:0;padding:0;cursor:pointer}
+  /* 현금흐름 칸 완료 색칠 — 세은 탭 현금흐름 칸과 같은 결(연두 + 초록 테두리) */
+  .chips.cf .chip.done{background:#DFF2DD;color:#1E5A2C;box-shadow:inset 0 0 0 1.5px #72B676}
+  .chips.cf .chip.done:active{background:#D3EBD0}
+  .chips.cf .chip .cf-ck{position:absolute;top:2px;left:5px;font-size:9px;font-weight:900;line-height:1;color:#2A6E3C}
+  .chips.cf .chip.done .cf-l{color:#1E5A2C}
 
   /* ================= 하고 싶은 일 ================= */
   .bks{display:flex;flex-direction:column;gap:6px}
@@ -775,9 +790,9 @@
   </div>
   <main id="view"></main>
   <nav class="tabs" id="tabs">
-    <button class="tab on" data-tab="vision"><span class="ic">🌼</span>비전</button>
-    <button class="tab" data-tab="strategy"><span class="ic">🍯</span>전략</button>
+    <button class="tab on" data-tab="vision"><span class="ic">🌼</span>세은</button>
     <button class="tab" data-tab="chankyu"><span class="ic">👨🏻</span>찬규</button>
+    <button class="tab" data-tab="strategy"><span class="ic">🍯</span>전략</button>
     <button class="tab" data-tab="networth"><span class="ic">💰</span>순자산</button>
   </nav>
 </div>
@@ -805,7 +820,8 @@ const VERIFY_HEX = 'c94584ef0ca10084ad0655e469418be1f0dad47b16e4762adc1d36b35c51
 const AUTH_KEY = 'bubudaisy.auth';
 const ROOM_KEY_RE = /^bubudaisy-[a-z0-9]{12,32}$/;
 
-const TABS = ['vision', 'strategy', 'chankyu', 'networth'];
+/* 하단 탭 순서 — 세은 → 찬규 → 전략 → 순자산 (2026-11-19 세은 님 지시) */
+const TABS = ['vision', 'chankyu', 'strategy', 'networth'];
 
 /* ---------- 🗓️ 연도 카드 접기/펼치기 (이 기기에만 저장) ----------
    연도 카드 헤더(✏️ 제외)를 누르면 그 연도의 3칸이 접힌다. 기본값은 펼침이고,
@@ -897,6 +913,8 @@ function hex(buf) {
 const ST = {
   vision: null, netWorth: {}, roadmap: {}, goals: {}, affirmations: {},
   bucket: {}, tradeUp: {}, plan: {}, sm: {}, cashflow: {}, lastSeen: {},
+  /* 👨🏻 찬규 탭 보드 — rooms/{room}/chankyuVision (세은 님 vision 노드와 분리) */
+  ck: null,
   tab: 'vision', loaded: false
 };
 /* 이 기기를 쓰는 사람(seeun / chankyu) — 같은 방·비밀번호를 둘이 쓰므로 기기마다 한 번 고른다 */
@@ -980,7 +998,7 @@ function lockNow(reload) {
   stopPolling();
   ST.loaded = false; ST.vision = null; ST.netWorth = {}; ST.roadmap = {};
   ST.goals = {}; ST.affirmations = {}; ST.bucket = {}; ST.tradeUp = {}; ST.plan = {};
-  ST.sm = {}; ST.cashflow = {}; ST.lastSeen = {};
+  ST.sm = {}; ST.cashflow = {}; ST.lastSeen = {}; ST.ck = null;
   stopSeen(); paintSeen();
   pin.buf = ''; paintPins();
   const msg = $('#pinMsg'); msg.className = 'pin-msg'; msg.textContent = '';
@@ -1108,6 +1126,15 @@ function absorb(d) {
   ST.plan = (d.masterPlan && typeof d.masterPlan === 'object') ? d.masterPlan : {};
   const smNode = (d.strategyMind && typeof d.strategyMind === 'object') ? d.strategyMind : null;
   ST.sm = smNode || {};
+  /* 👨🏻 찬규 탭 보드 — 없거나 아직 한 번도 시드하지 않은 빈 노드면 기본 틀을 깐다.
+     이미 내용이 있으면 절대 덮어쓰지 않는다. */
+  const ckNode = (d.chankyuVision && typeof d.chankyuVision === 'object') ? d.chankyuVision : null;
+  ST.ck = ckNode;
+  if (!ckNode || (!(ckNode.meta && ckNode.meta.seededAt) && !ckHasContent(ckNode))) {
+    if (!ckSeeded) seedChankyuVision();
+  } else {
+    ckSeeded = true;
+  }
   ST.cashflow = (d.cashflowBoxes && typeof d.cashflowBoxes === 'object') ? d.cashflowBoxes : {};
   /* 마지막 접속: 서버 값이 내가 방금 남긴 값보다 오래됐으면 내 값을 유지(깜빡임 방지) */
   const myPrev = ME ? seenAt((ST.lastSeen || {})[ME]) : 0;
@@ -1172,15 +1199,22 @@ function connect() {
 const NODE_TO_ST = {
   netWorth: 'netWorth', roadmap: 'roadmap', goals: 'goals', affirmations: 'affirmations',
   bucket: 'bucket', tradeUpStrategies: 'tradeUp', masterPlan: 'plan',
-  strategyMind: 'sm', cashflowBoxes: 'cashflow', lastSeen: 'lastSeen'
+  strategyMind: 'sm', cashflowBoxes: 'cashflow', lastSeen: 'lastSeen',
+  chankyuVision: 'ck'
 };
 function applyNode(name, data) {
   if (name === 'vision') {
     absorb({
       vision: data, netWorth: ST.netWorth, roadmap: ST.roadmap, goals: ST.goals,
       affirmations: ST.affirmations, bucket: ST.bucket, tradeUpStrategies: ST.tradeUp,
-      masterPlan: ST.plan, strategyMind: ST.sm, cashflowBoxes: ST.cashflow, lastSeen: ST.lastSeen
+      masterPlan: ST.plan, strategyMind: ST.sm, cashflowBoxes: ST.cashflow, lastSeen: ST.lastSeen,
+      chankyuVision: ST.ck
     });
+    return;
+  }
+  if (name === 'chankyuVision') {
+    ST.ck = (data && typeof data === 'object') ? data : null;
+    if (!ST.ck) seedChankyuVision();   /* 노드가 통째로 비었을 때만 기본 틀을 다시 깐다 */
     return;
   }
   const k = NODE_TO_ST[name];
@@ -1357,10 +1391,11 @@ function render() {
     view.innerHTML = '<div class="skeleton">불러오는 중…</div>';
     return;
   }
-  view.classList.toggle('fix-half', ST.tab === 'strategy' || ST.tab === 'chankyu');
+  /* 전략 탭만 위·아래 반반 고정 — 세은·찬규 보드는 한 화면 전체 스크롤 */
+  view.classList.toggle('fix-half', ST.tab === 'strategy');
   if (ST.tab === 'networth') { view.innerHTML = netWorthView(); fitAmounts(view); }
   else if (ST.tab === 'strategy') { view.innerHTML = strategyView(); }
-  else if (ST.tab === 'chankyu') { view.innerHTML = chankyuView(); }
+  else if (ST.tab === 'chankyu') { view.innerHTML = chankyuView(); fitGoalBadges(view); }
   else { view.innerHTML = visionView(); fitGoalBadges(view); }
   if (render.sameTab) view.scrollTop = keep;
   render.sameTab = true;
@@ -1388,7 +1423,7 @@ function refitSoon() {
   if (fitTimer) clearTimeout(fitTimer);
   fitTimer = setTimeout(() => {
     if (ST.tab === 'networth') fitAmounts($('#view'));
-    else if (ST.tab === 'vision') fitGoalBadges($('#view'));
+    else if (ST.tab === 'vision' || ST.tab === 'chankyu') fitGoalBadges($('#view'));
   }, 120);
 }
 window.addEventListener('resize', refitSoon);
@@ -1791,7 +1826,8 @@ function goalsView() {
 const SM_LISTS = [
   { key: 'strategy', title: '🍯 전략', label: '전략', emoji: '🍯', empty: '아직 전략이 없어요', ph: '예: 이주비 대출로 갈아탄다' },
   { key: 'mind', title: '💛 마인드', label: '마인드', emoji: '💛', empty: '아직 마인드가 없어요', ph: '예: 매일 아침 목표를 소리 내어 읽는다' },
-  /* 👨🏻 찬규 탭 — 전략 탭과 같은 줄·시트·스와이프·끌기를 그대로 쓰고, 같은 strategyMind 노드의 다른 키에 저장한다 */
+  /* 👨🏻 찬규 탭 — 전략 탭의 🔮 확언 / 🎯 실행 목록은 화면에서 사라졌고(2026-11-19),
+     그 데이터(strategyMind/ck_affirm·ck_action)는 지우지 않고 그대로 둔다 */
   { key: 'ck_affirm', title: '🔮 확언', label: '확언', emoji: '🔮', empty: '아직 확언이 없어요', ph: '예: 나는 매달 현금흐름 1,000만원을 만든다' },
   { key: 'ck_action', title: '🎯 실행', label: '실행', emoji: '🎯', empty: '아직 실행이 없어요', ph: '예: 이번 주 안에 임장 3곳 다녀오기' }
 ];
@@ -1866,7 +1902,710 @@ function smCard(l) {
     '</section>';
 }
 function strategyView() { return SM_LISTS.filter(l => SM_STRATEGY_KEYS.includes(l.key)).map(smCard).join(''); }
-function chankyuView() { return SM_LISTS.filter(l => SM_CHANKYU_KEYS.includes(l.key)).map(smCard).join(''); }
+
+/* ============================================================
+   👨🏻 찬규 탭 — 세은(비전) 탭과 똑같은 6개 섬션 보드
+   2026-11-19 세은 님 요청: "우리 찬규 비전을 아예 부부데이지에 동일한 구성으로 만들어주자"
+   · 순서: 진남삭 목표 카드 → 등기 3칸 → 현금흐름 6칸+메모 → 태그 칩 → 핵심 목표 → 연도별
+   · 제목·아이콘부터 줄 하나·칸 하나까지 전부 이 화면에서 고칠 수 있다
+   · 데이터는 rooms/{room}/chankyuVision 하나에만 쓴다(세은 님 vision·cashflowBoxes 등은 절대 안 건드린다)
+   ============================================================ */
+const CK_NODE = 'chankyuVision';
+const CK_FOLD_KEY = 'bubudaisy.ckFold';
+let CK_FOLD = loadCkFold();
+let ckSeeded = false;
+
+function loadCkFold() {
+  try {
+    const o = JSON.parse(localStorage.getItem(CK_FOLD_KEY) || '{}');
+    return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+  } catch (e) { return {}; }
+}
+function saveCkFold() {
+  try { localStorage.setItem(CK_FOLD_KEY, JSON.stringify(CK_FOLD)); } catch (e) {}
+}
+/* 방에 이미 들어있는 내용이 하나라도 있는지 — 있으면 기본 틀을 절대 덮어쓰지 않는다 */
+function ckHasContent(d) {
+  if (!d || typeof d !== 'object') return false;
+  return Object.keys(d).some(k => {
+    if (k === 'meta') return false;
+    const v = d[k];
+    return v && typeof v === 'object' && Object.keys(v).length > 0;
+  });
+}
+function ckData() { return (ST.ck && typeof ST.ck === 'object') ? ST.ck : {}; }
+function ckSec(key) {
+  const s = ckData()[key];
+  return (s && typeof s === 'object') ? s : {};
+}
+/* 객체로 저장된 줄·칸들을 order 순서로 — 연도/칸을 지우고 넣어도 번호가 밀리지 않는다 */
+function ckList(obj) {
+  return entries(obj).map(([id, v]) => ({ id, ...v })).sort((a, b) => {
+    const oa = num(a.order), ob = num(b.order);
+    return ((oa === null ? 999 : oa) - (ob === null ? 999 : ob)) || String(a.id).localeCompare(String(b.id));
+  });
+}
+function ckNextOrder(obj) {
+  let max = -1;
+  entries(obj).forEach(([, v]) => { const n = num(v && v.order); if (n !== null && n > max) max = n; });
+  return max + 1;
+}
+/* 3칸 배열 — Firebase 가 `{"1":"…"}` 처럼 숫자 키 객체로 돌려줘도 3칸으로 읽는다 */
+function ck3(raw) {
+  if (Array.isArray(raw)) return [0, 1, 2].map(i => raw[i]);
+  if (raw && typeof raw === 'object') return [0, 1, 2].map(i => raw[i]);
+  return [0, 1, 2].map(() => undefined);
+}
+/* 세은 님의 수치는 복제하지 않는다 — 찬규 님이 바로 덮어쓸 수 있는 기본 예시·빈칸 틀 */
+function ckTemplate(now) {
+  const t = now || Date.now();
+  const cells = {};
+  for (let i = 0; i < 6; i++) cells['c' + (i + 1)] = { emoji: null, label: null, note: null, done: false, order: i };
+  return {
+    meta: { seededAt: t, updatedAt: t, template: 'v1' },
+    hero: {
+      title: '20XX년 · 만 OO세',
+      goals: {
+        g1: { num: '1', label: '순자산', value: '목표 금액', note: null, now: '현재 금액', order: 0 },
+        g2: { num: '2', label: '우리 집', value: '갖고 싶은 집', note: null, now: '현재', order: 1 },
+        g3: { num: '3', label: '월급 외 현금흐름', value: '월 0만원', note: null, now: '0원', order: 2 }
+      },
+      updatedAt: t
+    },
+    flow: {
+      title: '우리 집 등기', emoji: '🏠',
+      steps: {
+        s1: { badge: '1호기', emoji: '🏢', label: '첫 집', deep: false, order: 0 },
+        s2: { badge: '2호기', emoji: '🏗️', label: '두 번째 집', deep: false, order: 1 },
+        s3: { badge: '3호기', emoji: '🏙️', label: '마지막 집', deep: true, order: 2 }
+      },
+      updatedAt: t
+    },
+    cash: { title: '현금흐름', emoji: '💸', cells: cells, updatedAt: t },
+    chips: {
+      title: '공부할 영역', emoji: '📚',
+      items: {
+        h1: { emoji: '🏠', label: '입지', order: 0 },
+        h2: { emoji: '🤝', label: '대출', order: 1 },
+        h3: { emoji: '🧮', label: '세금', order: 2 },
+        h4: { emoji: '🌳', label: '청약', order: 3 },
+        h5: { emoji: '📜', label: '정책', order: 4 }
+      },
+      updatedAt: t
+    },
+    core: {
+      title: '핵심 목표', emoji: '🎯',
+      items: {
+        k1: { text: '', memo: null, done: false, order: 0 },
+        k2: { text: '', memo: null, done: false, order: 1 },
+        k3: { text: '', memo: null, done: false, order: 2 }
+      },
+      updatedAt: t
+    },
+    years: {
+      title: '하나씩 천천히', emoji: '🗓️',
+      cards: {
+        y1: { year: '2027년', badge: null, tone: 'navy', items: ['', '', ''], subs: ['', '', ''],
+          done: [false, false, false], subDone: [false, false, false], order: 0 }
+      },
+      updatedAt: t
+    }
+  };
+}
+async function seedChankyuVision() {
+  if (ckSeeded) return;
+  ckSeeded = true;
+  const tpl = ckTemplate(Date.now());
+  ST.ck = tpl;
+  render.sameTab = true; render();
+  try { await put(CK_NODE, tpl); } catch (e) {}
+}
+
+/* ---------- 👨🏻 찬규 보드 그리기 ---------- */
+const CK_SEC_DEF = {
+  flow: { title: '우리 집 등기', emoji: '🏠', name: '등기 카드' },
+  cash: { title: '현금흐름', emoji: '💸', name: '현금흐름 카드' },
+  chips: { title: '공부할 영역', emoji: '📚', name: '태그 카드' },
+  core: { title: '핵심 목표', emoji: '🎯', name: '핵심 목표 카드' },
+  years: { title: '하나씩 천천히', emoji: '🗓️', name: '연도별 카드' }
+};
+function ckHead(key, extra) {
+  const s = ckSec(key), d = CK_SEC_DEF[key] || {};
+  return '<div class="card-h"><h2>' + esc(s.emoji || d.emoji || '') + ' ' + esc(s.title || d.title || '') + '</h2>' +
+    '<div class="board-tools">' + (extra || '') +
+    '<button class="pen-btn" data-act="ck-' + key + '-meta" aria-label="' + esc(d.name || '카드') + ' 제목·아이콘 수정">✏️</button></div></div>';
+}
+function ckHeroCard() {
+  const s = ckSec('hero');
+  const goals = ckList(s.goals);
+  const rows = goals.map((g) => {
+    const value = String(g.value == null ? '' : g.value).trim();
+    const label = String(g.label == null ? '' : g.label).trim();
+    const note = String(g.note == null ? '' : g.note).trim();
+    const now = String(g.now == null ? '' : g.now).trim();
+    const numTxt = String(g.num == null || g.num === '' ? '' : g.num).trim();
+    return '<button type="button" class="grow' + (value ? '' : ' ck-empty') + '" data-act="ck-goal" data-id="' + esc(g.id) + '" aria-label="목표 줄 수정">' +
+      '<span class="gn">' + esc(numTxt) + '</span><span class="gt">' +
+      (label ? '<span class="gl">' + esc(label) + '</span>' : '') +
+      '<span class="gv">' + esc(value || '목표를 적어 주세요') + '</span>' +
+      (note ? '<span class="gsub">' + esc(note) + '</span>' : '') +
+      '</span>' +
+      (now ? '<span class="nwpill"><span class="k">현재</span><span class="v">' + esc(now) + '</span></span>'
+        : '<span class="gchev">›</span>') +
+      '</button>';
+  }).join('') || '<p class="hint-in" style="color:#C6C2F2">아직 목표 줄이 없어요</p>';
+  return '<section class="hero goalcard">' +
+    '<div class="hero-top goal-top ck-hero-top"><span>' + esc(s.title || '목표 카드') + '</span>' +
+      '<button class="pen-btn" data-act="ck-hero-meta" aria-label="목표 카드 제목 수정">✏️</button></div>' +
+    '<div class="grows">' + rows +
+      '<button type="button" class="gadd" data-act="ck-goal-new">＋ 목표 줄 추가</button>' +
+    '</div></section>';
+}
+function ckFlowCard() {
+  const s = ckSec('flow');
+  const steps = ckList(s.steps);
+  const n = steps.length;
+  const cls = 'flow4' + (n >= 1 && n <= 4 ? ' c' + n : '');
+  const grid = n ? '<div class="' + cls + '">' + steps.map(st =>
+    '<button type="button" class="flow-step' + (st.deep ? ' last' : '') + '" data-act="ck-flow-step" data-id="' + esc(st.id) + '" aria-label="단계 수정">' +
+      '<span class="fs-badge">' + esc(st.badge || '단계') + '</span>' +
+      '<span class="fs-emoji">' + esc(st.emoji || '•') + '</span>' +
+      '<span class="fs-label">' + esc(st.label || '이름 없음') + '</span></button>').join('') + '</div>'
+    : '<p class="empty">아직 단계가 없어요<br>우리 집의 순서를 3단계로 적어 보세요</p>';
+  return '<section class="card">' + ckHead('flow', n ? '<span class="pill">' + n + '개</span>' : '') +
+    grid +
+    '<button class="add-row" data-act="ck-flow-new">＋ 단계 추가</button>' +
+    '</section>';
+}
+function ckCashCard() {
+  const s = ckSec('cash');
+  const cells = ckList(s.cells);
+  const notes = [];
+  const btns = cells.map((b, i) => {
+    const label = String(b.label == null ? '' : b.label).trim();
+    const emoji = String(b.emoji == null ? '' : b.emoji).trim();
+    const note = String(b.note == null ? '' : b.note).trim();
+    const done = !!b.done;
+    const empty = !label && !emoji;
+    const name = label || ('칸 ' + (i + 1));
+    if (note) notes.push({ id: b.id, emoji, name, note });
+    return '<button class="chip' + (empty && !done ? ' empty' : '') + (done ? ' done' : '') + '" data-act="ck-cf" data-id="' + esc(b.id) + '" aria-label="' + esc(name) + ' 수정' + (note ? ' (메모 있음)' : '') + '">' +
+      (done ? '<span class="cf-ck" aria-hidden="true">✓</span>' : '') +
+      (note ? '<span class="cf-note" aria-hidden="true">📝</span>' : '') +
+      '<span class="ci">' + esc(emoji || '＋') + '</span>' +
+      '<span class="cf-l">' + esc(label || (done ? '완료' : name)) + '</span></button>';
+  }).join('');
+  const noteList = notes.length
+    ? '<div class="cf-wrap' + (CF_FOLD ? ' fold' : '') + '">' +
+        '<div class="cf-fold" data-act="ck-cf-fold" role="button" tabindex="0" aria-expanded="' + (CF_FOLD ? 'false' : 'true') + '" aria-label="현금흐름 메모 ' + notes.length + '개 접기·펼치기">' +
+          '<span class="cf-ft">📝 메모 <span class="cf-fc">' + notes.length + '개</span></span>' +
+          '<span class="cf-chev" aria-hidden="true"></span></div>' +
+        '<div class="cf-notes">' + notes.map(x =>
+          '<button class="cf-nl" data-act="ck-cf" data-id="' + esc(x.id) + '" aria-label="' + esc(x.name) + ' 메모 수정">' +
+          '<span class="cf-nh">' + (x.emoji ? '<span class="cf-ne" aria-hidden="true">' + esc(x.emoji) + '</span>' : '') + esc(x.name) + '</span>' +
+          '<span class="cf-nt">' + esc(x.note) + '</span></button>').join('') + '</div></div>'
+    : '<p class="cap" style="text-align:left">칸을 누르면 이모지·이름·메모를 직접 적을 수 있어요</p>';
+  return '<section class="card">' + ckHead('cash', cells.length ? '<span class="pill">' + cells.length + '개</span>' : '') +
+    (cells.length ? '<div class="chips cf">' + btns + '</div>' : '<p class="empty">아직 칸이 없어요</p>') +
+    noteList +
+    '<button class="add-row" data-act="ck-cf-new">＋ 칸 추가</button>' +
+    '</section>';
+}
+function ckChipsCard() {
+  const s = ckSec('chips');
+  const items = ckList(s.items);
+  return '<section class="card">' + ckHead('chips', items.length ? '<span class="pill">' + items.length + '개</span>' : '') +
+    (items.length ? '<div class="chips">' + items.map(x =>
+      '<button class="chip" data-act="ck-chip" data-id="' + esc(x.id) + '" aria-label="' + esc(x.label || '태그') + ' 수정">' +
+      '<span class="ci">' + esc(x.emoji || '•') + '</span>' + esc(x.label || '') + '</button>').join('') + '</div>'
+      : '<p class="empty">아직 영역이 없어요</p>') +
+    '<button class="add-row" data-act="ck-chip-new">＋ 태그 추가</button>' +
+    '</section>';
+}
+function ckCoreCard() {
+  const s = ckSec('core');
+  const items = ckList(s.items);
+  return '<section class="card">' + ckHead('core', items.length ? '<span class="pill">' + items.length + '개</span>' : '') +
+    (items.length ? '<ul class="goals">' + items.map((g, i) => {
+      const text = String(g.text == null ? '' : g.text).trim();
+      const memo = String(g.memo == null ? '' : g.memo).trim();
+      return '<li class="goal' + (g.done ? ' done' : '') + '">' +
+        '<button class="gnum" data-act="ck-core-toggle" data-id="' + esc(g.id) + '" aria-label="' + esc(text || '목표') + ' 완료 토글" aria-pressed="' + (g.done ? 'true' : 'false') + '">' + (i + 1) + '</button>' +
+        '<button class="gtext" data-act="ck-core" data-id="' + esc(g.id) + '" aria-label="목표 수정">' +
+        (text ? esc(text) : '<span class="ck-ph">＋ 목표를 적어 주세요</span>') +
+        (memo ? '<span class="gmemo">📝 ' + esc(memo) + '</span>' : '') + '</button></li>';
+    }).join('') + '</ul>' : '<p class="empty">아직 목표가 없어요</p>') +
+    '<button class="add-row" data-act="ck-core-new">＋ 목표 추가</button>' +
+    '</section>';
+}
+function ckToggleFold(el) {
+  const card = el && el.closest ? el.closest('.ms-card') : null;
+  if (!card) return;
+  const key = el.dataset.k || ('c:' + el.dataset.id);
+  const fold = !card.classList.contains('fold');
+  card.classList.toggle('fold', fold);
+  el.setAttribute('aria-expanded', fold ? 'false' : 'true');
+  if (fold) CK_FOLD[key] = true; else delete CK_FOLD[key];
+  saveCkFold();
+}
+function ckYearsCard() {
+  const s = ckSec('years');
+  const cards = ckList(s.cards).sort((a, b) => (msLead(a.year) - msLead(b.year)) || ((num(a.order) ?? 999) - (num(b.order) ?? 999)));
+  const body = cards.length ? '<div class="ms">' + cards.map(c => {
+    const its = ck3(c.items).map(v => String(v == null ? '' : v));
+    const subs = ck3(c.subs).map(v => String(v == null ? '' : v));
+    const done = ck3(c.done).map(v => !!v);
+    const sdone = ck3(c.subDone).map(v => !!v);
+    const fk = 'c:' + (String(c.year == null ? '' : c.year).trim() || c.id);
+    const fold = !!CK_FOLD[fk];
+    const okN = its.filter((_, b) => done[b]).length;
+    return '<div class="ms-card' + msToneCls(c.tone) + (fold ? ' fold' : '') + '">' +
+      '<div class="ms-h" data-act="ck-yr-fold" data-id="' + esc(c.id) + '" data-k="' + esc(fk) + '" role="button" tabindex="0" aria-expanded="' + (fold ? 'false' : 'true') + '" aria-label="' + esc(c.year || '') + ' 접기·펼치기">' +
+        '<span class="y' + (c.tone === 'green' ? ' green' : '') + '">' + esc(c.year || '연도 없음') + '</span>' +
+        '<span class="ms-hr">' + (c.badge ? '<span class="bd">' + esc(c.badge) + '</span>' : '') +
+        '<span class="ms-prog">' + okN + '/3</span>' +
+        '<button class="pen-btn ms-pen" data-act="ck-yr" data-id="' + esc(c.id) + '" aria-label="' + esc(c.year || '') + ' 목표 수정">✏️</button>' +
+        '<span class="ms-chev" aria-hidden="true"></span></span></div>' +
+      '<div class="ms-grid">' + its.map((x, b) =>
+        '<button class="ms-box tap' + (done[b] ? ' done' : '') + '" data-act="ck-yr-toggle" data-id="' + esc(c.id) + '" data-b="' + b + '" aria-pressed="' + (done[b] ? 'true' : 'false') + '">' +
+        (done[b] ? '<span class="ck">✓</span>' : '') + (x ? esc(x) : '<span class="ck-ph">＋</span>') + '</button>').join('') +
+      '<div class="ms-subgrid">' + subs.map((t, b) =>
+        '<button class="ms-subbox tap' + (sdone[b] ? ' done' : '') + '" data-act="ck-yr-sub" data-id="' + esc(c.id) + '" data-b="' + b + '" aria-pressed="' + (sdone[b] ? 'true' : 'false') + '" aria-label="' + esc(c.year || '') + ' ' + (b + 1) + '번 칸 하위 메모' + (sdone[b] ? ' · 완료' : '') + '">' +
+        (sdone[b] ? '<span class="sk' + (t ? '' : ' only') + '" aria-hidden="true">✓</span>' : '') +
+        (t ? '<span class="st">' + esc(t) + '</span>' : (sdone[b] ? '' : '<span class="ph">＋</span>')) + '</button>').join('') + '</div>' +
+      '</div></div>';
+  }).join('') + '</div>' : '<p class="empty">아직 연도 카드가 없어요</p>';
+  return '<section class="card">' + ckHead('years', cards.length ? '<span class="pill">' + esc(cards[0].year || '') + '~</span>' : '') +
+    body +
+    '<button class="add-row" data-act="ck-yr-new">＋ 연도 추가</button>' +
+    '</section>';
+}
+function chankyuView() {
+  return ckHeroCard() + ckFlowCard() + ckCashCard() + ckChipsCard() + ckCoreCard() + ckYearsCard();
+}
+function ckToggleNotesFold(el) {
+  const wrap = el && el.closest ? el.closest('.cf-wrap') : null;
+  if (!wrap) return;
+  const fold = !wrap.classList.contains('fold');
+  wrap.classList.toggle('fold', fold);
+  el.setAttribute('aria-expanded', fold ? 'false' : 'true');
+  CF_FOLD = fold;
+  saveCfFold();
+}
+
+/* ---------- 저장 도우미 ---------- */
+async function ckSaveSection(key, next, msg) {
+  const prev = ST.ck;
+  ST.ck = { ...(ST.ck || {}), [key]: next };
+  closeSheet();
+  render.sameTab = true; render();
+  try { await put(CK_NODE + '/' + key, next); toast(msg); }
+  catch (e) { ST.ck = prev; render.sameTab = true; render(); toast('저장하지 못했어요'); }
+}
+
+/* ---------- 목표 카드 (진남색) ---------- */
+function openCkHeroMetaSheet() {
+  const s = ckSec('hero');
+  const body = '<label class="fld"><span>카드 제목</span>' +
+    '<input class="inp" id="ckhTitle" value="' + esc(s.title || '') + '" placeholder="2035년 · 만 40세"></label>' +
+    '<p class="hint-in">카드 맨 위에 그대로 보여요. 목표 줄은 카드 안의 줄을 눌러 고칠 수 있어요.</p>';
+  openSheet('목표 카드 제목', body, '<button class="sh-save" id="ckhSave">저장</button>');
+  $('#ckhSave').addEventListener('click', () => {
+    const title = $('#ckhTitle').value.trim();
+    if (!title) { toast('제목을 적어 주세요'); return; }
+    ckSaveSection('hero', { ...s, title: title, updatedAt: Date.now() }, '카드 제목을 저장했어요');
+  });
+}
+function openCkGoalSheet(id) {
+  const s = ckSec('hero');
+  const goals = (s.goals && typeof s.goals === 'object') ? s.goals : {};
+  const isNew = !id || !goals[id];
+  const cur = isNew ? { num: '', label: '', value: '', note: '', now: '' } : goals[id];
+  const body =
+    '<div class="fld"><span>번호 · 목표 (큰 글씨)</span><div class="row-edit">' +
+      '<input class="inp" id="ckgNum" style="flex:0 0 52px;text-align:center" maxlength="3" value="' + esc(cur.num == null ? '' : cur.num) + '" placeholder="1">' +
+      '<input class="inp" id="ckgValue" value="' + esc(cur.value || '') + '" placeholder="예: 올림픽선수기자촌 등기">' +
+    '</div></div>' +
+    '<label class="fld"><span>작은 제목 (선택)</span><input class="inp" id="ckgLabel" value="' + esc(cur.label || '') + '" placeholder="예: 월급 외 현금흐름"></label>' +
+    '<label class="fld"><span>현재 뱃지 (선택)</span><input class="inp" id="ckgNow" value="' + esc(cur.now || '') + '" placeholder="예: 9억 5,218만원"></label>' +
+    '<label class="fld"><span>부기 문구 (선택)</span><input class="inp" id="ckgNote" value="' + esc(cur.note || '') + '" placeholder="한 줄 설명"></label>' +
+    '<p class="hint-in">번호는 줄 앞 동그라미, 현재 뱃지는 줄 오른쪽 「현재」 알약에 들어가요. 현재 뱃지를 비우면 오른쪽이 › 표시가 돼요.</p>';
+  const acts = '<button class="sh-save" id="ckgSave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="ckgDel">삭제</button>');
+  openSheet(isNew ? '목표 줄 추가' : '목표 줄 수정', body, acts);
+  $('#ckgSave').addEventListener('click', async () => {
+    const value = $('#ckgValue').value.trim();
+    if (!value) { toast('목표를 적어 주세요'); return; }
+    const key2 = isNew ? newKey('cg') : id;
+    const rec = {
+      ...(isNew ? {} : cur),
+      num: $('#ckgNum').value.trim() || null,
+      label: $('#ckgLabel').value.trim() || null,
+      value: value,
+      now: $('#ckgNow').value.trim() || null,
+      note: $('#ckgNote').value.trim() || null,
+      order: isNew ? ckNextOrder(goals) : (num(cur.order) ?? ckNextOrder(goals)),
+      updatedAt: Date.now()
+    };
+    await ckSaveSection('hero', { ...s, goals: { ...goals, [key2]: rec }, updatedAt: Date.now() },
+      isNew ? '목표 줄을 추가했어요' : '목표 줄을 저장했어요');
+  });
+  if (!isNew) $('#ckgDel').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    const g2 = { ...goals }; delete g2[id];
+    await ckSaveSection('hero', { ...s, goals: g2, updatedAt: Date.now() }, '목표 줄을 삭제했어요');
+  });
+}
+
+/* ---------- 카드 제목·아이콘 (등기·현금흐름·태그·핵심 목표·연도별) ---------- */
+function openCkMetaSheet(key) {
+  const d = CK_SEC_DEF[key]; if (!d) return;
+  const s = ckSec(key);
+  const body =
+    '<div class="fld"><span>카드 제목 · 아이콘</span><div class="row-edit">' +
+      '<input class="inp" id="ckmEmoji" style="flex:0 0 64px;text-align:center;font-size:20px" maxlength="12" value="' + esc(s.emoji || '') + '" placeholder="' + d.emoji + '">' +
+      '<input class="inp" id="ckmTitle" value="' + esc(s.title || '') + '" placeholder="' + esc(d.title) + '">' +
+    '</div></div>' +
+    '<p class="hint-in">카드 맨 위에 「아이콘 제목」으로 보여요. 비우면 기본값(' + d.emoji + ' ' + esc(d.title) + ')으로 돌아가요.</p>';
+  openSheet(d.name + ' 제목', body, '<button class="sh-save" id="ckmSave">저장</button>');
+  $('#ckmSave').addEventListener('click', () => {
+    const title = $('#ckmTitle').value.trim();
+    const emoji = $('#ckmEmoji').value.trim();
+    ckSaveSection(key, { ...s, title: title || null, emoji: emoji || null, updatedAt: Date.now() }, '카드 제목을 저장했어요');
+  });
+}
+
+/* ---------- 등기 3칸 카드 ---------- */
+function openCkFlowStepSheet(id) {
+  const s = ckSec('flow');
+  const steps = (s.steps && typeof s.steps === 'object') ? s.steps : {};
+  const isNew = !id || !steps[id];
+  const cur = isNew ? { badge: '', emoji: '', label: '', deep: false } : steps[id];
+  let deep = !!cur.deep;
+  const body =
+    '<label class="fld"><span>배지 (순서 이름)</span><input class="inp" id="cksBadge" value="' + esc(cur.badge || '') + '" placeholder="1호기"></label>' +
+    '<label class="fld"><span>아이콘 (이모지 한 글자)</span><input class="inp" id="cksEmoji" style="text-align:center;font-size:22px" maxlength="12" value="' + esc(cur.emoji || '') + '" placeholder="🏠"></label>' +
+    '<label class="fld"><span>단계 이름</span><input class="inp" id="cksLabel" value="' + esc(cur.label || '') + '" placeholder="첫 집"></label>' +
+    '<div class="fld"><span>강조</span><div class="seg2" id="cksDeep">' +
+      '<button data-d="0" class="' + (deep ? '' : 'on') + '">기본 (연크림)</button>' +
+      '<button data-d="1" class="' + (deep ? 'on' : '') + '">진남색</button>' +
+    '</div></div>' +
+    '<p class="hint-in">배지는 칸 맨 위 알약, 단계 이름은 칸 맨 아래 글씨예요. 진남색을 고르면 마지막 집 칸처럼 칠해져요.</p>';
+  const acts = '<button class="sh-save" id="cksSave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="cksDel">삭제</button>');
+  openSheet(isNew ? '등기 단계 추가' : '등기 단계 수정', body, acts);
+  $('#cksDeep').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-d]'); if (!b) return;
+    deep = b.dataset.d === '1';
+    $$('#cksDeep button').forEach(x => x.classList.toggle('on', x === b));
+  });
+  $('#cksSave').addEventListener('click', async () => {
+    const label = $('#cksLabel').value.trim();
+    if (!label) { toast('단계 이름을 적어 주세요'); return; }
+    const key2 = isNew ? newKey('cs') : id;
+    const rec = { ...(isNew ? {} : cur),
+      badge: $('#cksBadge').value.trim() || null,
+      emoji: $('#cksEmoji').value.trim() || null,
+      label: label, deep: deep,
+      order: isNew ? ckNextOrder(steps) : (num(cur.order) ?? ckNextOrder(steps)),
+      updatedAt: Date.now() };
+    await ckSaveSection('flow', { ...s, steps: { ...steps, [key2]: rec }, updatedAt: Date.now() },
+      isNew ? '단계를 추가했어요' : '단계를 저장했어요');
+  });
+  if (!isNew) $('#cksDel').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    const s2 = { ...steps }; delete s2[id];
+    await ckSaveSection('flow', { ...s, steps: s2, updatedAt: Date.now() }, '단계를 삭제했어요');
+  });
+}
+
+/* ---------- 현금흐름 6칸 + 메모 ---------- */
+function openCkCfSheet(id) {
+  const s = ckSec('cash');
+  const cells = (s.cells && typeof s.cells === 'object') ? s.cells : {};
+  const isNew = !id || !cells[id];
+  const cur = isNew ? { emoji: '', label: '', note: '', done: false } : cells[id];
+  let done = !!cur.done;
+  const body = '<button class="sh-done' + (done ? ' on' : '') + '" id="ckcfDone" aria-pressed="' + (done ? 'true' : 'false') + '">' +
+      (done ? '✓ 완료됨' : '✓ 완료로 표시') + '</button>' +
+    '<label class="fld"><span>아이콘 (이모지 한 글자)</span><input class="inp" id="ckcfEmoji" style="text-align:center;font-size:22px" maxlength="12" value="' + esc(cur.emoji || '') + '" placeholder="💵"></label>' +
+    '<label class="fld"><span>이름</span><input class="inp" id="ckcfLabel" value="' + esc(cur.label || '') + '" placeholder="예: 월세 수입"></label>' +
+    '<label class="fld"><span>메모 (선택)</span><textarea class="inp" id="ckcfNote" placeholder="예: 매달 25일 입금 · 200만원 / 관리비 별도">' + esc(cur.note || '') + '</textarea></label>' +
+    '<p class="hint-in">✓ 를 켜면 칸이 연두색으로 칠해져요. 메모를 적으면 칸 오른쪽 위에 📝 가 붙고 6칸 아래 메모 목록에도 보여요.</p>';
+  const acts = '<button class="sh-save" id="ckcfSave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="ckcfDel">삭제</button>');
+  openSheet(isNew ? '현금흐름 칸 추가' : '현금흐름 칸 수정', body, acts);
+  $('#ckcfDone').addEventListener('click', (e) => {
+    const b = e.currentTarget;
+    done = !b.classList.contains('on');
+    b.classList.toggle('on', done);
+    b.setAttribute('aria-pressed', done ? 'true' : 'false');
+    b.textContent = done ? '✓ 완료됨' : '✓ 완료로 표시';
+  });
+  $('#ckcfSave').addEventListener('click', async () => {
+    const label = $('#ckcfLabel').value.trim();
+    const emoji = $('#ckcfEmoji').value.trim();
+    if (!label && !emoji) { toast('이름이나 아이콘을 적어 주세요'); return; }
+    const key2 = isNew ? newKey('cc') : id;
+    const rec = { ...(isNew ? {} : cur),
+      emoji: emoji || null, label: label || null,
+      note: ($('#ckcfNote').value || '').trim() || null,
+      done: done,
+      order: isNew ? ckNextOrder(cells) : (num(cur.order) ?? ckNextOrder(cells)),
+      updatedAt: Date.now() };
+    await ckSaveSection('cash', { ...s, cells: { ...cells, [key2]: rec }, updatedAt: Date.now() },
+      isNew ? '칸을 추가했어요' : '저장했어요');
+  });
+  if (!isNew) $('#ckcfDel').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    const c2 = { ...cells }; delete c2[id];
+    await ckSaveSection('cash', { ...s, cells: c2, updatedAt: Date.now() }, '칸을 삭제했어요');
+  });
+}
+
+/* ---------- 태그 칩 카드 ---------- */
+function openCkChipSheet(id) {
+  const s = ckSec('chips');
+  const items = (s.items && typeof s.items === 'object') ? s.items : {};
+  const isNew = !id || !items[id];
+  const cur = isNew ? { emoji: '', label: '' } : items[id];
+  const body =
+    '<label class="fld"><span>아이콘 (이모지 한 글자)</span><input class="inp" id="ckcEmoji" style="text-align:center;font-size:22px" maxlength="12" value="' + esc(cur.emoji || '') + '" placeholder="🏠"></label>' +
+    '<label class="fld"><span>이름</span><input class="inp" id="ckcLabel" value="' + esc(cur.label || '') + '" placeholder="예: 입지"></label>' +
+    '<p class="hint-in">🏠 🤝 🧮 🌳 📜 처럼 짧은 이모지를 붙여 넣으면 돼요.</p>';
+  const acts = '<button class="sh-save" id="ckcSave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="ckcDel">삭제</button>');
+  openSheet(isNew ? '태그 추가' : '태그 수정', body, acts);
+  $('#ckcSave').addEventListener('click', async () => {
+    const label = $('#ckcLabel').value.trim();
+    if (!label) { toast('이름을 적어 주세요'); return; }
+    const key2 = isNew ? newKey('ch') : id;
+    const rec = { ...(isNew ? {} : cur), emoji: $('#ckcEmoji').value.trim() || null, label: label,
+      order: isNew ? ckNextOrder(items) : (num(cur.order) ?? ckNextOrder(items)) };
+    await ckSaveSection('chips', { ...s, items: { ...items, [key2]: rec }, updatedAt: Date.now() },
+      isNew ? '태그를 추가했어요' : '태그를 저장했어요');
+  });
+  if (!isNew) $('#ckcDel').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    const i2 = { ...items }; delete i2[id];
+    await ckSaveSection('chips', { ...s, items: i2, updatedAt: Date.now() }, '태그를 삭제했어요');
+  });
+}
+
+/* ---------- 핵심 목표 카드 ---------- */
+function openCkCoreSheet(id) {
+  const s = ckSec('core');
+  const items = (s.items && typeof s.items === 'object') ? s.items : {};
+  const isNew = !id || !items[id];
+  const cur = isNew ? { text: '', memo: '', done: false } : items[id];
+  let done = !!cur.done;
+  const body = '<button class="sh-done' + (done ? ' on' : '') + '" id="ckkDone" aria-pressed="' + (done ? 'true' : 'false') + '">' +
+      (done ? '✓ 완료됨' : '✓ 완료로 표시') + '</button>' +
+    '<label class="fld"><span>목표</span><textarea class="inp" id="ckkText" style="min-height:76px">' + esc(cur.text || '') + '</textarea></label>' +
+    '<label class="fld"><span>메모 (선택)</span><textarea class="inp" id="ckkMemo">' + esc(cur.memo || '') + '</textarea></label>' +
+    '<p class="hint-in">완료한 목표는 번호가 진남색으로 바뀌고 글씨에 줄이 그어져요.</p>';
+  const acts = '<button class="sh-save" id="ckkSave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="ckkDel">삭제</button>');
+  openSheet(isNew ? '핵심 목표 추가' : '핵심 목표 수정', body, acts);
+  $('#ckkDone').addEventListener('click', (e) => {
+    const b = e.currentTarget;
+    done = !b.classList.contains('on');
+    b.classList.toggle('on', done);
+    b.setAttribute('aria-pressed', done ? 'true' : 'false');
+    b.textContent = done ? '✓ 완료됨' : '✓ 완료로 표시';
+  });
+  $('#ckkSave').addEventListener('click', async () => {
+    const text = $('#ckkText').value.trim();
+    if (!text) { toast('목표를 적어 주세요'); return; }
+    const key2 = isNew ? newKey('ck') : id;
+    const rec = { ...(isNew ? {} : cur), text: text, memo: $('#ckkMemo').value.trim() || null, done: done,
+      order: isNew ? ckNextOrder(items) : (num(cur.order) ?? ckNextOrder(items)), updatedAt: Date.now() };
+    await ckSaveSection('core', { ...s, items: { ...items, [key2]: rec }, updatedAt: Date.now() },
+      isNew ? '목표를 추가했어요' : '목표를 저장했어요');
+  });
+  if (!isNew) $('#ckkDel').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    const i2 = { ...items }; delete i2[id];
+    await ckSaveSection('core', { ...s, items: i2, updatedAt: Date.now() }, '목표를 삭제했어요');
+  });
+}
+async function ckToggleCoreDone(id) {
+  const s = ckSec('core');
+  const items = (s.items && typeof s.items === 'object') ? { ...s.items } : {};
+  const cur = items[id]; if (!cur) return;
+  const next = !cur.done;
+  items[id] = { ...cur, done: next };
+  await ckSaveSection('core', { ...s, items: items, updatedAt: Date.now() },
+    next ? '완료로 표시했어요 ✨' : '다시 도전 중으로 돌렸어요');
+}
+
+/* ---------- 연도별 카드 ---------- */
+async function ckSaveYearCard(id, rec) {
+  const s = ckSec('years');
+  const cards = (s.cards && typeof s.cards === 'object') ? { ...s.cards } : {};
+  const isNew = !id;
+  const key2 = isNew ? newKey('cy') : id;
+  const out = isNew ? { ...rec, order: ckNextOrder(cards) } : rec;
+  const prev = ST.ck;
+  ST.ck = { ...(ST.ck || {}), years: { ...s, cards: { ...cards, [key2]: out }, updatedAt: Date.now() } };
+  closeSheet(); render.sameTab = true; render();
+  try { await put(CK_NODE + '/years/cards/' + key2, out); toast(isNew ? '연도 카드를 추가했어요' : '연도 카드를 저장했어요'); }
+  catch (e) { ST.ck = prev; render.sameTab = true; render(); toast('저장하지 못했어요'); }
+}
+async function ckDeleteYearCard(id) {
+  const s = ckSec('years');
+  const cards = (s.cards && typeof s.cards === 'object') ? { ...s.cards } : {};
+  if (!cards[id]) return;
+  delete cards[id];
+  const prev = ST.ck;
+  ST.ck = { ...(ST.ck || {}), years: { ...s, cards: cards, updatedAt: Date.now() } };
+  closeSheet(); render.sameTab = true; render();
+  try { await del(CK_NODE + '/years/cards/' + id); toast('연도 카드를 삭제했어요'); }
+  catch (e) { ST.ck = prev; render.sameTab = true; render(); toast('삭제하지 못했어요'); }
+}
+async function ckToggleYearDone(id, b) {
+  const s = ckSec('years');
+  const cards = (s.cards && typeof s.cards === 'object') ? { ...s.cards } : {};
+  const c = cards[id]; if (!c) return;
+  const k = Number(b); if (!(k >= 0 && k <= 2)) return;
+  const done = ck3(c.done).map(v => !!v);
+  done[k] = !done[k];
+  const rec = { ...c, done: done };
+  const prev = ST.ck;
+  cards[id] = rec;
+  ST.ck = { ...(ST.ck || {}), years: { ...s, cards: cards, updatedAt: Date.now() } };
+  render.sameTab = true; render();
+  try { await put(CK_NODE + '/years/cards/' + id, rec); toast(done[k] ? '성공으로 표시했어요 ✨' : '다시 도전 중으로 돌렸어요'); }
+  catch (e) { ST.ck = prev; render.sameTab = true; render(); toast('저장하지 못했어요'); }
+}
+async function ckSetYearSub(id, b, text, doneVal) {
+  const s = ckSec('years');
+  const cards = (s.cards && typeof s.cards === 'object') ? { ...s.cards } : {};
+  const c = cards[id]; if (!c) return null;
+  const k = Math.max(0, Math.min(2, Number(b) || 0));
+  const subs = ck3(c.subs).map(v => String(v == null ? '' : v));
+  const sdone = ck3(c.subDone).map(v => !!v);
+  if (text !== null) subs[k] = text;
+  if (doneVal !== null) sdone[k] = !!doneVal;
+  const rec = { ...c, subs: subs, subDone: sdone };
+  const prev = ST.ck;
+  cards[id] = rec;
+  ST.ck = { ...(ST.ck || {}), years: { ...s, cards: cards, updatedAt: Date.now() } };
+  render.sameTab = true; render();
+  try { await put(CK_NODE + '/years/cards/' + id, rec); return true; }
+  catch (e) { ST.ck = prev; render.sameTab = true; render(); toast('저장하지 못했어요'); return false; }
+}
+function openCkYearSubSheet(id, b) {
+  const s = ckSec('years');
+  const cards = (s.cards && typeof s.cards === 'object') ? s.cards : {};
+  const c = cards[id]; if (!c) return;
+  const k = Math.max(0, Math.min(2, Number(b) || 0));
+  const cur = ck3(c.subs).map(v => String(v == null ? '' : v))[k];
+  const isDone = ck3(c.subDone).map(v => !!v)[k];
+  const goal = ck3(c.items).map(v => String(v == null ? '' : v))[k];
+  const tone = msTone(c.tone);
+  const doneBtn = '<button class="sh-done' + (isDone ? ' on' : '') + (tone === 'deep' ? ' deep' : '') + '" id="ckySubDone" aria-pressed="' + (isDone ? 'true' : 'false') + '">' +
+    (isDone ? '✓ 완료됨' : '✓ 완료로 표시') + '</button>';
+  const body = doneBtn +
+    '<label class="fld"><span>하위 메모</span><input class="inp" id="ckySubInp" maxlength="60" value="' + esc(cur) + '" placeholder="예: 서류 준비"></label>' +
+    '<p class="hint-in">' + (goal ? '위 칸 「' + esc(goal) + '」 바로 아래 얇은 칸에 한 줄로 보여요. ' : '') +
+      '짧게 한 줄로 적어 주세요. 비우고 저장하면 칸이 다시 비어요.</p>';
+  const acts = '<button class="sh-save" id="ckySubSave">저장</button>' +
+    (cur ? '<button class="sh-del" id="ckySubClear">비우기</button>' : '');
+  openSheet((c.year || '') + ' · 하위 메모 ' + (k + 1), body, acts);
+  $('#ckySubDone').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    if (btn.disabled) return;
+    btn.disabled = true;
+    const on = !btn.classList.contains('on');
+    const ok = await ckSetYearSub(id, k, null, on);
+    btn.disabled = false;
+    if (!ok) return;
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.textContent = on ? '✓ 완료됨' : '✓ 완료로 표시';
+    toast(on ? '하위 칸을 완료로 칠했어요 ✓' : '하위 칸 완료를 풀었어요');
+  });
+  $('#ckySubSave').addEventListener('click', async () => {
+    const t = ($('#ckySubInp').value || '').trim();
+    const ok = await ckSetYearSub(id, k, t, null);
+    if (!ok) return;
+    closeSheet();
+    toast(t ? '하위 메모를 저장했어요' : '하위 메모를 비웠어요');
+  });
+  if (cur) $('#ckySubClear').addEventListener('click', (e) => {
+    if (!delArm(e.currentTarget)) return;
+    $('#ckySubInp').value = '';
+    ckSetYearSub(id, k, '', null).then(ok => {
+      if (!ok) return;
+      closeSheet(); toast('하위 메모를 비웠어요');
+    });
+  });
+  setTimeout(() => { try { const el = $('#ckySubInp'); el.focus(); el.select(); } catch (e) {} }, 140);
+}
+function openCkYearSheet(id) {
+  const s = ckSec('years');
+  const cards = (s.cards && typeof s.cards === 'object') ? s.cards : {};
+  const isNew = !id || !cards[id];
+  const cur = isNew ? { year: '', badge: '', tone: 'navy' } : cards[id];
+  const its = ck3(cur.items).map(v => String(v == null ? '' : v));
+  const subs = ck3(cur.subs).map(v => String(v == null ? '' : v));
+  const sdone = ck3(cur.subDone).map(v => !!v);
+  let tone = msTone(cur.tone);
+  const boxIn = (n, ph) => '<label><i>' + n + (n === 3 ? ' (선택)' : '') + '</i>' +
+    '<input class="inp" id="ckyB' + n + '" value="' + esc(its[n - 1] || '') + '" placeholder="' + ph + '"></label>';
+  const subIn = (n) => '<label><span class="ms-inh"><i>' + n + '</i>' +
+    '<button class="mtog' + (sdone[n - 1] ? ' on' : '') + '" data-sd="' + (n - 1) + '" aria-pressed="' + (sdone[n - 1] ? 'true' : 'false') + '" aria-label="' + n + '번 하위 칸 완료 토글">✓</button></span>' +
+    '<input class="inp" id="ckyS' + n + '" maxlength="60" value="' + esc(subs[n - 1] || '') + '" placeholder="하위 메모"></label>';
+  const body =
+    '<div class="fld"><span>연도 · 배지</span><div class="ym-row">' +
+      '<input class="inp" id="ckyYear" value="' + esc(cur.year || '') + '" placeholder="2031~2035">' +
+      '<input class="inp" id="ckyBadge" value="' + esc(cur.badge || '') + '" placeholder="완성의 해">' +
+    '</div></div>' +
+    '<div class="fld"><span>강조 색</span><div class="seg2 seg3" id="ckyTone">' +
+      '<button data-t="navy" class="' + (tone === 'navy' ? 'on' : '') + '">기본 (크림)</button>' +
+      '<button data-t="green" class="' + (tone === 'green' ? 'on' : '') + '">초록</button>' +
+      '<button data-t="deep" class="' + (tone === 'deep' ? 'on' : '') + '">진한 남색</button>' +
+    '</div></div>' +
+    '<div class="fld"><span>목표 3칸</span><div class="ms-in3">' +
+      boxIn(1, '첫째 목표') + boxIn(2, '둘째 목표') + boxIn(3, '셋째 목표') +
+    '</div></div>' +
+    '<div class="fld"><span>하위 메모 3칸 (선택)</span><div class="ms-in3" id="ckySubs">' +
+      subIn(1) + subIn(2) + subIn(3) +
+    '</div></div>' +
+    '<p class="hint-in">위 3칸을 누르면 성공 ✓, 아래 얇은 칸을 누르면 하위 메모를 적을 수 있어요. 작은 ✓ 로 얇은 칸도 완료 색칠이 돼요.</p>';
+  const acts = '<button class="sh-save" id="ckySave">' + (isNew ? '추가' : '저장') + '</button>' +
+    (isNew ? '' : '<button class="sh-del" id="ckyDel">삭제</button>');
+  openSheet(isNew ? '연도 카드 추가' : (cur.year || '') + ' 목표 수정', body, acts);
+  $('#ckyTone').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-t]'); if (!b) return;
+    tone = msTone(b.dataset.t);
+    $$('#ckyTone button').forEach(x => x.classList.toggle('on', x === b));
+  });
+  $('#ckySubs').addEventListener('click', (e) => {
+    const b = e.target.closest('.mtog'); if (!b) return;
+    const k = Number(b.dataset.sd);
+    sdone[k] = !sdone[k];
+    b.classList.toggle('on', sdone[k]);
+    b.setAttribute('aria-pressed', sdone[k] ? 'true' : 'false');
+  });
+  $('#ckySave').addEventListener('click', async () => {
+    const year = $('#ckyYear').value.trim();
+    if (!year) { toast('연도를 적어 주세요'); return; }
+    const rec = { ...(isNew ? {} : cur),
+      year: year, badge: $('#ckyBadge').value.trim() || null, tone: tone,
+      items: [1, 2, 3].map(n => ($('#ckyB' + n).value || '').trim()),
+      subs: [1, 2, 3].map(n => ($('#ckyS' + n).value || '').trim()),
+      subDone: sdone.slice(),
+      done: ck3(cur.done).map(v => !!v),
+      updatedAt: Date.now() };
+    await ckSaveYearCard(isNew ? null : id, rec);
+  });
+  if (!isNew) $('#ckyDel').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    await ckDeleteYearCard(id);
+  });
+}
 
 /* ---------- 전략 줄 제스처: 한 번 탭 / 왼쪽 스와이프 / 길게 눌러 끌기 ----------
    손가락은 touch 로 직접 받아야 안드로이드 크롬이 스크롤·뒤로가기 제스처로 가져가지 않는다. */
@@ -2188,6 +2927,30 @@ $('#view').addEventListener('click', async (e) => {
   if (act === 'cf-notes-fold') return cfToggleNotesFold(el);
   if (act === 'sm-add') return openSmSheet(el.dataset.list, null);
   if (act === 'sm-del') return smDel(el.dataset.list, el.dataset.id);
+  /* 👨🏻 찬규 탭 — 목표 카드 · 등기 3칸 · 현금흐름 6칸 · 태그 · 핵심 목표 · 연도별 */
+  if (act === 'ck-hero-meta') return openCkHeroMetaSheet();
+  if (act === 'ck-goal') return openCkGoalSheet(el.dataset.id);
+  if (act === 'ck-goal-new') return openCkGoalSheet(null);
+  if (act === 'ck-flow-meta') return openCkMetaSheet('flow');
+  if (act === 'ck-flow-step') return openCkFlowStepSheet(el.dataset.id);
+  if (act === 'ck-flow-new') return openCkFlowStepSheet(null);
+  if (act === 'ck-cash-meta') return openCkMetaSheet('cash');
+  if (act === 'ck-cf') return openCkCfSheet(el.dataset.id);
+  if (act === 'ck-cf-new') return openCkCfSheet(null);
+  if (act === 'ck-cf-fold') return ckToggleNotesFold(el);
+  if (act === 'ck-chips-meta') return openCkMetaSheet('chips');
+  if (act === 'ck-chip') return openCkChipSheet(el.dataset.id);
+  if (act === 'ck-chip-new') return openCkChipSheet(null);
+  if (act === 'ck-core-meta') return openCkMetaSheet('core');
+  if (act === 'ck-core') return openCkCoreSheet(el.dataset.id);
+  if (act === 'ck-core-new') return openCkCoreSheet(null);
+  if (act === 'ck-core-toggle') return ckToggleCoreDone(el.dataset.id);
+  if (act === 'ck-years-meta') return openCkMetaSheet('years');
+  if (act === 'ck-yr') return openCkYearSheet(el.dataset.id);
+  if (act === 'ck-yr-new') return openCkYearSheet(null);
+  if (act === 'ck-yr-fold') return ckToggleFold(el);
+  if (act === 'ck-yr-toggle') return ckToggleYearDone(el.dataset.id, el.dataset.b);
+  if (act === 'ck-yr-sub') return openCkYearSubSheet(el.dataset.id, el.dataset.b);
   if (act === 'tt-add') return openTradeSheet(null);
   if (act === 'tt-edit') return openTradeSheet(el.dataset.id);
   if (act === 'nw-chart-dot') return nwChartSelect(el.dataset.month);
@@ -2212,10 +2975,12 @@ $('#view').addEventListener('click', async (e) => {
 /* 메모 헤더·연도 카드 헤더를 키보드(Enter/Space)로도 접고 편다 */
 $('#view').addEventListener('keydown', (e) => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
-  const el = e.target.closest('[data-act="v-ms-fold"],[data-act="cf-notes-fold"]');
+  const el = e.target.closest('[data-act="v-ms-fold"],[data-act="cf-notes-fold"],[data-act="ck-yr-fold"],[data-act="ck-cf-fold"]');
   if (!el) return;
   e.preventDefault();
   if (el.dataset.act === 'cf-notes-fold') cfToggleNotesFold(el);
+  else if (el.dataset.act === 'ck-cf-fold') ckToggleNotesFold(el);
+  else if (el.dataset.act === 'ck-yr-fold') ckToggleFold(el);
   else msToggleFold(el);
 });
 
@@ -3261,7 +4026,7 @@ function openPlanChapterSheet(cid) {
    ============================================================ */
 const MEMO_KEY = 'bubudaisy.memos';
 const TAB_NAMES = {
-  vision: '비전', strategy: '전략', chankyu: '찬규', networth: '순자산'
+  vision: '세은', strategy: '전략', chankyu: '찬규', networth: '순자산'
 };
 let MEMOS = loadMemos();
 function loadMemos() {
