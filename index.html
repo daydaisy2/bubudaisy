@@ -1441,7 +1441,7 @@ function cashflowCard() {
         '<button class="cf-nl" data-act="cf-edit" data-i="' + n.i + '" aria-label="' + esc(n.name) + ' 메모 수정">' +
         '<span class="cf-nh">' + (n.emoji ? '<span class="cf-ne" aria-hidden="true">' + esc(n.emoji) + '</span>' : '') +
         esc(n.name) + '</span>' +
-        '<span class="cf-nt">📝 ' + esc(n.note) + '</span></button>').join('') + '</div>' +
+        '<span class="cf-nt">' + esc(n.note) + '</span></button>').join('') + '</div>' +
       '</div>'
     : '<p class="cap" style="text-align:left">칸을 누르면 이모지·이름·메모를 직접 적을 수 있어요</p>';
   return '<section class="card">' +
