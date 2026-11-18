@@ -155,8 +155,8 @@
     line-height:1.3;min-height:1.3em;text-align:center;overflow-wrap:anywhere}
   .ms{display:flex;flex-direction:column;gap:8px}
   .ms-card{border-radius:16px;background:var(--cream);padding:11px 11px 11px;transition:background .15s}
-  /* 연도 헤더(연도·배지·›)만 누르면 편집 시트가 열린다 — 아래 칸은 성공 토글 */
-  .ms-h{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;
+  /* 연도 헤더(연도·배지·✏️·▾)를 누르면 그 연도 카드를 접고 편다 — ✏️ 만 편집 시트, 아래 칸은 성공 토글 */
+  .ms-h{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;
     margin-bottom:8px;padding:0 2px;border-radius:10px;text-align:left}
   .ms-h:active{opacity:.62}
   .ms-h .y{font-size:15px;font-weight:900;color:var(--navy);letter-spacing:-.03em}
@@ -166,6 +166,15 @@
   .ms-card.green .ms-h .bd{color:#2A6E3C}
   .ms-hr{display:flex;align-items:center;gap:6px;min-width:0}
   .ms-hr .li-chev{padding-left:0}
+  /* 접힌 연도 카드 — 헤더 한 줄만 남기고 3칸을 감춘다. ▾ 가 ▸ 로 돌아간다 */
+  .ms-card.fold .ms-h{margin-bottom:0}
+  .ms-card.fold .ms-grid{display:none}
+  .ms-h .ms-chev{flex:0 0 auto;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;
+    border-top:6px solid #8A8368;margin:1px 3px 0 3px;transition:transform .18s ease}
+  .ms-card.fold .ms-h .ms-chev{transform:rotate(-90deg);border-top-color:#5E5942}
+  /* 헤더 한 줄에 남는 진행 현황(성공 ✓ 개수 / 3칸) */
+  .ms-h .ms-prog{flex:0 0 auto;font-size:10px;font-weight:900;color:#8A8368;letter-spacing:-.02em}
+  .ms-card.fold .ms-h .ms-prog{color:#5E5942}
   .ms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .ms-box{position:relative;background:#fff;border-radius:12px;min-height:52px;padding:8px 6px;
     display:flex;align-items:center;justify-content:center;text-align:center;
@@ -181,6 +190,23 @@
   .ms-card.green .ms-box.done:active{background:#FBE9A6}
   .ms-card.green .ms-box.done .ck{background:#B08A00}
   .ms-card.green .ms-box{background:var(--green-soft);color:#265C33}
+  /* 진한 남색 카드(`tone: deep`) — `갈아타기 전략`의 3호기(찐똘) 칸과 같은 진남색 그라데이션 + 흰 글씨 */
+  .ms-card.deep{background:linear-gradient(160deg,#2E2AA0,#1E1B7A 72%);box-shadow:0 9px 18px rgba(30,27,122,.24)}
+  .ms-card.deep .ms-h .y{color:#fff}
+  .ms-card.deep .ms-h .bd{background:var(--yellow);color:#2A2694}
+  .ms-card.deep .ms-h .ms-prog{color:rgba(255,255,255,.72)}
+  .ms-card.deep .ms-h .ms-chev{border-top-color:rgba(255,255,255,.6)}
+  .ms-card.deep .ms-pen{background:rgba(255,255,255,.16);color:#fff}
+  .ms-card.deep .ms-box{background:rgba(255,255,255,.12);color:#fff;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+  .ms-card.deep .ms-box:active{background:rgba(255,255,255,.22)}
+  .ms-card.deep .ms-box.done{background:var(--yellow);color:#4A3600;box-shadow:inset 0 0 0 1.5px #EFD871}
+  .ms-card.deep .ms-box.done:active{background:#FBE9A6}
+  .ms-card.deep .ms-box.done .ck{background:#2A2694}
+  /* 시트 `이렇게 보여요` 미리보기에서도 같은 색 */
+  .ms-prev.deep{background:linear-gradient(160deg,#2E2AA0,#1E1B7A 72%)}
+  .ms-prev.deep .ms-box{background:rgba(255,255,255,.12);color:#fff}
+  .ms-prev.green .ms-box{background:var(--green-soft);color:#265C33}
   .ms-in3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .ms-in3 label{display:flex;flex-direction:column;gap:3px;min-width:0}
   .ms-in3 i{font-style:normal;font-size:10px;font-weight:900;color:#9A947C;letter-spacing:-.01em;padding-left:3px}
@@ -258,6 +284,8 @@
   .seg2 button{flex:1 1 0;padding:9px 6px;border-radius:9px;font-size:11.5px;
     font-weight:900;color:#8A8674;letter-spacing:-.02em}
   .seg2 button.on{background:var(--navy);color:#fff}
+  /* 강조 색 3가지(기본·초록·진한 남색) — 좁은 시트에서도 한 줄에 */
+  .seg2.seg3 button{padding:9px 4px;font-size:11px;letter-spacing:-.04em}
   .hint-in{font-size:10.5px;font-weight:800;color:#9A947C;letter-spacing:-.02em;
     line-height:1.5;padding-left:2px}
 
@@ -649,6 +677,44 @@ const AUTH_KEY = 'bubudaisy.auth';
 const ROOM_KEY_RE = /^bubudaisy-[a-z0-9]{12,32}$/;
 
 const TABS = ['vision', 'strategy', 'networth'];
+
+/* ---------- 🗓️ 연도 카드 접기/펼치기 (이 기기에만 저장) ----------
+   연도 카드 헤더(✏️ 제외)를 누르면 그 연도의 3칸이 접힌다. 기본값은 펼침이고,
+   접은 연도만 localStorage 에 남겨 새로고침해도 그대로 유지된다. 방 데이터는 건드리지 않는다. */
+const MS_FOLD_KEY = 'bubudaisy.msFold';
+let MS_FOLD = loadMsFold();
+function loadMsFold() {
+  try {
+    const o = JSON.parse(localStorage.getItem(MS_FOLD_KEY) || '{}');
+    return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+  } catch (e) { return {}; }
+}
+function saveMsFold() {
+  try { localStorage.setItem(MS_FOLD_KEY, JSON.stringify(MS_FOLD)); } catch (e) {}
+}
+/* 접힘 상태 키 — 연도 글자를 쓰고, 연도가 비었을 때만 자리(i)를 쓴다 */
+function msFoldKey(m, i) {
+  const y = String((m && m.year) || '').trim();
+  return y ? 'y:' + y : 'i:' + i;
+}
+/* 연도 카드 강조 색 — 기본(크림) · green · deep(진한 남색, 3호기 스타일) */
+function msTone(q) {
+  return q === 'green' ? 'green' : (q === 'deep' ? 'deep' : 'navy');
+}
+function msToneCls(q) {
+  const t = msTone(q);
+  return t === 'navy' ? '' : ' ' + t;
+}
+function msToggleFold(el) {
+  const card = el && el.closest ? el.closest('.ms-card') : null;
+  if (!card) return;
+  const key = el.dataset.k || ('i:' + el.dataset.i);
+  const fold = !card.classList.contains('fold');
+  card.classList.toggle('fold', fold);
+  el.setAttribute('aria-expanded', fold ? 'false' : 'true');
+  if (fold) MS_FOLD[key] = true; else delete MS_FOLD[key];
+  saveMsFold();
+}
 
 /* ---------- 도우미 ---------- */
 const $ = (s, r = document) => r.querySelector(s);
@@ -1202,11 +1268,17 @@ function visionView() {
       (arr.length ? '<div class="ms">' + arr.map((m, i) => {
         const its = (Array.isArray(m.items) ? m.items : []).slice(0, 3);
         const done = Array.isArray(m.done) ? m.done : [];
-        return '<div class="ms-card' + (m.tone === 'green' ? ' green' : '') + '">' +
-          '<div class="ms-h" data-act="v-ms" data-i="' + i + '" role="button" tabindex="0" aria-label="연도 카드 수정">' +
+        /* 접힘 상태 키 — 연도를 쓰고, 연도가 비었을 때만 자리(i)를 쓴다 */
+        const fk = msFoldKey(m, i);
+        const fold = !!MS_FOLD[fk];
+        const okN = its.filter((_, b) => done[b]).length;
+        return '<div class="ms-card' + msToneCls(m.tone) + (fold ? ' fold' : '') + '">' +
+          '<div class="ms-h" data-act="v-ms-fold" data-i="' + i + '" data-k="' + esc(fk) + '" role="button" tabindex="0" aria-expanded="' + (fold ? 'false' : 'true') + '" aria-label="' + esc(m.year || '') + ' 접기·펼치기">' +
           '<span class="y' + (m.tone === 'green' ? ' green' : '') + '">' + esc(m.year) + '</span>' +
           '<span class="ms-hr">' + (m.badge ? '<span class="bd">' + esc(m.badge) + '</span>' : '') +
+          (its.length ? '<span class="ms-prog">' + okN + '/' + its.length + '</span>' : '') +
           '<button class="pen-btn ms-pen" data-act="v-ms" data-i="' + i + '" aria-label="' + esc(m.year || '') + ' 목표 수정">✏️</button>' +
+          '<span class="ms-chev" aria-hidden="true"></span>' +
           '</span></div>' +
           (its.length ? '<div class="ms-grid">' + its.map((x, b) => '<button class="ms-box tap' + (done[b] ? ' done' : '') + '" data-act="v-ms-toggle" data-i="' + i + '" data-b="' + b + '" aria-pressed="' + (done[b] ? 'true' : 'false') + '">' + (done[b] ? '<span class="ck">✓</span>' : '') + esc(x) + '</button>').join('') + '</div>' : '') +
           '</div>';
@@ -1823,6 +1895,7 @@ $('#view').addEventListener('click', async (e) => {
   if (el.dataset.go) { go(el.dataset.go); return; }
   const act = el.dataset.act;
   if (act === 'v-ms') return openVisionMsSheet(el.dataset.i);
+  if (act === 'v-ms-fold') return msToggleFold(el);
   if (act === 'v-ms-toggle') return toggleMsDone(el.dataset.i, el.dataset.b);
   if (act === 'v-ms-cell') return openVisionMsSheet(el.dataset.i, el.dataset.b);
   if (act === 'v-flow-step') return openFlowStepSheet(el.dataset.i);
@@ -1851,6 +1924,15 @@ $('#view').addEventListener('click', async (e) => {
   if (act === 'pl-item') return openPlanItemSheet(el.dataset.c, el.dataset.s, el.dataset.i);
   if (act === 'pl-add') return openPlanItemSheet(el.dataset.c, el.dataset.s, null);
   if (act === 'pl-ch') return openPlanChapterSheet(el.dataset.c);
+});
+
+/* 연도 카드 헤더를 키보드(Enter/Space)로도 접고 편다 */
+$('#view').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const el = e.target.closest('[data-act="v-ms-fold"]');
+  if (!el) return;
+  e.preventDefault();
+  msToggleFold(el);
 });
 
 /* 전략 줄 제스처 — 한 번 탭(수정 시트) · 왼쪽 스와이프(삭제) · 길게 눌러 끌기(순서) */
@@ -2282,7 +2364,7 @@ function openVisionMsSheet(i, box) {
   const idx = isNew ? -1 : Number(i);
   const cur = isNew ? { year: '', badge: '', tone: 'navy', items: [] } : arr[idx];
   const items = Array.isArray(cur.items) ? cur.items : [];
-  let tone = cur.tone === 'green' ? 'green' : 'navy';
+  let tone = msTone(cur.tone);
   const boxIn = (n, ph) => '<label><i>' + n + (n === 3 ? ' (선택)' : '') + '</i>' +
     '<input class="inp" id="vmB' + n + '" value="' + esc(items[n - 1] || '') + '" placeholder="' + ph + '"></label>';
   const body =
@@ -2290,14 +2372,15 @@ function openVisionMsSheet(i, box) {
       '<input class="inp" id="vmYear" value="' + esc(cur.year || '') + '" placeholder="2031~2035">' +
       '<input class="inp" id="vmBadge" value="' + esc(cur.badge || '') + '" placeholder="완성의 해">' +
     '</div></div>' +
-    '<div class="fld"><span>강조 색</span><div class="seg2" id="vmTone">' +
-      '<button data-t="navy" class="' + (tone === 'green' ? '' : 'on') + '">남색</button>' +
-      '<button data-t="green" class="' + (tone === 'green' ? 'on' : '') + '">초록 (완성의 해)</button>' +
+    '<div class="fld"><span>강조 색</span><div class="seg2 seg3" id="vmTone">' +
+      '<button data-t="navy" class="' + (tone === 'navy' ? 'on' : '') + '">기본 (크림)</button>' +
+      '<button data-t="green" class="' + (tone === 'green' ? 'on' : '') + '">초록</button>' +
+      '<button data-t="deep" class="' + (tone === 'deep' ? 'on' : '') + '">진한 남색</button>' +
     '</div></div>' +
     '<div class="fld"><span>TOP3 목표 3칸</span><div class="ms-in3">' +
       boxIn(1, '올선 등기') + boxIn(2, '결혼식') + boxIn(3, '경제적 자유') +
     '</div></div>' +
-    '<div class="fld"><span>이렇게 보여요</span><div class="ms-prev"><div class="ms-grid" id="vmPrev"></div></div></div>' +
+    '<div class="fld"><span>이렇게 보여요</span><div class="ms-prev" id="vmPrevBox"><div class="ms-grid" id="vmPrev"></div></div></div>' +
     '<p class="hint-in">짧은 키워드로 한 칸에 하나씩 넣어 주세요. 비워 둔 칸은 화면에서 빠져요. (최대 3개)</p>';
   const acts = '<button class="sh-save" id="vmSave">' + (isNew ? '추가' : '저장') + '</button>' +
     (isNew ? '' : '<button class="sh-del" id="vmDel">삭제</button>');
@@ -2305,8 +2388,10 @@ function openVisionMsSheet(i, box) {
   const readBoxes = () => [1, 2, 3].map(n => ($('#vmB' + n).value || '').trim()).filter(Boolean).slice(0, 3);
   const upd = () => {
     const its = readBoxes();
+    const box = $('#vmPrevBox');
+    if (box) box.className = 'ms-prev' + (tone === 'green' ? ' green' : (tone === 'deep' ? ' deep' : ''));
     const prev = $('#vmPrev');
-    prev.className = 'ms-grid' + (tone === 'green' ? ' green' : '');
+    prev.className = 'ms-grid';
     prev.innerHTML = its.map(x => '<div class="ms-box">' + esc(x) + '</div>').join('') ||
       '<div class="ms-box" style="color:#B4AE97">박스를 채워 보세요</div>';
   };
