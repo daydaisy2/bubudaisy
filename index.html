@@ -1197,7 +1197,7 @@ function visionView() {
   if (v) {
     const arr = vArr(v, 'milestones');
     ms = '<section class="card">' +
-      '<div class="card-h"><h2>🗓️ 연도별 TOP3</h2><div class="board-tools">' +
+      '<div class="card-h"><h2>🗓️ 하나씩 천천히</h2><div class="board-tools">' +
         (arr.length ? '<span class="pill">' + esc(arr[0].year || '') + '~</span>' : '') + '</div></div>' +
       (arr.length ? '<div class="ms">' + arr.map((m, i) => {
         const its = (Array.isArray(m.items) ? m.items : []).slice(0, 3);
