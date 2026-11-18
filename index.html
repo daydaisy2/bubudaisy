@@ -1211,6 +1211,7 @@ function visionView() {
           (its.length ? '<div class="ms-grid">' + its.map((x, b) => '<button class="ms-box tap' + (done[b] ? ' done' : '') + '" data-act="v-ms-toggle" data-i="' + i + '" data-b="' + b + '" aria-pressed="' + (done[b] ? 'true' : 'false') + '">' + (done[b] ? '<span class="ck">✓</span>' : '') + esc(x) + '</button>').join('') + '</div>' : '') +
           '</div>';
       }).join('') + '</div>' : '<p class="empty">아직 연도 카드가 없어요</p>') +
+      '<button class="add-row" data-act="v-ms" data-i="new">＋ 연도 추가</button>' +
       '</section>';
   }
 
@@ -2359,8 +2360,9 @@ async function saveMsCard(idx, rec) {
     closeSheet();
     render.sameTab = true; render();
     if (isNew) {
-      // 뒤에서부터 한 칸씩 카드 단위로 밀어 넣고, 마지막에 새 카드를 그 자리에 쓴다
-      for (let k = next.length - 2; k >= at; k--) await put('vision/milestones/' + k, next[k]);
+      // 뒤에서부터 한 칸씩 카드 단위로 밀어 넣고, 마지막에 새 카드를 그 자리에 쓴다.
+      // 맨 뒤 카드(next.length-1)부터 써야 중간에 끼워 넣어도 마지막 연도가 사라지지 않는다.
+      for (let k = next.length - 1; k > at; k--) await put('vision/milestones/' + k, next[k]);
       await put('vision/milestones/' + at, rec);
     } else {
       await put('vision/milestones/' + idx, rec);
