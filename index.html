@@ -166,6 +166,21 @@
   .cf-notes .cf-nh .cf-ne{font-size:13px;line-height:1}
   .cf-notes .cf-nt{display:block;margin-top:4px;font-size:11px;font-weight:700;color:#6B6552;
     line-height:1.5;letter-spacing:-.02em;white-space:pre-wrap;overflow-wrap:anywhere}
+  /* 메모 목록 접기/펼치기 — '하나씩 천천히' 연도 접기와 같은 결의 헤더 한 줄(📝 메모 n개 + ▾) */
+  .cf-wrap{margin-top:10px}
+  .cf-wrap .cf-notes{margin-top:6px}
+  .cf-fold{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;
+    cursor:pointer;padding:1px 2px;border-radius:10px;text-align:left}
+  .cf-fold:active{opacity:.62}
+  .cf-fold .cf-ft{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:900;
+    color:#4A4738;letter-spacing:-.02em;line-height:1.3}
+  .cf-fold .cf-fc{font-size:10px;font-weight:900;color:#7C765C;background:var(--cream);
+    padding:3px 8px;border-radius:999px;letter-spacing:-.02em}
+  /* 접힌 메모 — 헤더 한 줄만 남기고 줄들을 감춘다. ▾ 가 ▸ 로 돌아간다 */
+  .cf-wrap.fold .cf-notes{display:none}
+  .cf-fold .cf-chev{flex:0 0 auto;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;
+    border-top:6px solid #8A8368;margin:1px 3px 0 3px;transition:transform .18s ease}
+  .cf-wrap.fold .cf-chev{transform:rotate(-90deg);border-top-color:#5E5942}
   .ms{display:flex;flex-direction:column;gap:8px}
   .ms-card{border-radius:16px;background:var(--cream);padding:11px 11px 11px;transition:background .15s}
   /* 연도 헤더(연도·배지·✏️·▾)를 누르면 그 연도 카드를 접고 편다 — ✏️ 만 편집 시트, 아래 칸은 성공 토글 */
@@ -1374,6 +1389,24 @@ function flowSection() {
    세팅력 컨설턴트와 같은 3열×2행 그리드. 칸을 누르면 이모지와 이름을 적고
    Firebase(cashflowBoxes/b1~b6)에 바로 저장한다. 데이터가 없으면 빈칸으로 보인다. */
 const CF_N = 6;
+/* 메모 목록 접힘 상태 — 이 기기에만 저장한다. 기본값은 펼침이고, 방 데이터는 건드리지 않는다. */
+const CF_FOLD_KEY = 'bubudaisy.cfNotesFold';
+let CF_FOLD = loadCfFold();
+function loadCfFold() {
+  try { return localStorage.getItem(CF_FOLD_KEY) === 'fold'; } catch (e) { return false; }
+}
+function saveCfFold() {
+  try { localStorage.setItem(CF_FOLD_KEY, CF_FOLD ? 'fold' : 'open'); } catch (e) {}
+}
+function cfToggleNotesFold(el) {
+  const wrap = el && el.closest ? el.closest('.cf-wrap') : null;
+  if (!wrap) return;
+  const fold = !wrap.classList.contains('fold');
+  wrap.classList.toggle('fold', fold);
+  el.setAttribute('aria-expanded', fold ? 'false' : 'true');
+  CF_FOLD = fold;
+  saveCfFold();
+}
 function cfBox(i) {
   const d = (ST.cashflow && typeof ST.cashflow === 'object') ? ST.cashflow : {};
   const v = d['b' + (i + 1)];
@@ -1396,13 +1429,20 @@ function cashflowCard() {
       '<span class="cf-l">' + esc(name) + '</span></button>');
     if (note) notes.push({ i: i, emoji: emoji, name: name, note: note });
   }
-  /* 6칸 아래 — 메모를 적은 칸만 b1~b6 순서로 모아 보여 주고, 줄을 누르면 그 칸 시트가 열린다 */
+  /* 6칸 아래 — 메모를 적은 칸만 b1~b6 순서로 모아 보여 주고, 줄을 누르면 그 칸 시트가 열린다.
+     헤더 줄(📝 메모 n개 + ▾)을 누르면 목록만 접히고, 접힘 상태는 이 기기에 남는다. */
   const noteList = notes.length
-    ? '<div class="cf-notes" aria-label="현금흐름 메모">' + notes.map(n =>
+    ? '<div class="cf-wrap' + (CF_FOLD ? ' fold' : '') + '">' +
+        '<div class="cf-fold" data-act="cf-notes-fold" role="button" tabindex="0" aria-expanded="' + (CF_FOLD ? 'false' : 'true') + '" aria-label="현금흐름 메모 ' + notes.length + '개 접기·펼치기">' +
+          '<span class="cf-ft">📝 메모 <span class="cf-fc">' + notes.length + '개</span></span>' +
+          '<span class="cf-chev" aria-hidden="true"></span>' +
+        '</div>' +
+        '<div class="cf-notes" aria-label="현금흐름 메모">' + notes.map(n =>
         '<button class="cf-nl" data-act="cf-edit" data-i="' + n.i + '" aria-label="' + esc(n.name) + ' 메모 수정">' +
         '<span class="cf-nh">' + (n.emoji ? '<span class="cf-ne" aria-hidden="true">' + esc(n.emoji) + '</span>' : '') +
         esc(n.name) + '</span>' +
-        '<span class="cf-nt">📝 ' + esc(n.note) + '</span></button>').join('') + '</div>'
+        '<span class="cf-nt">📝 ' + esc(n.note) + '</span></button>').join('') + '</div>' +
+      '</div>'
     : '<p class="cap" style="text-align:left">칸을 누르면 이모지·이름·메모를 직접 적을 수 있어요</p>';
   return '<section class="card">' +
     '<div class="card-h"><h2>💸 현금흐름 월 1,000만원</h2><div class="board-tools"><span class="pill">' + CF_N + '개</span></div></div>' +
@@ -1930,6 +1970,7 @@ $('#view').addEventListener('click', async (e) => {
   if (act === 'v-flow-meta') return openFlowMetaSheet();
   if (act === 'v-flow-init') return createRoadFlow();
   if (act === 'cf-edit') return openCfSheet(el.dataset.i);
+  if (act === 'cf-notes-fold') return cfToggleNotesFold(el);
   if (act === 'sm-add') return openSmSheet(el.dataset.list, null);
   if (act === 'sm-del') return smDel(el.dataset.list, el.dataset.id);
   if (act === 'tt-add') return openTradeSheet(null);
@@ -1953,13 +1994,14 @@ $('#view').addEventListener('click', async (e) => {
   if (act === 'pl-ch') return openPlanChapterSheet(el.dataset.c);
 });
 
-/* 연도 카드 헤더를 키보드(Enter/Space)로도 접고 편다 */
+/* 메모 헤더·연도 카드 헤더를 키보드(Enter/Space)로도 접고 편다 */
 $('#view').addEventListener('keydown', (e) => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
-  const el = e.target.closest('[data-act="v-ms-fold"]');
+  const el = e.target.closest('[data-act="v-ms-fold"],[data-act="cf-notes-fold"]');
   if (!el) return;
   e.preventDefault();
-  msToggleFold(el);
+  if (el.dataset.act === 'cf-notes-fold') cfToggleNotesFold(el);
+  else msToggleFold(el);
 });
 
 /* 전략 줄 제스처 — 한 번 탭(수정 시트) · 왼쪽 스와이프(삭제) · 길게 눌러 끌기(순서) */
