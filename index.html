@@ -70,13 +70,20 @@
   #app{position:fixed;inset:0;display:flex;flex-direction:column;max-width:560px;margin:0 auto}
   .top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;
     padding:calc(env(safe-area-inset-top) + 12px) 18px 8px}
-  .brand{display:flex;align-items:center;gap:.28em;margin:0;font-size:23px;font-weight:900;
+  .brand{flex:0 0 auto;display:flex;align-items:center;gap:.28em;margin:0;font-size:21px;font-weight:900;
     letter-spacing:-.035em;color:var(--navy);line-height:1}
-  .brand .fl{font-size:20px;transform:translateY(1px)}
+  .brand .fl{font-size:18px;transform:translateY(1px)}
   .top-right{display:flex;align-items:center;gap:10px}
   /* 마지막 접속 시간 — 브랜드 아래 작은 두 줄(세은 / 찬규) */
-  .top-l{display:flex;flex-direction:column;gap:4px;min-width:0}
-  .seen-box{display:flex;flex-direction:column;gap:1px}
+  .seen-box{display:flex;flex-direction:column;gap:2px;flex:0 0 auto;margin:0 auto}
+  @media (max-width:360px){
+    .brand{font-size:18px}.brand .fl{font-size:15px}
+    .top{gap:5px;padding-left:12px;padding-right:12px}.top-right{gap:6px}
+    .seen{font-size:9px}
+  }
+  @media (max-width:340px){
+    .top .dot{display:none}.top .lock-btn,.top .memo-btn{width:28px;height:28px}
+  }
   .seen{display:flex;align-items:center;gap:4px;margin:0;padding:0;min-width:0;border:0;background:none;
     font:inherit;font-size:10px;font-weight:800;line-height:1.3;letter-spacing:-.02em;color:#6B6642;
     text-align:left;white-space:nowrap}
@@ -85,7 +92,7 @@
   .seen.live .stx{color:var(--green)}
   .seen.none .stx{color:#8F8A66;font-weight:700}
   button.seen{cursor:pointer;border-radius:6px;transition:opacity .15s}
-  button.seen .sw{font-size:.95em;color:#8F8A66}
+  button.seen .sn{text-decoration:underline dotted;text-underline-offset:2px}
   button.seen:active{opacity:.55}
   .pick-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .pick-b{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:84px;
@@ -755,10 +762,8 @@
 <!-- ===== 앱 ===== -->
 <div id="app" class="hidden">
   <div class="top">
-    <div class="top-l">
-      <h1 class="brand"><span class="fl">🌼</span>BUBUDAISY<span class="fl">🌼</span></h1>
-      <div class="seen-box" id="seenBox" aria-label="마지막 접속 시간"></div>
-    </div>
+    <h1 class="brand"><span class="fl">🌼</span>BUBUDAISY<span class="fl">🌼</span></h1>
+    <div class="seen-box" id="seenBox" aria-label="마지막 접속 시간"></div>
     <div class="top-right">
       <span class="dot" id="dot" title="연결 확인 중"></span>
       <button class="memo-btn" id="memoBtn" aria-label="수정 요청 메모">📝<span class="memo-cnt hidden" id="memoCnt">0</span></button>
@@ -998,11 +1003,11 @@ function seenAt(v) {
 function sameYmd(a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
 function seenInfo(owner) {
   const ts = seenAt((ST.lastSeen || {})[owner]);
-  if (!ts) return { text: '접속 기록 없음', live: false, none: true };
+  if (!ts) return { text: '기록 없음', live: false, none: true };
   const d = new Date(ts), now = new Date();
   const hm = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
   const diff = Date.now() - ts;
-  if (diff < 60 * 1000 && diff > -60 * 1000) return { text: '방금 접속', live: true, none: false };
+  if (diff < 60 * 1000 && diff > -60 * 1000) return { text: '방금', live: true, none: false };
   if (sameYmd(d, now)) return { text: '오늘 ' + hm, live: false, none: false };
   const y = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
   if (sameYmd(d, y)) return { text: '어제 ' + hm, live: false, none: false };
@@ -1014,13 +1019,12 @@ function paintSeen() {
   box.innerHTML = Object.keys(OWNERS).map(owner => {
     const o = OWNERS[owner], s = seenInfo(owner);
     const cls = 'seen' + (s.live ? ' live' : '') + (s.none ? ' none' : '');
-    const inner = '<span aria-hidden="true">' + o.emoji + '</span><span class="sn">' + o.name + '</span>' +
-      '<span class="stx">' + esc(s.text) + '</span>';
+    const inner = '<span class="sn">' + o.name + '</span><span class="stx">' + esc(s.text) + '</span>';
     if (owner === ME) {
       /* 내 줄을 누르면 이 기기 프로필을 다시 고를 수 있다 */
       return '<button type="button" class="' + cls + ' mine" data-switch="1" ' +
         'aria-label="내 마지막 접속 ' + esc(s.text) + ' — 탭하면 기기 프로필 바꾸기">' +
-        inner + '<span class="sw" aria-hidden="true">⇄</span></button>';
+        inner + '</button>';
     }
     return '<div class="' + cls + '" title="마지막 접속 ' + esc(s.text) + '">' + inner + '</div>';
   }).join('');
