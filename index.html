@@ -75,14 +75,19 @@
   .brand .fl{font-size:18px;transform:translateY(1px)}
   .top-right{display:flex;align-items:center;gap:10px}
   /* 마지막 접속 시간 — 브랜드 아래 작은 두 줄(세은 / 찬규) */
-  .seen-box{display:flex;flex-direction:column;gap:2px;flex:0 0 auto;margin:0 auto}
+  .seen-box{display:flex;flex-direction:column;gap:2px;flex:0 0 auto;margin:0 -2px 0 auto;padding:3px 8px;
+    border:0;border-radius:12px;background:rgba(255,255,255,.55);font:inherit;text-align:left;cursor:pointer;
+    transition:opacity .15s}
+  .seen-box:active{opacity:.6}
   @media (max-width:360px){
     .brand{font-size:18px}.brand .fl{font-size:15px}
     .top{gap:5px;padding-left:12px;padding-right:12px}.top-right{gap:6px}
     .seen{font-size:9px}
   }
+  @media (max-width:400px){ .top .dot{display:none} }
   @media (max-width:340px){
-    .top .dot{display:none}.top .lock-btn,.top .memo-btn{width:28px;height:28px}
+    .top .lock-btn,.top .memo-btn{width:28px;height:28px}
+    .brand .fl:last-child{display:none}
   }
   .seen{display:flex;align-items:center;gap:4px;margin:0;padding:0;min-width:0;border:0;background:none;
     font:inherit;font-size:10px;font-weight:800;line-height:1.3;letter-spacing:-.02em;color:#6B6642;
@@ -91,9 +96,7 @@
   .seen .stx{overflow:hidden;text-overflow:ellipsis}
   .seen.live .stx{color:var(--green)}
   .seen.none .stx{color:#8F8A66;font-weight:700}
-  button.seen{cursor:pointer;border-radius:6px;transition:opacity .15s}
-  button.seen .sn{text-decoration:underline dotted;text-underline-offset:2px}
-  button.seen:active{opacity:.55}
+  .seen.mine .sn{color:var(--navy)}
   .pick-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .pick-b{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:84px;
     border-radius:16px;background:var(--cream);border:2px solid transparent;font-size:15px;font-weight:900;
@@ -763,7 +766,7 @@
 <div id="app" class="hidden">
   <div class="top">
     <h1 class="brand"><span class="fl">🌼</span>BUBUDAISY<span class="fl">🌼</span></h1>
-    <div class="seen-box" id="seenBox" aria-label="마지막 접속 시간"></div>
+    <button type="button" class="seen-box" id="seenBox" aria-label="마지막 접속 시간 — 탭하면 이 기기 프로필 바꾸기"></button>
     <div class="top-right">
       <span class="dot" id="dot" title="연결 확인 중"></span>
       <button class="memo-btn" id="memoBtn" aria-label="수정 요청 메모">📝<span class="memo-cnt hidden" id="memoCnt">0</span></button>
@@ -1018,15 +1021,9 @@ function paintSeen() {
   if (!box) return;
   box.innerHTML = Object.keys(OWNERS).map(owner => {
     const o = OWNERS[owner], s = seenInfo(owner);
-    const cls = 'seen' + (s.live ? ' live' : '') + (s.none ? ' none' : '');
-    const inner = '<span class="sn">' + o.name + '</span><span class="stx">' + esc(s.text) + '</span>';
-    if (owner === ME) {
-      /* 내 줄을 누르면 이 기기 프로필을 다시 고를 수 있다 */
-      return '<button type="button" class="' + cls + ' mine" data-switch="1" ' +
-        'aria-label="내 마지막 접속 ' + esc(s.text) + ' — 탭하면 기기 프로필 바꾸기">' +
-        inner + '</button>';
-    }
-    return '<div class="' + cls + '" title="마지막 접속 ' + esc(s.text) + '">' + inner + '</div>';
+    const cls = 'seen' + (s.live ? ' live' : '') + (s.none ? ' none' : '') + (owner === ME ? ' mine' : '');
+    return '<span class="' + cls + '"><span class="sn">' + o.name + '</span>' +
+      '<span class="stx">' + esc(s.text) + '</span></span>';
   }).join('');
 }
 /* 내 접속 시간을 서버에 남긴다. 실패해도 화면은 그대로. */
@@ -1055,7 +1052,7 @@ function openPick() {
     Object.keys(OWNERS).map(k => '<button type="button" class="pick-b' + (k === ME ? ' on' : '') + '" data-pick="' + k + '">' +
       '<span class="pe" aria-hidden="true">' + OWNERS[k].emoji + '</span>' + OWNERS[k].name + '</button>').join('') +
     '</div>' +
-    '<p class="hint-in" style="margin:10px 0 0">나중에 바꾸려면 위쪽 내 접속 시간 줄을 눌러 주세요</p>';
+    '<p class="hint-in" style="margin:10px 0 0">나중에 바꾸려면 위쪽 접속 시간 칸을 눌러 주세요</p>';
   openSheet('이 기기는 누구인가요?', body, '');
 }
 function setMe(who) {
@@ -1068,7 +1065,7 @@ function setMe(who) {
   touchSeen(true);
 }
 document.addEventListener('click', (e) => {
-  const sw = e.target.closest && e.target.closest('#seenBox [data-switch]');
+  const sw = e.target.closest && e.target.closest('#seenBox');
   if (sw) { e.preventDefault(); openPick(); return; }
   const pk = e.target.closest && e.target.closest('#shBody [data-pick]');
   if (pk) { e.preventDefault(); setMe(pk.dataset.pick); }
