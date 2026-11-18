@@ -135,6 +135,8 @@
     box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
   .card-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
   .card-h h2{margin:0;font-size:14.5px;font-weight:900;letter-spacing:-.03em;color:var(--ink)}
+  /* 긴 카드 제목 — 오른쪽 뱃지·✏️와 겹치지 않게 좁은 화면에서는 낱말 단위로 줄바꿈 */
+  .card-h h2.lng{min-width:0;line-height:1.28;word-break:keep-all;overflow-wrap:anywhere;text-wrap:balance}
   .pill{flex:0 0 auto;font-size:10.5px;font-weight:800;color:#7C765C;background:var(--cream);
     padding:4px 9px;border-radius:999px;letter-spacing:-.02em}
   .pill.navy{color:#fff;background:var(--navy)}
@@ -1603,7 +1605,7 @@ function visionView() {
   if (v) {
     const arr = vArr(v, 'milestones');
     ms = '<section class="card">' +
-      '<div class="card-h"><h2>🗓️ 하나씩 천천히</h2><div class="board-tools">' +
+      '<div class="card-h"><h2 class="lng">💘 하나씩 천천히, 하지만 뾰족하게</h2><div class="board-tools">' +
         (arr.length ? '<span class="pill">' + esc(arr[0].year || '') + '~</span>' : '') + '</div></div>' +
       (arr.length ? '<div class="ms">' + arr.map((m, i) => {
         const its = (Array.isArray(m.items) ? m.items : []).slice(0, 3);
@@ -2073,10 +2075,12 @@ function ckHead(key, extra) {
   const s = ckSec(key), d = CK_SEC_DEF[key] || {};
   const em = String(s.emoji == null ? '' : s.emoji).trim();
   const ti = String(s.title == null ? '' : s.title).trim();
+  /* 연도별 카드는 제목이 길어도 오른쪽 뱃지·✏️와 겹치지 않게 lng(줄바꿈 허용) */
+  const lng = key === 'years' ? ' lng' : '';
   /* 제목이 비어 있으면 「제목 입력」 자리표시만 — 자리표시를 눌러도 제목 입력 시트가 열린다 */
   const h2 = ti
-    ? '<h2>' + (em ? esc(em) + ' ' : '') + esc(ti) + '</h2>'
-    : '<h2 class="ck-tph-h" data-act="ck-' + key + '-meta" role="button" tabindex="0" aria-label="카드 제목 입력">' +
+    ? '<h2 class="' + lng.trim() + '">' + (em ? esc(em) + ' ' : '') + esc(ti) + '</h2>'
+    : '<h2 class="ck-tph-h' + lng + '" data-act="ck-' + key + '-meta" role="button" tabindex="0" aria-label="카드 제목 입력">' +
         (em ? esc(em) + ' ' : '') + '<span class="ck-tph">제목 입력</span></h2>';
   return '<div class="card-h">' + h2 +
     '<div class="board-tools">' + (extra || '') +
