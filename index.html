@@ -190,22 +190,21 @@
   .ms-card.green .ms-box.done:active{background:#FBE9A6}
   .ms-card.green .ms-box.done .ck{background:#B08A00}
   .ms-card.green .ms-box{background:var(--green-soft);color:#265C33}
-  /* 진한 남색 카드(`tone: deep`) — `갈아타기 전략`의 3호기(찐똘) 칸과 같은 진남색 그라데이션 + 흰 글씨 */
-  .ms-card.deep{background:linear-gradient(160deg,#2E2AA0,#1E1B7A 72%);box-shadow:0 9px 18px rgba(30,27,122,.24)}
-  .ms-card.deep .ms-h .y{color:#fff}
-  .ms-card.deep .ms-h .bd{background:var(--yellow);color:#2A2694}
-  .ms-card.deep .ms-h .ms-prog{color:rgba(255,255,255,.72)}
-  .ms-card.deep .ms-h .ms-chev{border-top-color:rgba(255,255,255,.6)}
-  .ms-card.deep .ms-pen{background:rgba(255,255,255,.16);color:#fff}
-  .ms-card.deep .ms-box{background:rgba(255,255,255,.12);color:#fff;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
-  .ms-card.deep .ms-box:active{background:rgba(255,255,255,.22)}
-  .ms-card.deep .ms-box.done{background:var(--yellow);color:#4A3600;box-shadow:inset 0 0 0 1.5px #EFD871}
-  .ms-card.deep .ms-box.done:active{background:#FBE9A6}
-  .ms-card.deep .ms-box.done .ck{background:#2A2694}
-  /* 시트 `이렇게 보여요` 미리보기에서도 같은 색 */
-  .ms-prev.deep{background:linear-gradient(160deg,#2E2AA0,#1E1B7A 72%)}
-  .ms-prev.deep .ms-box{background:rgba(255,255,255,.12);color:#fff}
+  /* 진한 남색 카드(`tone: deep`) — 바깥 연도 카드(연도·배지·`✏️`·`▾`)는 `2026년`·`2027` 과 똑같은
+     연한 크림 바탕 그대로 두고, **안쪽 3개 네모 칸만** `갈아타기 전략`의 3호기(찐똘) 칸과 같은
+     진남색 그라데이션 + 흰 글씨로 칠한다 */
+  .ms-card.deep .ms-box{background:linear-gradient(160deg,#2E2AA0,#1E1B7A 72%);color:#fff;
+    box-shadow:0 9px 18px rgba(30,27,122,.24)}
+  .ms-card.deep .ms-box:active{background:linear-gradient(160deg,#3531AC,#242086 72%)}
+  /* 성공 ✓ — 진남색 바탕은 그대로 두고 노란 테두리 + 노란 ✓ 배지로 구분한다 */
+  .ms-card.deep .ms-box.done{background:linear-gradient(160deg,#2E2AA0,#1E1B7A 72%);color:#fff;
+    box-shadow:inset 0 0 0 2px var(--yellow)}
+  .ms-card.deep .ms-box.done:active{background:linear-gradient(160deg,#3531AC,#242086 72%)}
+  .ms-card.deep .ms-box.done .ck{background:var(--yellow);color:#2A2694}
+  /* 시트 `이렇게 보여요` 미리보기도 바깥은 크림, 안쪽 네모만 진한 남색 */
+  .ms-prev.deep{background:var(--cream)}
+  .ms-prev.deep .ms-box{background:linear-gradient(160deg,#2E2AA0,#1E1B7A 72%);color:#fff;
+    box-shadow:0 2px 7px rgba(30,27,122,.2)}
   .ms-prev.green .ms-box{background:var(--green-soft);color:#265C33}
   .ms-in3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
   .ms-in3 label{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -2393,7 +2392,7 @@ function openVisionMsSheet(i, box) {
     const prev = $('#vmPrev');
     prev.className = 'ms-grid';
     prev.innerHTML = its.map(x => '<div class="ms-box">' + esc(x) + '</div>').join('') ||
-      '<div class="ms-box" style="color:#B4AE97">박스를 채워 보세요</div>';
+      '<div class="ms-box" style="color:' + (tone === 'deep' ? 'rgba(255,255,255,.66)' : '#B4AE97') + '">박스를 채워 보세요</div>';
   };
   upd();
   ['#vmB1', '#vmB2', '#vmB3'].forEach(sel => $(sel).addEventListener('input', upd));
