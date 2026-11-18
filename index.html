@@ -147,7 +147,10 @@
     align-items:center;gap:4px;font-size:11px;font-weight:900;color:#4A4738;letter-spacing:-.02em}
   .chip .ci{font-size:18px;line-height:1}
   /* 💸 현금흐름 6칸 — 세팅력 컨설턴트와 같은 3열×2행 그리드, 칸을 눌러 직접 적는다 */
-  .chips.cf .chip{padding:12px 6px;gap:5px;transition:background .15s}
+  .chips.cf .chip{padding:12px 6px;gap:5px;transition:background .15s;position:relative}
+  /* 메모가 있는 칸 — 칸 모서리에 작은 📝 만 붙여 글자 자리를 잡아먹지 않게 한다 */
+  .chips.cf .chip .cf-note{position:absolute;top:3px;right:4px;font-size:9px;line-height:1;opacity:.72}
+  .chips.cf .chip.empty .cf-note{display:none}
   .chips.cf .chip:active{background:#F6EFD6}
   .chips.cf .chip.empty{color:#B4AE97}
   .chips.cf .chip.empty .ci{color:#C9C2A6;font-size:15px}
@@ -1373,15 +1376,17 @@ function cashflowCard() {
     const label = String(b.label || '').trim();
     const emoji = String(b.emoji || '').trim();
     const empty = !label && !emoji;
+    const note = String(b.note || '').trim();
     cells.push('<button class="chip' + (empty ? ' empty' : '') + '" data-act="cf-edit" data-i="' + i +
-      '" aria-label="현금흐름 ' + (i + 1) + '번 칸 수정">' +
+      '" aria-label="현금흐름 ' + (i + 1) + '번 칸 수정' + (note ? ' (메모 있음)' : '') + '">' +
+      (note ? '<span class="cf-note" aria-hidden="true">📝</span>' : '') +
       '<span class="ci">' + esc(emoji || '＋') + '</span>' +
       '<span class="cf-l">' + esc(label || ('항목 ' + (i + 1))) + '</span></button>');
   }
   return '<section class="card">' +
-    '<div class="card-h"><h2>💸 현금흐름</h2><div class="board-tools"><span class="pill">' + CF_N + '개</span></div></div>' +
+    '<div class="card-h"><h2>💸 현금흐름 월 1,000</h2><div class="board-tools"><span class="pill">' + CF_N + '개</span></div></div>' +
     '<div class="chips cf">' + cells.join('') + '</div>' +
-    '<p class="cap" style="text-align:left">칸을 누르면 이모지와 이름을 직접 적을 수 있어요</p>' +
+    '<p class="cap" style="text-align:left">칸을 누르면 이모지·이름·메모를 직접 적을 수 있어요</p>' +
     '</section>';
 }
 function openCfSheet(i) {
@@ -1391,7 +1396,8 @@ function openCfSheet(i) {
   const body =
     '<label class="fld"><span>아이콘 (이모지 한 글자)</span><input class="inp" id="cfEmoji" style="text-align:center;font-size:22px" maxlength="12" value="' + esc(cur.emoji || '') + '" placeholder="💵"></label>' +
     '<label class="fld"><span>이름</span><input class="inp" id="cfLabel" value="' + esc(cur.label || '') + '" placeholder="예: 월세 수입"></label>' +
-    '<p class="hint-in">💵 🏠 📈 처럼 짧은 이모지를 붙여 넣으면 돼요. 두 칸을 모두 비우고 저장하면 빈칸으로 돌아가요.</p>';
+    '<label class="fld"><span>메모 (선택)</span><textarea class="inp" id="cfNote" placeholder="예: 매달 25일 입금 · 200만원 / 관리비 별도">' + esc(cur.note || '') + '</textarea></label>' +
+    '<p class="hint-in">💵 🏠 📈 처럼 짧은 이모지를 붙여 넣으면 돼요. 메모를 적어 두면 칸 오른쪽 위에 📝 가 붙어요. 이름과 아이콘을 모두 비우고 저장하면 빈칸으로 돌아가요.</p>';
   const acts = '<button class="sh-save" id="cfSave">저장</button>' +
     (has ? '<button class="sh-del" id="cfClear">비우기</button>' : '');
   openSheet('현금흐름 ' + (idx + 1) + '번 칸', body, acts);
@@ -1409,11 +1415,12 @@ function openCfSheet(i) {
   $('#cfSave').addEventListener('click', async () => {
     const emoji = $('#cfEmoji').value.trim();
     const label = $('#cfLabel').value.trim();
+    const note = ($('#cfNote').value || '').trim();
     if (!label) {
       if (!emoji) return clearBox();
       toast('이름을 적어 주세요'); return;
     }
-    const rec = { emoji: emoji || null, label: label, order: idx + 1, updatedAt: Date.now() };
+    const rec = { emoji: emoji || null, label: label, note: note || null, order: idx + 1, updatedAt: Date.now() };
     if (!ST.cashflow || typeof ST.cashflow !== 'object') ST.cashflow = {};
     ST.cashflow['b' + (idx + 1)] = rec;
     closeSheet(); render.sameTab = true; render();
