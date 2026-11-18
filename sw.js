@@ -1,6 +1,6 @@
 /* BUBUDAISY 서비스워커 — 오프라인에서도 마지막 화면은 열리게.
    비공개 방(Firebase) 통신은 절대 캐시하지 않는다. */
-const CACHE = 'bubudaisy-v27';
+const CACHE = 'bubudaisy-v28';
 const ASSETS = [
   './',
   './index.html',
@@ -38,6 +38,9 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url);
   // 다른 출처(Firebase 등)는 서비스워커가 건드리지 않는다
   if (url.origin !== self.location.origin) return;
+
+  // robots.txt 는 서비스워커가 가로채지 않는다 — 검색 로봇이 늘 서버 응답을 받도록
+  if (url.pathname.endsWith('/robots.txt')) return;
 
   // 화면(HTML)은 네트워크 우선, 실패하면 캐시
   if (req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html')) {
