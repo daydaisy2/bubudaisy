@@ -612,11 +612,12 @@
   .nwchart{margin:6px 0 0}
   .nwchart svg{width:100%;height:auto;display:block;overflow:visible;touch-action:manipulation}
   .nwchart .axis{stroke:#EDE7D2;stroke-width:1;stroke-dasharray:3 4}
-  .nwchart .guide{stroke:#E3DCC3;stroke-width:1;stroke-dasharray:2 3}
+  .nwchart .guide{stroke:#EDE6D2;stroke-width:1;stroke-dasharray:2 3}
   .nwchart .ln{filter:drop-shadow(0 2px 3px rgba(30,27,122,.10))}
   /* 세은·찬규 선은 연하게 — 부부 선이 한눈에 주인공으로 보이게 */
   .nwchart .ln.subln{filter:none;opacity:.5}
   .nwchart .cml{font-size:10px;font-weight:800;fill:#8A8674;letter-spacing:-.02em}
+  .nwchart .cml.on{fill:#1E1B7A;font-weight:900}
   .nwchart rect.hit{fill:transparent;cursor:pointer}
   .nwchart circle.pt{transition:r .12s}
   .nwchart circle.pt.sub{opacity:.62}
@@ -624,9 +625,8 @@
   .nwchart .vl{font-weight:900;letter-spacing:-.03em;paint-order:stroke;stroke:#FFFDF6;
     stroke-width:2.6px;stroke-linejoin:round;pointer-events:none}
   /* 부부 금액은 알약 배지 안에 — 배지가 불투명하니 흰 테두리(paint-order)는 끈다 */
-  .nwchart .vl.pv{font-size:9.8px;fill:#1E1B7A;stroke:none;font-weight:900}
-  .nwchart .vl.se{font-size:8.4px;fill:#EA580C;opacity:.8}
-  .nwchart .vl.ck{font-size:8.4px;fill:#0D9488;opacity:.8}
+  .nwchart .vl.pv{fill:#FFFFFF;stroke:none;font-weight:900;letter-spacing:-.02em}
+  .nwchart .vl.se,.nwchart .vl.ck{font-weight:900;letter-spacing:-.03em}
   .crow{display:grid;grid-template-columns:54px 1fr 76px;align-items:center;gap:8px}
   .crow .cm{font-size:10.5px;font-weight:800;color:#7C765C;letter-spacing:-.02em}
   .crow .cbar{height:14px;background:var(--cream);border-radius:999px;overflow:hidden}
@@ -1299,18 +1299,29 @@ function pctOf(total) {
   if (!t || total == null) return null;
   return total / t * 100;
 }
-/* ---------- 순자산 추이: 3색 멀티 꺾은선(SVG) ----------
-   부부(부부 순자산) · 세은 · 찬규 세 선을 늘 함께 그린다(칩 토글 없음 — 위 카드 3칸과 색만 맞춘다).
-   X축은 오래된 달 → 최신 달(오름차순). Y축은 세 선의 min/max에 여백을 둬 골고루 펼쳐진다.
-   점(또는 달 칸)을 누르면 아래 요약이 그 달로 바뀐다 — 기본은 최신 달. */
-const NW_SERIES = [
-  { k: 'net',     nm: '부부', cls: 'net', c: '#1E1B7A', w: 3.2 },
-  { k: 'seeun',   nm: '세은', cls: 'se',  c: '#EA580C', w: 1.4 },
-  { k: 'chankyu', nm: '찬규', cls: 'ck',  c: '#0D9488', w: 1.4 }
-];
-const nwOn = { net: true, seeun: true, chankyu: true };
-let nwMonth = '';        /* 요약에 보여 줄 달 — 빈 값이면 최신 달 */
+/* ---------- 순자산 추이: 세은·찬규 막대 + 부부 꺾은선(콤보, SVG) ----------
+   세은(연한 오렌지)·찬규(연한 청록) 막대를 나란히 세우고, 그 위쪽 띠를 지나는 부부 진남색 선에
+   흰 점을 얹고 월마다 부부 총액을 진남색 알약 배지로 선 위에 표시한다. 범례 줄은 두지 않는다
+   (위 3칸과 색이 이미 통일돼 있다). 막대 띠와 선 띠를 위아래로 나눠 잡아 부부 총액이 0이거나
+   음수여도 선과 막대가 겹치지 않는다. 달 칸(막대+점)을 누르면 그 달 가이드선이 서고 아래가 바뀐다. */
 const NW_MONTHS = 6;     /* 그래프에 그릴 최근 개월 수 */
+const NW_NAVY = '#1E1B7A';
+const NW_BAR = {         /* 막대 파스텔 색 · 숫자색 */
+  seeun:   { c: '#F8CFB2', t: '#EA580C' },
+  chankyu: { c: '#A6D8CD', t: '#0D9488' }
+};
+/* 윗면만 둥근 막대 — 위 두 모서리만 Q로 깎고 아래는 각지게 */
+function nwBarPath(x, yTop, w, h, r) {
+  const rr = Math.max(0, Math.min(r, w / 2, h));
+  return 'M' + x.toFixed(1) + ' ' + (yTop + h).toFixed(1) +
+    ' L' + x.toFixed(1) + ' ' + (yTop + rr).toFixed(1) +
+    ' Q' + x.toFixed(1) + ' ' + yTop.toFixed(1) + ' ' + (x + rr).toFixed(1) + ' ' + yTop.toFixed(1) +
+    ' L' + (x + w - rr).toFixed(1) + ' ' + yTop.toFixed(1) +
+    ' Q' + (x + w).toFixed(1) + ' ' + yTop.toFixed(1) + ' ' + (x + w).toFixed(1) + ' ' + (yTop + rr).toFixed(1) +
+    ' L' + (x + w).toFixed(1) + ' ' + (yTop + h).toFixed(1) + ' Z';
+}
+
+let nwMonth = '';        /* 그래프에서 고른 달 — 빈 값이면 최신 달 */
 
 function nwChartCard() {
   const all = nwSorted();
@@ -1333,176 +1344,132 @@ function nwChartInner(all, latest) {
   const recent = all.slice(0, NW_MONTHS).slice().reverse();
   const n = recent.length;
   const sel = recent.some(x => x.month === nwMonth) ? nwMonth : latest.month;
-  const on = NW_SERIES.filter(s => nwOn[s.k]);
-  /* 좌우 여백은 아껴 그래프를 시원하게 — 양 끝 숫자·배지는 라벨을 안쪽(점 오른쪽/왼쪽)으로 붙여 지킨다.
-     높이도 넉넉히(390px 폰에서 약 200px) 잡아 칩을 뺀 만큼 위아래로 꽉 차게. */
-  const VW = 340, VH = 202, PT = 30, PB = 24, PX = 20;
-  const plotW = VW - PX * 2, plotH = VH - PT - PB, base = PT + plotH;
+  /* 좌우 여백은 아껴 그래프를 시원하게, 높이는 390px 폰에서 약 240px — 범례 줄 없이 위아래 여백을 넉넉히 */
+  const VW = 340, VH = 240, PX = 16;
+  const plotW = VW - PX * 2;
+  const LINE_TOP = 40, LINE_BOT = 74;    /* 부부 선이 오가는 위쪽 띠 */
+  const BAR_TOP = 96, BASE = 212;        /* 막대가 닿을 수 있는 꼭대기 · 막대 바닥 */
+  const LAB_Y = 230;                     /* 달 이름(26.09) */
   const val = (d, k) => Number(d[k]) || 0;
-  /* Y축: 지금 켜진 선들의 값 전체에서 최솟값~최댓값 (+ 위아래 여백) */
-  const vals = [];
-  recent.forEach(d => on.forEach(s => vals.push(val(d, s.k))));
-  let mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals);
-  if (mx - mn < 1) { const d = Math.max(Math.abs(mx) * 0.08, 500); mn -= d; mx += d; }
-  else { const p = (mx - mn) * 0.38; mn -= p; mx += p; }
-  const xAt = i => n === 1 ? VW / 2 : PX + plotW * i / (n - 1);
-  const yAt = v => base - ((v - mn) / (mx - mn)) * plotH;
-  const xs = recent.map((x, i) => xAt(i));
-  const sIdx = recent.findIndex(x => x.month === sel);
-
-  /* 부부 선만 아래로 은은한 영역 채움 */
-  let area = '';
-  if (nwOn.net && n > 1) {
-    const ys = recent.map(d => yAt(val(d, 'net')));
-    area = 'M' + xs[0].toFixed(1) + ' ' + ys[0].toFixed(1) +
-      recent.slice(1).map((d, i) => ' L' + xs[i + 1].toFixed(1) + ' ' + ys[i + 1].toFixed(1)).join('') +
-      ' L' + xs[n - 1].toFixed(1) + ' ' + base.toFixed(1) +
-      ' L' + xs[0].toFixed(1) + ' ' + base.toFixed(1) + ' Z';
-  }
-  const lines = on.map(s => {
-    const d = recent.map((x, i) => (i ? 'L' : 'M') + xs[i].toFixed(1) + ' ' + yAt(val(x, s.k)).toFixed(1)).join(' ');
-    return '<path class="ln' + (s.k === 'net' ? '' : ' subln') + '" d="' + d + '" fill="none" stroke="' + s.c + '" stroke-width="' + s.w +
-      '" stroke-linecap="round" stroke-linejoin="round"></path>';
-  }).join('');
-  const dots = recent.map((d, i) => on.map(s => {
-    const isSel = d.month === sel;
-    const sub = s.k !== 'net';
-    return '<circle class="pt' + (isSel ? ' on' : '') + (sub ? ' sub' : '') + '" cx="' + xs[i].toFixed(1) + '" cy="' + yAt(val(d, s.k)).toFixed(1) +
-      '" r="' + (isSel ? (sub ? 4.2 : 5) : (sub ? 2.6 : 3.2)) + '" fill="' + (isSel ? '#FFFFFF' : s.c) + '" stroke="' + (isSel ? s.c : '#FFFFFF') +
-      '" stroke-width="' + (isSel ? 2.4 : 1.6) + '"></circle>';
-  }).join('')).join('');
-  /* 금액 숫자를 점 바로 옆 빈자리에 놓는다 — 선 위에 걸치지 않고 이웃 숫자와도 겹치지 않게.
-     부부는 연한 남색 알약 배지, 세은·찬규는 작은 글씨. */
-  const boxes = [];
-  /* 지금 켜진 선들의 선분 — 숫자 자리가 선을 가로지르는지 판단한다 */
-  const segs = [];
-  on.forEach(s => {
-    for (let i = 1; i < n; i++) segs.push([xs[i - 1], yAt(val(recent[i - 1], s.k)), xs[i], yAt(val(recent[i], s.k))]);
-  });
-  const nwSegHit = (s, b) => {
-    /* 선분이 상자 안을 타고 지나가는가(Liang–Barsky) */
-    const dx = s[2] - s[0], dy = s[3] - s[1];
-    let t0 = 0, t1 = 1;
-    const p = [-dx, dx, -dy, dy];
-    const q = [s[0] - b[0], b[2] - s[0], s[1] - b[1], b[3] - s[1]];
-    for (let i = 0; i < 4; i++) {
-      if (p[i] === 0) { if (q[i] < 0) return false; }
-      else {
-        const t = q[i] / p[i];
-        if (p[i] < 0) { if (t > t1) return false; if (t > t0) t0 = t; }
-        else { if (t < t0) return false; if (t < t1) t1 = t; }
-      }
-    }
-    return true;
-  };
+  /* 라벨 폭 어림 — 한글 1em, 숫자 .58em, 마침표·쉼표 .32em */
   const tW = (s, fs) => {
     let w = 0;
     for (const ch of String(s)) {
       if (/[\uAC00-\uD7A3]/.test(ch)) w += fs;
-      else if (/[0-9]/.test(ch)) w += fs * .58;
-      else if (ch === '.' || ch === ',') w += fs * .32;
-      else w += fs * .45;
+      else if (/[0-9]/.test(ch)) w += fs * 0.58;
+      else if (ch === '.' || ch === ',') w += fs * 0.32;
+      else w += fs * 0.45;
     }
     return w;
   };
-  /* 위치 후보 — r/l 은 점 옆(같은 높이), ru/rd 는 점 옆에서 위·아래로 비켜 선을 피한다 */
-  const nwPos = (cx, cy, w, h, k) => {
-    const g = 7;
-    if (k === 'r')  return [cx + g, cy - h / 2];
-    if (k === 'l')  return [cx - g - w, cy - h / 2];
-    if (k === 'ru') return [cx + g, cy - h - 3];
-    if (k === 'rd') return [cx + g, cy + 3];
-    if (k === 'lu') return [cx - g - w, cy - h - 3];
-    if (k === 'ld') return [cx - g - w, cy + 3];
-    if (k === 'u')  return [cx - w / 2, cy - h - 9];
-    if (k === 'd')  return [cx - w / 2, cy + 9];
-    if (k === 'uu') return [cx - w / 2, cy - h * 2 - 12];
-    if (k === 'dd') return [cx - w / 2, cy + h + 12];
-    return [cx - w / 2, cy - h / 2];
-  };
-  const nwPick = (cx, cy, w, h, order) => {
-    const cands = order.map(k => { const p = nwPos(cx, cy, w, h, k); return [p[0], p[1], p[0] + w, p[1] + h]; });
-    const room = (b, avoidLine) => {
-      if (b[0] < 2 || b[2] > VW - 2 || b[1] < 2 || b[3] > VH - 16) return false;
-      if (boxes.some(o => b[0] < o[2] && b[2] > o[0] && b[1] < o[3] && b[3] > o[1])) return false;
-      if (avoidLine && segs.some(s => nwSegHit(s, [b[0] - 1.4, b[1] - 1.4, b[2] + 1.4, b[3] + 1.4]))) return false;
-      return true;
-    };
-    for (const b of cands) if (room(b, true)) { boxes.push(b); return b; }
-    for (const b of cands) if (room(b, false)) { boxes.push(b); return b; }
-    boxes.push(cands[0]); return cands[0];
-  };
-  const vlabels = recent.map((d, i) => {
-    let out = '';    /* 안쪽(그래프 가운데)으로 숫자를 모아야 양 끝 배지가 잘리지 않는다 */
-    const side = i < n / 2 ? 'r' : 'l';
-    const away = i < n / 2 ? 'l' : 'r';
-    /* 그 점이 꼭대기면 위, 바닥이면 아래로 비켜 선을 피한다 */
-    const vSide = (k) => {
-      const y = yAt(val(d, k));
-      const yp = i > 0 ? yAt(val(recent[i - 1], k)) : y;
-      const yn = i < n - 1 ? yAt(val(recent[i + 1], k)) : y;
-      return (y >= yp - .5 && y >= yn - .5) ? 'd' : 'u';
-    };
-    if (nwOn.net) {
-      const txt = fmtAx(d.net), fs = 9.8;
-      const w = Math.round((tW(txt, fs) * 1.04 + 11) * 10) / 10, h = 16;
-      const v = vSide('net'), o = v === 'u' ? 'd' : 'u';
-      const b = nwPick(xs[i], yAt(val(d, 'net')), w, h,
-        [side + v, side, side + o, v, o, away + v, away, 'uu', 'dd']);
-      out += '<g class="nwpillg"><rect class="nwpill" x="' + b[0].toFixed(1) + '" y="' + b[1].toFixed(1) +
-        '" width="' + w.toFixed(1) + '" height="' + h + '" rx="' + (h / 2) + '" fill="#E8EAFA" stroke="#1E1B7A" stroke-opacity=".38" stroke-width="1"></rect>' +
-        '<text class="vl pv" x="' + (b[0] + w / 2).toFixed(1) + '" y="' + (b[1] + h / 2 + fs * .36).toFixed(1) +
-        '" text-anchor="middle">' + esc(txt) + '</text></g>';
+  const slotW = plotW / n;
+  const xs = recent.map((_, i) => PX + slotW * (i + 0.5));
+  const sIdx = recent.findIndex(x => x.month === sel);
+
+  /* ---- 막대: 0(또는 음수 최솟값)에서 최댓값까지, 막대 띠 안에서만 자란다 ---- */
+  let bLo = 0, bHi = 0;
+  recent.forEach(d => ['seeun', 'chankyu'].forEach(k => {
+    const v = val(d, k);
+    if (v < bLo) bLo = v;
+    if (v > bHi) bHi = v;
+  }));
+  if (bHi - bLo < 1) bHi = bLo + 1;
+  const barY = v => BASE - ((v - bLo) / (bHi - bLo)) * (BASE - BAR_TOP);
+  const zeroY = barY(0);
+  /* 2~6개월 어느 쪽이어도 막대 폭·간격이 슬롯에 맞춰 줄어 서로 겹치지 않는다 */
+  const barW = Math.max(9, Math.min(34, slotW * 0.30));
+  const barGap = Math.max(4, Math.min(8, slotW * 0.10));
+  const barX = { seeun: i => xs[i] - barGap / 2 - barW, chankyu: i => xs[i] + barGap / 2 };
+
+  const bars = recent.map((d, i) => ['seeun', 'chankyu'].map(k => {
+    const v = val(d, k), ty = barY(v);
+    const top = Math.min(ty, zeroY), h = Math.abs(zeroY - ty);
+    if (h < 0.6) return '';
+    const shape = v >= 0
+      ? '<path d="' + nwBarPath(barX[k](i), top, barW, h, barW * 0.42) + '"></path>'
+      : '<rect x="' + barX[k](i).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + barW.toFixed(1) +
+        '" height="' + h.toFixed(1) + '" rx="' + (barW * 0.3).toFixed(1) + '"></rect>';
+    return '<g class="bar" fill="' + NW_BAR[k].c + '">' + shape + '</g>';
+  }).join('')).join('');
+
+  /* ---- 막대 위 숫자: 막대 색으로 작고 선명하게 — 이웃·짝과 겹치면 한 줄씩 위로 ---- */
+  const fsB = n <= 2 ? 10 : n <= 4 ? 9.2 : 8.4;
+  const placed = [];
+  const blabels = recent.map((d, i) => ['seeun', 'chankyu'].map(k => {
+    const txt = fmtAx(val(d, k));
+    if (!txt) return '';
+    const w = tW(txt, fsB) * 1.02 + 2, h = Math.round(fsB * 1.2);
+    const cx = barX[k](i) + barW / 2;
+    let y = Math.min(barY(val(d, k)), zeroY) - 4 - h;
+    if (y > BASE - h) y = BASE - h;
+    for (let g = 0; g < 3; g++) {
+      const b = [cx - w / 2, y, cx + w / 2, y + h];
+      const clash = placed.some(o => b[0] < o[2] && b[2] > o[0] && b[1] < o[3] && b[3] > o[1]);
+      if (!clash) break;
+      const ny = y - h - 1.5;
+      if (ny < LINE_BOT + 4) break;
+      y = ny;
     }
-    ['seeun', 'chankyu'].forEach(k => {
-      if (!nwOn[k]) return;
-      const txt = fmtAx(val(d, k));
-      if (!txt) return;
-      const fs = 8.4, w = tW(txt, fs) * 1.04 + 1, h = fs * 1.2;
-      const v = vSide(k), o = v === 'u' ? 'd' : 'u';
-      const b = nwPick(xs[i], yAt(val(d, k)), w, h,
-        [side + v, v, side, side + o, o, away + v, away, 'uu', 'dd']);
-      out += '<text class="vl ' + (k === 'seeun' ? 'se' : 'ck') + '" x="' + (b[0] + w / 2).toFixed(1) +
-        '" y="' + (b[1] + h / 2 + fs * .36).toFixed(1) + '" text-anchor="middle">' + esc(txt) + '</text>';
-    });
-    return out;
+    placed.push([cx - w / 2, y, cx + w / 2, y + h]);
+    return '<text class="vl ' + (k === 'seeun' ? 'se' : 'ck') + '" x="' + cx.toFixed(1) + '" y="' + (y + fsB * 0.98).toFixed(1) +
+      '" font-size="' + fsB + '" text-anchor="middle" fill="' + NW_BAR[k].t + '">' + esc(txt) + '</text>';
+  }).join('')).join('');
+
+  /* ---- 부부 꺾은선: 위쪽 띠에서만 움직인다(막대와 절대 겹치지 않음) ---- */
+  let nLo = Infinity, nHi = -Infinity;
+  recent.forEach(d => { const v = val(d, 'net'); if (v < nLo) nLo = v; if (v > nHi) nHi = v; });
+  const flat = !(nHi - nLo >= 1);
+  const lineY = v => flat ? (LINE_TOP + LINE_BOT) / 2
+    : LINE_BOT - ((v - nLo) / (nHi - nLo)) * (LINE_BOT - LINE_TOP);
+  const ptY = recent.map(d => lineY(val(d, 'net')));
+  const line = n > 1
+    ? '<path class="ln" d="' + xs.map((x, i) => (i ? 'L' : 'M') + x.toFixed(1) + ' ' + ptY[i].toFixed(1)).join(' ') +
+      '" fill="none" stroke="' + NW_NAVY + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>'
+    : '';
+  const dots = recent.map((d, i) => {
+    const on = d.month === sel;
+    return '<circle class="pt' + (on ? ' on' : '') + '" cx="' + xs[i].toFixed(1) + '" cy="' + ptY[i].toFixed(1) +
+      '" r="' + (on ? 5.4 : 4.4) + '" fill="#FFFFFF" stroke="' + NW_NAVY + '" stroke-width="' + (on ? 2.8 : 2.4) + '"></circle>';
   }).join('');
-  /* 달마다 세로 띠 — 점을 정확히 누르지 않아도 그 달이 선택된다.
-     띠는 이웃한 달과 겹치지 않게 나누고, 양 끝 달은 그래프 가장자리까지 맡는다. */
-  const step = n > 1 ? plotW / (n - 1) : plotW;
+
+  /* ---- 부부 총액 알약 배지: 반드시 그 점의 선 위쪽 ---- */
+  const fsN = n >= 5 ? 9.4 : 10, bh = 17;
+  const badges = recent.map((d, i) => {
+    const txt = fmtAx(val(d, 'net'));
+    if (!txt) return '';
+    const w = Math.max(30, tW(txt, fsN) * 1.02 + 12);
+    const x = Math.min(Math.max(xs[i] - w / 2, 2), VW - 2 - w);
+    const y = Math.max(3, ptY[i] - 8 - bh);
+    return '<g class="nwpillg"><rect class="nwpill" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w.toFixed(1) +
+      '" height="' + bh + '" rx="' + (bh / 2) + '" fill="' + NW_NAVY + '"></rect>' +
+      '<text class="vl pv" x="' + (x + w / 2).toFixed(1) + '" y="' + (y + bh / 2 + 3.5).toFixed(1) +
+      '" font-size="' + fsN + '" text-anchor="middle" fill="#FFFFFF">' + esc(txt) + '</text></g>';
+  }).join('');
+
+  /* 달 칸 전체가 탭 영역 — 막대·점을 정확히 누르지 않아도 그 달이 선택된다 */
   const hits = recent.map((d, i) => {
-    const left = (n === 1 || i === 0) ? PX - 4 : xs[i] - step / 2;
-    const right = (n === 1 || i === n - 1) ? VW - PX + 4 : xs[i] + step / 2;
-    return '<rect class="hit" x="' + left.toFixed(1) + '" y="' + (PT - 6) + '" width="' + (right - left).toFixed(1) +
-      '" height="' + (plotH + 12) + '" data-act="nw-chart-dot" data-month="' + esc(d.month) + '"></rect>';
+    const left = i === 0 ? PX - 6 : xs[i] - slotW / 2;
+    const right = i === n - 1 ? VW - PX + 6 : xs[i] + slotW / 2;
+    return '<rect class="hit" x="' + left.toFixed(1) + '" y="' + (LINE_TOP - 10) + '" width="' + (right - left).toFixed(1) +
+      '" height="' + (BASE - LINE_TOP + 16) + '" data-act="nw-chart-dot" data-month="' + esc(d.month) + '"></rect>';
   }).join('');
-  /* 달 이름은 두 자리 연도(26.06)로 짧게 — 6개월이 붙어도 서로 겹치지 않는다.
-     첫 달 라벨은 점 오른쪽으로, 마지막 달 라벨은 점 왼쪽으로 붙여 좌우 여백이 좁아도 SVG 밖으로 새지 않는다. */
+  /* 달 이름은 두 자리 연도(26.09)로 짧게 — 6개월이 붙어도 서로 겹치지 않게 가운데 정렬 */
   const mlabels = recent.map((d, i) => {
     const txt = esc(monthLabel(d.month).replace(/^(\d{2})(\d{2})\./, '$2.'));
-    const first = i === 0 && n > 1, last = i === n - 1 && n > 1;
-    if (first) return '<text class="cml" x="' + (xs[i] + 2).toFixed(1) + '" y="' + (VH - 4) + '" text-anchor="start">' + txt + '</text>';
-    if (last) return '<text class="cml" x="' + (xs[i] - 2).toFixed(1) + '" y="' + (VH - 4) + '" text-anchor="end">' + txt + '</text>';
-    const lx = Math.min(Math.max(xs[i], 15), VW - 15);
-    return '<text class="cml" x="' + lx.toFixed(1) + '" y="' + (VH - 4) + '" text-anchor="middle">' + txt + '</text>';
+    const on = d.month === sel;
+    return '<text class="cml' + (on ? ' on' : '') + '" x="' + xs[i].toFixed(1) + '" y="' + LAB_Y + '" text-anchor="middle">' + txt + '</text>';
   }).join('');
   const guide = sIdx >= 0
-    ? '<line class="guide" x1="' + xs[sIdx].toFixed(1) + '" y1="' + PT + '" x2="' + xs[sIdx].toFixed(1) + '" y2="' + base.toFixed(1) + '"></line>'
+    ? '<line class="guide" x1="' + xs[sIdx].toFixed(1) + '" y1="' + (LINE_TOP - 8) + '" x2="' + xs[sIdx].toFixed(1) + '" y2="' + BASE.toFixed(1) + '"></line>'
     : '';
 
   return '<div class="card-h"><h2>순자산 추이</h2><span class="pill">최근 ' + n + '개월</span></div>' +
-    '<div class="nwchart"><svg viewBox="0 0 ' + VW + ' ' + VH + '" role="img" aria-label="순자산 추이 그래프 — 부부·세은·찬규">' +
-      '<defs><linearGradient id="nwGrad" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0%" stop-color="#1E1B7A" stop-opacity=".16"></stop>' +
-        '<stop offset="65%" stop-color="#1E1B7A" stop-opacity=".05"></stop>' +
-        '<stop offset="100%" stop-color="#1E1B7A" stop-opacity="0"></stop>' +
-      '</linearGradient></defs>' +
-      '<line class="axis" x1="' + PX + '" y1="' + base.toFixed(1) + '" x2="' + (VW - PX) + '" y2="' + base.toFixed(1) + '"></line>' +
-      guide +
-      (area ? '<path d="' + area + '" fill="url(#nwGrad)"></path>' : '') +
-      lines + dots + hits + vlabels + mlabels +
+    '<div class="nwchart"><svg viewBox="0 0 ' + VW + ' ' + VH + '" role="img" aria-label="순자산 추이 그래프 — 세은·찬규 막대와 부부 꺾은선">' +
+      '<line class="axis" x1="' + PX + '" y1="' + BASE.toFixed(1) + '" x2="' + (VW - PX) + '" y2="' + BASE.toFixed(1) + '"></line>' +
+      guide + bars + blabels + line + dots + badges + hits + mlabels +
     '</svg></div>';
 }
+
 function goalList() {
   return entries(ST.goals).map(([id, v]) => ({ id, ...v }))
     .sort((a, b) => (Number(a.order ?? 99) - Number(b.order ?? 99)) || a.id.localeCompare(b.id));
