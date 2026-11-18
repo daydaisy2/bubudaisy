@@ -481,6 +481,9 @@
   .flow4.c1{grid-template-columns:1fr}
   .grow.ck-empty .gv{color:#C9C2A6}
   .ck-ph{color:#B4AE97;font-weight:800}
+  /* 제목이 비어 있을 때 — 예시 대신 옅은 「제목 입력」 자리표시(✏️ 버튼은 그대로) */
+  .ck-tph{color:#C6C0A8;font-weight:900}
+  .ck-tph.on-dark{color:#9C97E2;font-weight:900}
   .goals .gnum{border:0;padding:0;cursor:pointer}
   /* 현금흐름 칸 완료 색칠 — 세은 탭 현금흐름 칸과 같은 결(연두 + 초록 테두리) */
   .chips.cf .chip.done{background:#DFF2DD;color:#1E5A2C;box-shadow:inset 0 0 0 1.5px #72B676}
@@ -2031,60 +2034,18 @@ function ck3(raw) {
   if (raw && typeof raw === 'object') return [0, 1, 2].map(i => raw[i]);
   return [0, 1, 2].map(() => undefined);
 }
-/* 세은 님의 수치는 복제하지 않는다 — 찬규 님이 바로 덮어쓸 수 있는 기본 예시·빈칸 틀 */
+/* 세은 님의 수치는 복제하지 않는다 — 2026-11-19 세은 님 지시로
+   예시 문구·카드 제목을 모두 빼고, 찬규 님이 직접 적을 수 있는 빈 틀만 만든다. */
 function ckTemplate(now) {
   const t = now || Date.now();
-  const cells = {};
-  for (let i = 0; i < 6; i++) cells['c' + (i + 1)] = { emoji: null, label: null, note: null, done: false, order: i };
   return {
-    meta: { seededAt: t, updatedAt: t, template: 'v1' },
-    hero: {
-      title: '20XX년 · 만 OO세',
-      goals: {
-        g1: { num: '1', label: '순자산', value: '목표 금액', note: null, now: '금액', order: 0 },
-        g2: { num: '2', label: '우리 집', value: '갖고 싶은 집', note: null, now: '상태', order: 1 },
-        g3: { num: '3', label: '월급 외 현금흐름', value: '월 0만원', note: null, now: '0원', order: 2 }
-      },
-      updatedAt: t
-    },
-    flow: {
-      title: '우리 집 등기', emoji: '🏠',
-      steps: {
-        s1: { badge: '1호기', emoji: '🏢', label: '첫 집', deep: false, order: 0 },
-        s2: { badge: '2호기', emoji: '🏗️', label: '두 번째 집', deep: false, order: 1 },
-        s3: { badge: '3호기', emoji: '🏙️', label: '마지막 집', deep: true, order: 2 }
-      },
-      updatedAt: t
-    },
-    cash: { title: '현금흐름', emoji: '💸', cells: cells, updatedAt: t },
-    chips: {
-      title: '공부할 영역', emoji: '📚',
-      items: {
-        h1: { emoji: '🏠', label: '입지', order: 0 },
-        h2: { emoji: '🤝', label: '대출', order: 1 },
-        h3: { emoji: '🧮', label: '세금', order: 2 },
-        h4: { emoji: '🌳', label: '청약', order: 3 },
-        h5: { emoji: '📜', label: '정책', order: 4 }
-      },
-      updatedAt: t
-    },
-    core: {
-      title: '핵심 목표', emoji: '🎯',
-      items: {
-        k1: { text: '', memo: null, done: false, order: 0 },
-        k2: { text: '', memo: null, done: false, order: 1 },
-        k3: { text: '', memo: null, done: false, order: 2 }
-      },
-      updatedAt: t
-    },
-    years: {
-      title: '하나씩 천천히', emoji: '🗓️',
-      cards: {
-        y1: { year: '2027년', badge: null, tone: 'navy', items: ['', '', ''], subs: ['', '', ''],
-          done: [false, false, false], subDone: [false, false, false], order: 0 }
-      },
-      updatedAt: t
-    }
+    meta: { seededAt: t, updatedAt: t, template: 'v2-empty' },
+    hero: { title: '', goals: {}, updatedAt: t },
+    flow: { title: '', emoji: '', steps: {}, updatedAt: t },
+    cash: { title: '', emoji: '', cells: {}, updatedAt: t },
+    chips: { title: '', emoji: '', items: {}, updatedAt: t },
+    core: { title: '', emoji: '', items: {}, updatedAt: t },
+    years: { title: '', emoji: '', cards: {}, updatedAt: t }
   };
 }
 async function seedChankyuVision() {
@@ -2097,18 +2058,23 @@ async function seedChankyuVision() {
 }
 
 /* ---------- 👨🏻 찬규 보드 그리기 ---------- */
+/* 섹션 이름은 화면에 늘 보이는 제목이 아니라 aria-label(말로 읽어 줄 때만)용이다.
+   예시 제목은 두지 않는다 — 제목이 비면 화면에는 「제목 입력」 자리표시만 보인다. */
 const CK_SEC_DEF = {
-  flow: { title: '우리 집 등기', emoji: '🏠', name: '등기 카드' },
-  cash: { title: '현금흐름', emoji: '💸', name: '현금흐름 카드' },
-  chips: { title: '공부할 영역', emoji: '📚', name: '태그 카드' },
-  core: { title: '핵심 목표', emoji: '🎯', name: '핵심 목표 카드' },
-  years: { title: '하나씩 천천히', emoji: '🗓️', name: '연도별 카드' }
+  flow: { name: '등기 카드' },
+  cash: { name: '현금흐름 카드' },
+  chips: { name: '태그 카드' },
+  core: { name: '핵심 목표 카드' },
+  years: { name: '연도별 카드' }
 };
 function ckHead(key, extra) {
   const s = ckSec(key), d = CK_SEC_DEF[key] || {};
-  return '<div class="card-h"><h2>' + esc(s.emoji || d.emoji || '') + ' ' + esc(s.title || d.title || '') + '</h2>' +
+  const em = String(s.emoji == null ? '' : s.emoji).trim();
+  const ti = String(s.title == null ? '' : s.title).trim();
+  return '<div class="card-h"><h2>' + (em ? esc(em) + ' ' : '') +
+    (ti ? esc(ti) : '<span class="ck-tph">제목 입력</span>') + '</h2>' +
     '<div class="board-tools">' + (extra || '') +
-    '<button class="pen-btn" data-act="ck-' + key + '-meta" aria-label="' + esc(d.name || '카드') + ' 제목·아이콘 수정">✏️</button></div></div>';
+    '<button class="pen-btn" data-act="ck-' + key + '-meta" aria-label="' + esc(ti || d.name || '카드') + ' 제목·아이콘 수정">✏️</button></div></div>';
 }
 function ckHeroCard() {
   const s = ckSec('hero');
@@ -2130,7 +2096,8 @@ function ckHeroCard() {
       '</button>';
   }).join('') || '<p class="hint-in" style="color:#C6C2F2">아직 목표 줄이 없어요</p>';
   return '<section class="hero goalcard">' +
-    '<div class="hero-top goal-top ck-hero-top"><span>' + esc(s.title || '목표 카드') + '</span>' +
+    '<div class="hero-top goal-top ck-hero-top"><span>' +
+      (String(s.title == null ? '' : s.title).trim() ? esc(s.title) : '<span class="ck-tph on-dark">제목 입력</span>') + '</span>' +
       '<button class="pen-btn" data-act="ck-hero-meta" aria-label="목표 카드 제목 수정">✏️</button></div>' +
     '<div class="grows">' + rows +
       '<button type="button" class="gadd" data-act="ck-goal-new">＋ 목표 줄 추가</button>' +
@@ -2146,7 +2113,7 @@ function ckFlowCard() {
       '<span class="fs-badge">' + esc(st.badge || '단계') + '</span>' +
       '<span class="fs-emoji">' + esc(st.emoji || '•') + '</span>' +
       '<span class="fs-label">' + esc(st.label || '이름 없음') + '</span></button>').join('') + '</div>'
-    : '<p class="empty">아직 단계가 없어요<br>우리 집의 순서를 3단계로 적어 보세요</p>';
+    : '<p class="empty">아직 단계가 없어요<br>아래 「＋ 단계 추가」로 첫 단계를 만들어 보세요</p>';
   return '<section class="card">' + ckHead('flow', n ? '<span class="pill">' + n + '개</span>' : '') +
     grid +
     '<button class="add-row" data-act="ck-flow-new">＋ 단계 추가</button>' +
@@ -2338,10 +2305,10 @@ function openCkMetaSheet(key) {
   const s = ckSec(key);
   const body =
     '<div class="fld"><span>카드 제목 · 아이콘</span><div class="row-edit">' +
-      '<input class="inp" id="ckmEmoji" style="flex:0 0 64px;text-align:center;font-size:20px" maxlength="12" value="' + esc(s.emoji || '') + '" placeholder="' + d.emoji + '">' +
-      '<input class="inp" id="ckmTitle" value="' + esc(s.title || '') + '" placeholder="' + esc(d.title) + '">' +
+      '<input class="inp" id="ckmEmoji" style="flex:0 0 64px;text-align:center;font-size:20px" maxlength="12" value="' + esc(s.emoji || '') + '" placeholder="🙂">' +
+      '<input class="inp" id="ckmTitle" value="' + esc(s.title || '') + '" placeholder="제목 입력">' +
     '</div></div>' +
-    '<p class="hint-in">카드 맨 위에 「아이콘 제목」으로 보여요. 비우면 기본값(' + d.emoji + ' ' + esc(d.title) + ')으로 돌아가요.</p>';
+    '<p class="hint-in">카드 맨 위에 「아이콘 제목」으로 보여요. 비우면 카드에 「제목 입력」 자리표시만 보여요.</p>';
   openSheet(d.name + ' 제목', body, '<button class="sh-save" id="ckmSave">저장</button>');
   $('#ckmSave').addEventListener('click', () => {
     const title = $('#ckmTitle').value.trim();
