@@ -2275,8 +2275,14 @@ function ckYearsCard() {
     '<button class="add-row" data-act="ck-yr-new">＋ 연도 추가</button>' +
     '</section>';
 }
+/* 👨🏻 찬규 탭 맨 아래 — 개편 전(v34) 찬규 탭 구성 그대로 붙인다(2026-11-19 세은 님 요청).
+   위쪽 🔮 확언 / 아래쪽 🎯 실행 두 카드는 전략 탭과 같은 줄·시트·스와이프·끌기를 그대로 쓰고,
+   데이터도 예전 그대로 strategyMind/ck_affirm · strategyMind/ck_action 에 읽고 쓴다.
+   방에 이미 적어 둔 내용이 있으면 시드 없이 그대로 그려지고, 여기서 추가·수정·삭제·순서 변경이 모두 된다. */
+function chankyuLegacyView() { return SM_LISTS.filter(l => SM_CHANKYU_KEYS.includes(l.key)).map(smCard).join(''); }
 function chankyuView() {
-  return ckHeroCard() + ckFlowCard() + ckCashCard() + ckChipsCard() + ckCoreCard() + ckYearsCard();
+  return ckHeroCard() + ckFlowCard() + ckCashCard() + ckChipsCard() + ckCoreCard() + ckYearsCard() +
+    chankyuLegacyView();
 }
 function ckToggleNotesFold(el) {
   const wrap = el && el.closest ? el.closest('.cf-wrap') : null;
