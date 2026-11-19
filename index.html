@@ -2336,7 +2336,7 @@ function ckYearsCard() {
         '<button class="pen-btn ms-pen" data-act="ck-yr" data-id="' + esc(c.id) + '" aria-label="' + esc(c.year || '') + ' 목표 수정">✏️</button>' +
         '<span class="ms-chev" aria-hidden="true"></span></span></div>' +
       '<div class="ms-grid">' + its.map((x, b) =>
-        '<button class="ms-box tap' + (done[b] ? ' done' : '') + '" data-act="ck-yr-toggle" data-id="' + esc(c.id) + '" data-b="' + b + '" aria-pressed="' + (done[b] ? 'true' : 'false') + '">' +
+        '<button class="ms-box tap' + (done[b] ? ' done' : '') + '" data-act="' + (x ? 'ck-yr-toggle' : 'ck-yr') + '" data-id="' + esc(c.id) + '" data-b="' + b + '" aria-pressed="' + (done[b] ? 'true' : 'false') + '" aria-label="' + esc(c.year || '') + ' ' + (b + 1) + '번 칸 ' + (x ? '성공 표시' : '목표 적기') + '">' +
         (done[b] ? '<span class="ck">✓</span>' : '') + (x ? esc(x) : '<span class="ck-ph">＋ 목표</span>') + '</button>').join('') +
       '<div class="ms-subgrid">' + subs.map((t, b) =>
         '<button class="ms-subbox tap' + (sdone[b] ? ' done' : '') + '" data-act="ck-yr-sub" data-id="' + esc(c.id) + '" data-b="' + b + '" aria-pressed="' + (sdone[b] ? 'true' : 'false') + '" aria-label="' + esc(c.year || '') + ' ' + (b + 1) + '번 칸 하위 메모' + (sdone[b] ? ' · 완료' : '') + '">' +
@@ -2347,7 +2347,7 @@ function ckYearsCard() {
   const anyEmpty = cards.some(c => ck3(c.items).some(v => !String(v == null ? '' : v).trim()));
   return '<section class="card">' + ckHead('years', cards.length ? '<span class="pill">' + esc(cards[0].year || '') + '~</span>' : '') +
     body +
-    (anyEmpty ? '<p class="ck-hint">위 3칸은 목표, 아래 얇은 칸은 하위 메모 · 칸을 누르면 성공 ✓ 표시가 돼요</p>' : '') +
+    (anyEmpty ? '<p class="ck-hint">빈 칸을 누르면 바로 적을 수 있고, 적은 칸을 누르면 성공 ✓ 표시가 돼요</p>' : '') +
     '<button class="add-row" data-act="ck-yr-new">＋ 연도 추가</button>' +
     '</section>';
 }
