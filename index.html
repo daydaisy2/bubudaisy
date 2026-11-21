@@ -79,6 +79,13 @@
     border:0;border-radius:12px;background:rgba(255,255,255,.55);font:inherit;text-align:left;cursor:pointer;
     transition:opacity .15s}
   .seen-box:active{opacity:.6}
+  /* 📣 버튼이 하나 늘어 좁은 폭에서도 헤더가 넘치거나 줄바꿈되지 않게 간격·크기를 줄인다 */
+  @media (max-width:440px){
+    .top{gap:6px;padding-left:14px;padding-right:14px}
+    .top-right{gap:6px}
+    .top .memo-btn,.top .nudge-btn,.top .lock-btn{width:30px;height:30px}
+    .brand{font-size:19px}.brand .fl{font-size:16px}
+  }
   @media (max-width:360px){
     .brand{font-size:18px}.brand .fl{font-size:15px}
     .top{gap:5px;padding-left:12px;padding-right:12px}.top-right{gap:6px}
@@ -86,7 +93,7 @@
   }
   @media (max-width:400px){ .top .dot{display:none} }
   @media (max-width:340px){
-    .top .lock-btn,.top .memo-btn{width:28px;height:28px}
+    .top .lock-btn,.top .memo-btn,.top .nudge-btn{width:28px;height:28px}
     .brand .fl:last-child{display:none}
   }
   .seen{display:flex;align-items:center;gap:4px;margin:0;padding:0;min-width:0;border:0;background:none;
@@ -113,6 +120,11 @@
   .memo-btn{position:relative;width:32px;height:32px;border-radius:12px;display:grid;place-items:center;
     background:rgba(255,255,255,.55);font-size:14px;color:var(--navy);transition:background .18s,color .18s}
   .memo-btn.has{background:var(--navy);color:#fff}
+  /* 📣 확인 요청 — 상대에게 바로 공유/복사해 보내기 */
+  .nudge-btn{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;
+    background:rgba(255,255,255,.55);font-size:14px;color:var(--navy);
+    transition:background .18s,color .18s,transform .1s}
+  .nudge-btn:active{background:var(--navy);color:#fff;transform:scale(.94)}
   .memo-cnt{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;
     background:#E8603C;color:#fff;font-size:9px;font-weight:900;line-height:16px;text-align:center;
     border:1.5px solid var(--yellow)}
@@ -739,7 +751,8 @@
   .sh-del.confirm{background:#C0392B;color:#fff}
   .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);
     background:rgba(32,32,28,.92);color:#fff;font-size:12px;font-weight:800;letter-spacing:-.02em;
-    padding:9px 15px;border-radius:999px;z-index:90;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+    padding:9px 15px;border-radius:999px;z-index:90;box-shadow:0 8px 20px rgba(0,0,0,.2);
+    max-width:calc(100vw - 36px);white-space:normal;text-align:center;line-height:1.45}
   .skeleton{background:var(--white);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);
     font-size:12.5px;font-weight:800;color:var(--muted);text-align:center}
 
@@ -815,6 +828,7 @@
     <div class="top-right">
       <span class="dot" id="dot" title="연결 확인 중"></span>
       <button class="memo-btn" id="memoBtn" aria-label="수정 요청 메모">📝<span class="memo-cnt hidden" id="memoCnt">0</span></button>
+      <button type="button" class="nudge-btn" id="nudgeBtn" aria-label="확인 요청 공유" title="확인 요청 공유">📣</button>
       <button class="lock-btn" id="lockBtn" aria-label="잠그기">🔒</button>
     </div>
   </div>
@@ -4323,6 +4337,41 @@ function openMemoSheet() {
 }
 $('#memoBtn').addEventListener('click', openMemoSheet);
 paintMemoBadge();
+
+/* ============================================================
+   📣 확인 요청 — 상대에게 바로 공유/복사해 보내기
+   ============================================================ */
+function nudgeText() {
+  if (ME === 'seeun') return '찬규야, BUBUDAISY 확인해 줘! 🌼';
+  if (ME === 'chankyu') return '세은아, BUBUDAISY 확인해 줘! 🌼';
+  return 'BUBUDAISY 확인해 줘! 🌼';
+}
+function nudgeUrl() {
+  /* 방 코드는 비밀번호에서 파생돼 주소에 담기지 않는다 — 받는 사람도 같은 6자리로 열면 된다 */
+  return location.href.split('#')[0];
+}
+let nudgeAt = 0;
+async function nudgeShare() {
+  const now = Date.now();
+  if (now - nudgeAt < 700) return;   /* 두 번 눌림 방지 */
+  nudgeAt = now;
+  const text = nudgeText(), url = nudgeUrl();
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'BUBUDAISY', text: text, url: url });
+      return;
+    } catch (e) {
+      if (e && e.name === 'AbortError') return;   /* 그냥 닫았을 뿐이니 안내하지 않는다 */
+    }
+  }
+  try {
+    await copyText(text + '\n' + url);
+    toast('확인 요청 문구를 복사했어요! 카톡이나 피클에 붙여넣기 해 주세요');
+  } catch (e) {
+    toast('공유하지 못했어요 — 주소를 직접 보내 주세요: ' + url);
+  }
+}
+$('#nudgeBtn').addEventListener('click', nudgeShare);
 
 /* ============================================================
    시작
