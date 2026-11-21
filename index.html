@@ -961,6 +961,12 @@ const OWNERS = { seeun: { name: '세은', emoji: '👩🏻' }, chankyu: { name: 
 let ME = '';
 try { ME = localStorage.getItem(ME_KEY) || ''; } catch (e) { ME = ''; }
 if (!OWNERS[ME]) ME = '';
+/* 이 기기를 쓰는 사람의 첫 탭 — 찬규 님 기기는 「찬규」 탭, 세은 님이거나 아직 고르기 전이면 「세은」 탭.
+   (여는 사람에 따라 앱이 열리는 탭이 달라진다 — 2026-11-21 세은 님 요청) */
+function homeTab(who) { return who === 'chankyu' ? 'chankyu' : 'vision'; }
+/* 사용자가 하단 탭을 직접 눌렀는지 — 기기·프로필을 고른 직후에만 첫 탭을 그 사람 탭으로 맞춘다 */
+let tabTouched = false;
+ST.tab = homeTab(ME);
 let ROOM = '';
 let es = null, retry = 0, pollTimer = null;
 const draft = {};
@@ -1120,6 +1126,15 @@ function setMe(who) {
   closeSheet();
   if (changed) { seenLastSent = 0; toast(OWNERS[who].emoji + ' ' + OWNERS[who].name + ' 님 기기로 설정했어요'); }
   touchSeen(true);
+  /* 처음 기기를 고르거나 프로필을 바꾼 직후 — 아직 다른 탭을 보고 있지 않다면 그 사람의 탭으로 맞춘다 */
+  const want = homeTab(who);
+  if (ST.loaded && !tabTouched && ST.tab !== want) {
+    ST.tab = want;
+    render.sameTab = false;
+    render();
+    $('#view').scrollTop = 0;
+    tabIntoView(want);
+  }
 }
 document.addEventListener('click', (e) => {
   const sw = e.target.closest && e.target.closest('#seenBox');
@@ -1544,6 +1559,7 @@ function render() {
   render.sameTab = true;
 }
 function go(tab) {
+  tabTouched = true;
   if (ST.tab === tab) return;
   ST.tab = tab;
   render.sameTab = false;
