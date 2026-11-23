@@ -495,21 +495,95 @@
   /* ================= 하단 탭 4개 (비전 · 올해 · 전략 · 순자산) ================= */
   .tabs{grid-template-columns:repeat(4,1fr);gap:7px;overflow:visible}
 
-  /* ================= ✨ 올해 탭 — 올해의 목표 3가지 (2026-11-23) ================= */
-  .ty-card{gap:10px}
-  .ty-h{align-items:center;gap:8px}
-  .ty-title{margin:0;min-width:0;font-size:16.5px;font-weight:900;letter-spacing:-.04em;
-    color:var(--ink);line-height:1.22;word-break:keep-all}
-  /* 두 번째 카드 — 2027년 월별 목표 12줄 */
-  .ty-goals.tm{margin-top:1px}
-  .ty-goals.tm .ty-row{padding:9px 1px}
-  .ty-goals.tm .ty-row:first-child{padding-top:2px}
-  .ty-goals.tm .ty-row:last-child{padding-bottom:2px}
-  .ty-goals.tm .ty-check{width:24px;height:24px;border-radius:8px;font-size:11px}
-  .tm-line{display:flex;align-items:baseline;gap:8px;min-width:0}
-  .tm-m{flex:0 0 30px;font-size:12.5px;font-weight:900;color:var(--navy);letter-spacing:-.03em;
-    line-height:1.4}
-  .tm-row .ty-note{padding-left:38px}
+  /* ================= ✨ 올해 탭 — 2027년 목표 4개 · 1~12월 접기 카드 (2026-11-23 개편) ================= */
+  /* 탭 머리 — 가운데 「✨ 올해」와 연도 */
+  .ty-head{display:flex;flex-direction:column;align-items:center;gap:1px;padding:1px 0 0}
+  .ty-head .t1{font-size:20px;font-weight:900;letter-spacing:-.04em;color:var(--navy);line-height:1.2}
+  .ty-head .t2{font-size:11.5px;font-weight:900;color:#8A8368;letter-spacing:.06em;line-height:1.2}
+
+  /* 위 카드 — `2035년 · 만 40세` 카드와 같은 진남색 그라데이션 한 장.
+     가운데 흰 제목 + 반투명 남색 알약 4줄(노란 원 숫자 · 목표·메모 · 오른쪽 둥근 체크) */
+  .ty-navy{position:relative;border-radius:var(--r);padding:14px 12px 13px;
+    background:linear-gradient(155deg,#2B2799,#1E1B7A 62%);color:#fff;
+    box-shadow:0 14px 28px rgba(30,27,122,.28);display:flex;flex-direction:column;gap:8px;
+    overflow:hidden}
+  .ty-navy::before,.ty-navy::after{content:'✦';position:absolute;color:rgba(255,255,255,.3);
+    font-size:11px;line-height:1;pointer-events:none}
+  .ty-navy::before{left:15px;top:14px}
+  .ty-navy::after{right:14px;top:18px;font-size:8px;color:rgba(251,224,73,.75)}
+  .ty-navy-h{margin:3px 0 2px;text-align:center}
+  .ty-navy-h h2{margin:0;font-size:17.5px;font-weight:900;letter-spacing:-.04em;color:#fff;line-height:1.25}
+  .tyg{display:flex;flex-direction:column;gap:6px}
+  .tyg-pill{display:flex;align-items:center;gap:8px;min-height:52px;padding:7px 8px;
+    background:rgba(126,122,228,.24);box-shadow:inset 0 0 0 1px rgba(255,255,255,.075);
+    border-radius:16px;transition:background .15s}
+  .tyg-body{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:9px;text-align:left;
+    background:none;padding:1px 0}
+  .tyg-num{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--yellow);
+    color:var(--navy);font-size:13px;font-weight:900;line-height:1;display:grid;place-items:center}
+  .tyg-tw{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .tyg-t{font-size:13.5px;font-weight:900;color:#fff;letter-spacing:-.025em;line-height:1.38;
+    word-break:keep-all;overflow-wrap:anywhere;white-space:pre-line}
+  .tyg-t.ph{font-size:12.5px;font-weight:800;color:rgba(255,255,255,.46)}
+  .tyg-t.on{color:rgba(255,255,255,.52);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.4)}
+  .tyg-n{font-size:10.5px;font-weight:700;color:rgba(227,225,255,.74);letter-spacing:-.02em;line-height:1.45;
+    white-space:pre-line;overflow-wrap:anywhere}
+  .tyg-n.on{color:rgba(227,225,255,.4);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.26)}
+  .tyg-check{flex:0 0 auto;width:32px;height:32px;border-radius:50%;
+    border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.05);color:rgba(255,255,255,.38);
+    font-size:13px;font-weight:900;line-height:1;display:grid;place-items:center;
+    transition:background .15s,border-color .15s,color .15s,transform .1s}
+  .tyg-check:active{transform:scale(.93)}
+  .tyg-check.on{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
+
+  /* 아래 — 1월부터 12월까지 흰 카드 12장. 헤더를 누르면 그 달만 접히고 펼쳐진다 */
+  .tym{display:flex;flex-direction:column;gap:9px}
+  .tym-card{background:var(--white);border-radius:20px;box-shadow:var(--shadow);padding:0 14px}
+  .tym-h{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;
+    padding:14px 1px;text-align:left}
+  .tym-h:active{opacity:.62}
+  .tym-m{font-size:15px;font-weight:900;color:var(--navy);letter-spacing:-.03em;line-height:1.2}
+  .tym-hr{display:flex;align-items:center;gap:7px}
+  .tym-cnt{font-size:10px;font-weight:900;color:#ADA78D;letter-spacing:-.02em;line-height:1}
+  .tym-chev{flex:0 0 auto;width:0;height:0;margin:1px 2px 0 2px;
+    border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #8A8368;
+    transition:transform .18s ease}
+  .tym-card.fold .tym-chev{transform:rotate(-90deg);border-top-color:#5E5942}
+  .tym-body{display:flex;flex-direction:column;padding-bottom:7px}
+  .tym-card.fold .tym-body{display:none}
+  .tym-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px solid var(--cream-line)}
+  .tym-row:first-child{border-top:0;padding-top:1px}
+  .tym-row:last-child{padding-bottom:7px}
+  .tym-body-btn{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:9px;text-align:left;
+    background:none;padding:1px 0}
+  .tym-num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#FFF4CF;color:#9C7A12;
+    font-size:11.5px;font-weight:900;line-height:1;display:grid;place-items:center}
+  .tym-tw{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .tym-t{font-size:13px;font-weight:800;color:var(--ink);letter-spacing:-.025em;line-height:1.4;
+    word-break:keep-all;overflow-wrap:anywhere;white-space:pre-line}
+  .tym-t.ph{font-size:12.5px;font-weight:800;color:#BEB79F}
+  .tym-t.on{color:#A29C85;text-decoration:line-through;text-decoration-color:#C6BFA6}
+  .tym-n{font-size:10.5px;font-weight:700;color:#8F8A73;letter-spacing:-.02em;line-height:1.45;
+    white-space:pre-line;overflow-wrap:anywhere}
+  .tym-n.on{color:#B3AD97;text-decoration:line-through;text-decoration-color:#D5CFB8}
+  .tym-check{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1.5px solid #E3DCC4;
+    background:#fff;color:transparent;font-size:11.5px;font-weight:900;line-height:1;display:grid;place-items:center;
+    transition:background .15s,border-color .15s,color .15s,transform .1s}
+  .tym-check:active{transform:scale(.93)}
+  .tym-check.on{background:var(--navy);border-color:var(--navy);color:#fff}
+  .ty-hint{margin:1px 0 0;font-size:10.5px;font-weight:700;color:#8F8A66;text-align:center;
+    letter-spacing:-.02em;line-height:1.5}
+  @media (max-width:359px){
+    .ty-head .t1{font-size:18px}
+    .ty-navy-h h2{font-size:16px}
+    .tyg-pill{gap:7px;padding:6px 7px}
+    .tyg-t{font-size:12.5px}
+    .tyg-t.ph{font-size:11.5px}
+    .tyg-num{width:28px;height:28px;font-size:12px}
+    .tyg-check{width:30px;height:30px}
+    .tym-t{font-size:12px}
+    .tym-t.ph{font-size:11.5px}
+  }
   /* 👀 보기 전용 (찬규 님 기기) — 상단 알약 뱃지 */
   .ro-bar{flex:0 0 auto;display:flex;justify-content:center;padding:0 16px 6px}
   .ro-pill{display:inline-flex;align-items:center;gap:3px;padding:4px 12px;border-radius:999px;
@@ -518,33 +592,9 @@
   /* 보기 전용일 때는 고치는 버튼·자리를 감춘다(체크박스는 읽는 상태 표시로만 남긴다) */
   body.ro .add-row,body.ro .add-btn,body.ro .card-add,body.ro .pen-btn,
   body.ro .srow-acts,body.ro .ms-pen,body.ro .sh-del{display:none !important}
-  body.ro .ty-check,body.ro .ty-row,body.ro .mli,body.ro .srow-face{cursor:default}
+  body.ro .tyg-check,body.ro .tyg-body,body.ro .tym-check,body.ro .tym-body-btn,
+  body.ro .mli,body.ro .srow-face{cursor:default}
   body.ro .ty-hint{display:none}
-  .ty-goals{display:flex;flex-direction:column;margin-top:2px}
-  .ty-row{display:flex;align-items:center;gap:11px;padding:11px 1px;border-top:1px solid var(--cream-line)}
-  .ty-row:first-child{border-top:0;padding-top:2px}
-  .ty-row:last-child{padding-bottom:2px}
-  .ty-check{flex:0 0 auto;width:26px;height:26px;border-radius:9px;border:2px solid #DED8C1;background:#fff;
-    display:grid;place-items:center;font-size:12px;font-weight:900;line-height:1;color:transparent;
-    transition:background .15s,border-color .15s,transform .1s}
-  .ty-check:active{transform:scale(.93)}
-  .ty-check.on{background:var(--navy);border-color:var(--navy);color:#fff}
-  .ty-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px;text-align:left}
-  .ty-txt{font-size:13.5px;font-weight:800;color:var(--ink);letter-spacing:-.025em;line-height:1.4;
-    word-break:keep-all;overflow-wrap:anywhere;white-space:pre-line}
-  .ty-txt.ph{font-size:12.5px;font-weight:800;color:#BEB79F}
-  .ty-txt.on{color:#A29C85;text-decoration:line-through;text-decoration-color:#C6BFA6}
-  .ty-note{font-size:10.5px;font-weight:700;color:#8F8A73;letter-spacing:-.02em;line-height:1.45;
-    white-space:pre-line}
-  .ty-note.on{color:#B3AD97;text-decoration:line-through;text-decoration-color:#D5CFB8}
-  .ty-hint{margin:1px 0 0;font-size:10.5px;font-weight:700;color:#8F8A66;text-align:center;
-    letter-spacing:-.02em;line-height:1.5}
-  @media (max-width:359px){
-    .ty-title{font-size:15.5px}
-    .tm-m{font-size:11.5px}
-    .ty-txt{font-size:12.5px}
-    .ty-txt.ph{font-size:11.5px}
-  }
 
   /* ================= 👨🏻 찬규 탭 보드 (세은 탭과 같은 6섹션 · 제목부터 전부 편집) ================= */
   /* 목표 카드 제목 — 가운데 정렬을 지키면서 오른쪽에 ✏️ 만 띄운다 */
@@ -1041,7 +1091,7 @@ if (!OWNERS[ME]) ME = '';
    기기 프로필이 찬규면 BUBUDAISY 네 탭(비전·올해·전략·순자산)을 모두 보기만 한다.
    화면(버튼 감춤·동작 차단)과 저장(put/patch/del) 양쪽에서 막고,
    접속 표시 lastSeen/chankyu 만 예외로 쓴다(그 외 데이터 변경 0). */
-const RO_ACTS = ['v-ms-fold', 'cf-notes-fold', 'nw-chart-dot'];   /* 접기·그래프 달 고르기 — 보기만 하는 동작 */
+const RO_ACTS = ['v-ms-fold', 'cf-notes-fold', 'nw-chart-dot', 'ty-month-fold'];   /* 접기·그래프 달 고르기 — 보기만 하는 동작 */
 const RO_MSG = '보기 전용이에요 — 세은 님 기기에서 고칠 수 있어요';
 function isRO() { return ME === 'chankyu'; }
 function paintRO() {
@@ -1831,12 +1881,13 @@ function visionView() {
   return hero + flow + cf + expertise + core + ms + foot;
 }
 
-/* ---------- ✨ 올해 탭 — 올해의 목표 3가지 (rooms/{room}/thisYear/{YYYY}) ----------
-   해가 바뀌면 새 연도 칸이 빈 채로 열린다. 칸은 1·2·3 세 개로 고정이고,
-   목표를 누르면 제목·메모 시트가, 왼쪽 체크를 누르면 완료가 바뀐다.
-   저장은 늘 항목 경로(thisYear/{YYYY}/goals/{칸})만 PATCH 해서 다른 칸·다른 노드를 건드리지 않는다. */
-const TY_SLOTS = [0, 1, 2];
-const TY_PH = ['첫 번째 목표를 적어 보세요', '두 번째 목표를 적어 보세요', '세 번째 목표를 적어 보세요'];
+/* ---------- ✨ 올해 탭 — 2027년 목표 4개 · 1~12월 월별 목표 (rooms/{room}/thisYear/{YYYY}) ----------
+   위는 진남색 카드 한 장(`2027년 목표` 4줄), 아래는 1월부터 12월까지 흰 카드 12장(접기/펼치기).
+   목표 줄을 누르면 제목·메모 시트가, 오른쪽 둥근 체크를 누르면 완료가 바뀐다.
+   저장은 늘 항목 경로(thisYear/{YYYY}/goals/{칸} · thisYear/{YYYY}/months/{달}/goals/{칸})만 PATCH 해서
+   다른 칸·다른 노드를 건드리지 않는다. */
+const TY_SLOTS = [0, 1, 2, 3];
+const TY_PH = ['첫 번째 목표를 적어 보세요', '두 번째 목표를 적어 보세요', '세 번째 목표를 적어 보세요', '네 번째 목표를 적어 보세요'];
 const TM_PH = '목표를 적어 보세요';
 function tyYear() { return TY_YEAR; }
 /* 올해 칸의 저장소를 화면 상태(ST) 안에서만 보정한다 — 빈 방이면 goals 만 비어 있는 상태 */
@@ -1858,69 +1909,135 @@ function tyGoalList() {
     };
   });
 }
-/* 1~12월 목표 — rooms/{room}/thisYear/{YYYY}/months/{1..12} (goals 와 같은 모양) */
+/* 1~12월 목표 — rooms/{room}/thisYear/{YYYY}/months/{1..12}/goals/{0..3}
+   v48까지는 달 노드에 목표가 하나뿐(months/{달} = {title·note·done})이었다.
+   그 모양은 그 달의 goals/0 으로 읽어 준다(값을 옮겨 쓰지 않고 읽기만 호환). */
 function tyMonthStore() {
   const y = tyStore();
   if (!y.months || typeof y.months !== 'object') y.months = {};
   return y.months;
 }
-function tyMonthList() {
-  const m = tyMonthStore();
-  return TY_MONTHS.map(n => {
-    const v = (m[n] && typeof m[n] === 'object') ? m[n] : {};
+function tyMonthNode(m) {
+  const v = tyMonthStore()[m];
+  return (v && typeof v === 'object') ? v : {};
+}
+function tyMonthGoals(m) {
+  const v = tyMonthNode(m);
+  const g = (v.goals && typeof v.goals === 'object') ? { ...v.goals } : {};
+  /* 옛 모양(달 노드에 바로 title…)은 0번 칸으로 겹쳐 읽는다 — 0번 칸에 새 목표가 있으면 그게 우선 */
+  if (!g[0] && (v.title || v.note || v.done)) g[0] = v;
+  return g;
+}
+/* 옛 모양 값을 이 기기 화면 상태에서 지운다(0번 칸을 지울 때만) */
+function tyMonthClearLegacy(m) {
+  const v = tyMonthStore()[m];
+  if (!v || typeof v !== 'object') return;
+  ['title', 'note', 'done', 'doneAt'].forEach(k => {
+    if (Object.prototype.hasOwnProperty.call(v, k)) delete v[k];
+  });
+}
+/* 옛 모양(달 노드에 바로 title·note·done)인가 — 지울 때 옛 값이 되살아나지 않게 같이 지운다 */
+function tyMonthLegacy(m) {
+  const v = tyMonthNode(m);
+  return !!(v && (Object.prototype.hasOwnProperty.call(v, 'title') ||
+    Object.prototype.hasOwnProperty.call(v, 'note') || Object.prototype.hasOwnProperty.call(v, 'done')));
+}
+function tyMonthList(m) {
+  const g = tyMonthGoals(m);
+  return TY_SLOTS.map(i => {
+    const v = (g[i] && typeof g[i] === 'object') ? g[i] : {};
     return {
-      m: n,
+      m: m, slot: i,
       title: String(v.title || '').trim(),
       note: String(v.note || '').trim(),
       done: !!v.done
     };
   });
 }
-function tyCardHead(title) {
-  return '<div class="card-h ty-h"><h2 class="ty-title">' + esc(title) + '</h2></div>';
+/* 달 카드 접힘 — 이 기기에만 저장한다. 기본값은 「1월」만 펼치고 2~12월은 접힘 */
+const TYMF_KEY = 'bubudaisy.tyMonthOpen';
+let TYMF = loadTymf();
+function loadTymf() {
+  try {
+    const o = JSON.parse(localStorage.getItem(TYMF_KEY) || '{}');
+    return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+  } catch (e) { return {}; }
+}
+function saveTymf() {
+  try { localStorage.setItem(TYMF_KEY, JSON.stringify(TYMF)); } catch (e) {}
+}
+function tymOpen(m) {
+  const k = String(m);
+  return Object.prototype.hasOwnProperty.call(TYMF, k) ? !!TYMF[k] : m === 1;
+}
+function tymToggleFold(el) {
+  const card = el && el.closest ? el.closest('.tym-card') : null;
+  if (!card) return;
+  const fold = !card.classList.contains('fold');
+  card.classList.toggle('fold', fold);
+  el.setAttribute('aria-expanded', fold ? 'false' : 'true');
+  TYMF[String(el.dataset.m)] = fold ? 0 : 1;
+  saveTymf();
 }
 function thisYearView() {
   const year = tyYear();
   const rows = tyGoalList().map(g => {
     const empty = !g.title;
-    return '<div class="ty-row">' +
-      '<button class="ty-check' + (g.done ? ' on' : '') + '" data-act="ty-toggle" data-slot="' + g.slot + '"' +
+    return '<div class="tyg-pill">' +
+      '<button class="tyg-body" data-act="ty-edit" data-slot="' + g.slot + '" aria-label="' + (g.slot + 1) + '번 목표 적기·수정">' +
+        '<span class="tyg-num" aria-hidden="true">' + (g.slot + 1) + '</span>' +
+        '<span class="tyg-tw">' +
+          (empty
+            ? '<span class="tyg-t ph">' + TY_PH[g.slot] + '</span>'
+            : '<span class="tyg-t' + (g.done ? ' on' : '') + '">' + esc(g.title) + '</span>' +
+              (g.note ? '<span class="tyg-n' + (g.done ? ' on' : '') + '">' + esc(g.note) + '</span>' : '')) +
+        '</span>' +
+      '</button>' +
+      '<button class="tyg-check' + (g.done ? ' on' : '') + '" data-act="ty-toggle" data-slot="' + g.slot + '"' +
         ' aria-pressed="' + (g.done ? 'true' : 'false') + '"' +
         ' aria-label="' + (g.slot + 1) + '번 목표 ' + (empty ? '적기' : (g.done ? '완료 취소' : '완료')) + '">✓</button>' +
-      '<button class="ty-body" data-act="ty-edit" data-slot="' + g.slot + '" aria-label="' + (g.slot + 1) + '번 목표 적기·수정">' +
-        (empty
-          ? '<span class="ty-txt ph">' + TY_PH[g.slot] + '</span>'
-          : '<span class="ty-txt' + (g.done ? ' on' : '') + '">' + esc(g.title) + '</span>' +
-            (g.note ? '<span class="ty-note' + (g.done ? ' on' : '') + '">' + esc(g.note) + '</span>' : '')) +
-      '</button></div>';
+      '</div>';
   }).join('');
-  /* 두 번째 카드 — 1월부터 12월까지 12줄. 빈 달은 흐린 「목표를 적어 보세요」만 보인다 */
-  const monthRows = tyMonthList().map(x => {
-    const empty = !x.title;
-    return '<div class="ty-row tm-row">' +
-      '<button class="ty-check' + (x.done ? ' on' : '') + '" data-act="ty-month-toggle" data-m="' + x.m + '"' +
-        ' aria-pressed="' + (x.done ? 'true' : 'false') + '"' +
-        ' aria-label="' + x.m + '월 목표 ' + (empty ? '적기' : (x.done ? '완료 취소' : '완료')) + '">✓</button>' +
-      '<button class="ty-body" data-act="ty-month-edit" data-m="' + x.m + '" aria-label="' + x.m + '월 목표 적기·수정">' +
-        '<span class="tm-line"><span class="tm-m">' + x.m + '월</span>' +
-          (empty
-            ? '<span class="ty-txt ph">' + TM_PH + '</span>'
-            : '<span class="ty-txt' + (x.done ? ' on' : '') + '">' + esc(x.title) + '</span>') +
-        '</span>' +
-        (x.note ? '<span class="ty-note' + (x.done ? ' on' : '') + '">' + esc(x.note) + '</span>' : '') +
-      '</button></div>';
+  /* 1월~12월 — 달마다 흰 카드 한 장. 헤더를 누르면 접히고 펼쳐진다 */
+  const monthCards = TY_MONTHS.map(m => {
+    const open = tymOpen(m);
+    const list = tyMonthList(m);
+    const cnt = list.filter(x => x.title).length;
+    const monthRows = list.map(x => {
+      const empty = !x.title;
+      return '<div class="tym-row">' +
+        '<button class="tym-body-btn" data-act="ty-month-edit" data-m="' + m + '" data-slot="' + x.slot + '"' +
+          ' aria-label="' + m + '월 ' + (x.slot + 1) + '번 목표 적기·수정">' +
+          '<span class="tym-num" aria-hidden="true">' + (x.slot + 1) + '</span>' +
+          '<span class="tym-tw">' +
+            (empty
+              ? '<span class="tym-t ph">' + TM_PH + '</span>'
+              : '<span class="tym-t' + (x.done ? ' on' : '') + '">' + esc(x.title) + '</span>' +
+                (x.note ? '<span class="tym-n' + (x.done ? ' on' : '') + '">' + esc(x.note) + '</span>' : '')) +
+          '</span>' +
+        '</button>' +
+        '<button class="tym-check' + (x.done ? ' on' : '') + '" data-act="ty-month-toggle" data-m="' + m + '" data-slot="' + x.slot + '"' +
+          ' aria-pressed="' + (x.done ? 'true' : 'false') + '"' +
+          ' aria-label="' + m + '월 ' + (x.slot + 1) + '번 목표 ' + (empty ? '적기' : (x.done ? '완료 취소' : '완료')) + '">✓</button>' +
+        '</div>';
+    }).join('');
+    return '<section class="tym-card' + (open ? '' : ' fold') + '" data-m="' + m + '">' +
+      '<button class="tym-h" data-act="ty-month-fold" data-m="' + m + '" aria-expanded="' + (open ? 'true' : 'false') + '"' +
+        ' aria-label="' + m + '월 ' + (open ? '접기' : '펼치기') + '">' +
+        '<span class="tym-m">' + m + '월</span>' +
+        '<span class="tym-hr">' + (cnt ? '<span class="tym-cnt">' + cnt + '개</span>' : '') +
+          '<span class="tym-chev" aria-hidden="true"></span></span>' +
+      '</button>' +
+      '<div class="tym-body">' + monthRows + '</div>' +
+    '</section>';
   }).join('');
-  return '<section class="card ty-card" id="tyGoalsCard">' +
-      tyCardHead(year + '년 목표') +
-      '<div class="ty-goals">' + rows + '</div>' +
-      '<p class="ty-hint">목표를 누르면 제목과 메모를 적을 수 있어요</p>' +
+  return '<div class="ty-head"><span class="t1">✨ 올해</span><span class="t2">' + year + '</span></div>' +
+    '<section class="ty-navy" id="tyGoalsCard">' +
+      '<div class="ty-navy-h"><h2>' + year + '년 목표</h2></div>' +
+      '<div class="tyg">' + rows + '</div>' +
     '</section>' +
-    '<section class="card ty-card" id="tyMonthsCard">' +
-      tyCardHead(year + '년 월별 목표') +
-      '<div class="ty-goals tm">' + monthRows + '</div>' +
-      '<p class="ty-hint">달을 누르면 그 달 목표를 적을 수 있어요</p>' +
-    '</section>' +
-    '<p class="foot-note">체크하면 두 분 폰에 바로 함께 반영돼요 🌼</p>';
+    '<div class="tym">' + monthCards + '</div>' +
+    '<p class="foot-note">목표를 누르면 적고 고칠 수 있어요 · 달 이름을 누르면 접히고 펼쳐져요 🌼</p>';
 }
 
 /* ---------- 🏠 올선등기 (구 갈아타기 · 비전 탭 · 편집 가능) ---------- */
@@ -2585,8 +2702,9 @@ $('#view').addEventListener('click', async (e) => {
   if (act === 'g-edit') return openGoalSheet(el.dataset.kind, el.dataset.id);
   if (act === 'ty-edit') return openTySheet(Number(el.dataset.slot));
   if (act === 'ty-toggle') return toggleTyDone(Number(el.dataset.slot));
-  if (act === 'ty-month-edit') return openTyMonthSheet(Number(el.dataset.m));
-  if (act === 'ty-month-toggle') return toggleTyMonthDone(Number(el.dataset.m));
+  if (act === 'ty-month-fold') return tymToggleFold(el);
+  if (act === 'ty-month-edit') return openTyMonthSheet(Number(el.dataset.m), Number(el.dataset.slot));
+  if (act === 'ty-month-toggle') return toggleTyMonthDone(Number(el.dataset.m), Number(el.dataset.slot));
   if (act === 'pl-item') return openPlanItemSheet(el.dataset.c, el.dataset.s, el.dataset.i);
   if (act === 'pl-add') return openPlanItemSheet(el.dataset.c, el.dataset.s, null);
   if (act === 'pl-ch') return openPlanChapterSheet(el.dataset.c);
@@ -3468,7 +3586,7 @@ function openGoalSheet(kind, id) {
   });
 }
 
-/* ---------- ✨ 올해 목표 시트 (제목·메모 · 지우기) ---------- */
+/* ---------- ✨ 2027년 목표 시트 (4칸 · 제목·메모 · 지우기) ---------- */
 function tyRestore(slot, prev) {
   const store = tyStore();
   if (!store.goals || typeof store.goals !== 'object') store.goals = {};
@@ -3501,11 +3619,11 @@ function openTySheet(slot) {
       '<input class="inp" id="tyTitle" maxlength="60" placeholder="' + TY_PH[slot] + '" value="' + esc(cur.title) + '"></label>' +
     '<label class="fld"><span>메모 (선택)</span>' +
       '<textarea class="inp" id="tyNote" placeholder="예: 매달 100만원씩 모으기">' + esc(cur.note) + '</textarea></label>' +
-    (isNew ? '<p class="hint-in">해가 바뀌면 이 칸은 새 연도 목표로 비워져요.</p>'
+    (isNew ? '<p class="hint-in">비워 두면 이 칸은 흐린 안내로 남아요.</p>'
            : '<p class="hint-in">지우면 이 칸이 빈 자리로 돌아가요.</p>');
   const acts = '<button class="sh-save" id="tySave">저장</button>' +
     (isNew ? '' : '<button class="sh-del" id="tyDel">🗑 지우기</button>');
-  openSheet('✨ ' + n + '번째 올해 목표', body, acts);
+  openSheet('✨ ' + tyYear() + '년 목표', body, acts);
   const titleEl = $('#tyTitle');
   setTimeout(() => { if (titleEl) titleEl.focus(); }, 80);
   titleEl.addEventListener('keydown', (e) => {
@@ -3539,41 +3657,58 @@ function openTySheet(slot) {
   });
 }
 
-/* ---------- ✨ 월별 목표 시트 (1~12월 · 제목·메모 · 지우기) ---------- */
-function tyMonthRestore(m, prev) {
-  const store = tyMonthStore();
-  if (prev) store[m] = prev; else delete store[m];
+/* ---------- ✨ 달별 목표 시트 (1~12월 · 4칸 · 제목·메모 · 지우기) ---------- */
+function tyMonthSnap(m) {
+  const v = tyMonthStore()[m];
+  return (v && typeof v === 'object') ? JSON.parse(JSON.stringify(v)) : null;
 }
-function tyMonthRec(m) {
-  return tyMonthList().filter(x => x.m === m)[0] || null;
+function tyMonthRestoreTo(m, snap) {
+  const mts = tyMonthStore();
+  if (snap) mts[m] = snap; else delete mts[m];
 }
-async function toggleTyMonthDone(m) {
-  const cur = tyMonthRec(m);
+/* 화면 상태(ST)에만 반영 — 옛 모양(달 노드에 title…)이면 goals/0 으로 옮겨 담는다 */
+function tyMonthPut(m, slot, rec) {
+  const mts = tyMonthStore();
+  const v = (mts[m] && typeof mts[m] === 'object') ? mts[m] : {};
+  if (!v.goals || typeof v.goals !== 'object') {
+    v.goals = (v.title || v.note || v.done)
+      ? { 0: { title: v.title || '', note: v.note || null, done: !!v.done,
+               doneAt: v.doneAt || null, updatedAt: v.updatedAt || null } }
+      : {};
+  }
+  if (rec) v.goals[slot] = rec; else delete v.goals[slot];
+  mts[m] = v;
+  return mts[m];
+}
+function tyMonthRec(m, slot) {
+  return tyMonthList(m)[slot] || null;
+}
+async function toggleTyMonthDone(m, slot) {
+  const cur = tyMonthRec(m, slot);
   if (!cur) return;
-  /* 아직 적지 않은 달의 체크를 누르면 완료가 아니라 그 달 적기 시트를 연다 */
-  if (!cur.title) return openTyMonthSheet(m);
+  /* 아직 적지 않은 칸의 체크를 누르면 완료가 아니라 그 칸 적기 시트를 연다 */
+  if (!cur.title) return openTyMonthSheet(m, slot);
   const year = tyYear();
-  const store = tyMonthStore();
-  const prev = store[m] ? { ...store[m] } : null;
+  const snap = tyMonthSnap(m);
   const next = !cur.done;
   const at = Date.now();
-  store[m] = { ...(prev || {}), title: cur.title, note: cur.note || null,
-    done: next, doneAt: next ? at : null, updatedAt: at };
+  tyMonthPut(m, slot, { title: cur.title, note: cur.note || null,
+    done: next, doneAt: next ? at : null, updatedAt: at });
   render.sameTab = true; render();
-  try { await patch('thisYear/' + year + '/months/' + m, { done: next, doneAt: next ? at : null, updatedAt: at }); }
-  catch (err) { tyMonthRestore(m, prev); render.sameTab = true; render(); toast('저장하지 못했어요'); }
+  try { await patch('thisYear/' + year + '/months/' + m + '/goals/' + slot, { done: next, doneAt: next ? at : null, updatedAt: at }); }
+  catch (err) { tyMonthRestoreTo(m, snap); render.sameTab = true; render(); toast('저장하지 못했어요'); }
 }
-function openTyMonthSheet(m) {
-  const cur = tyMonthRec(m);
+function openTyMonthSheet(m, slot) {
+  const cur = tyMonthRec(m, slot);
   if (!cur) return;
   const isNew = !cur.title;
   const body =
-    '<label class="fld"><span>' + m + '월 목표</span>' +
+    '<label class="fld"><span>' + (slot + 1) + '번째 목표</span>' +
       '<input class="inp" id="tmTitle" maxlength="60" placeholder="' + TM_PH + '" value="' + esc(cur.title) + '"></label>' +
     '<label class="fld"><span>메모 (선택)</span>' +
       '<textarea class="inp" id="tmNote" placeholder="예: 이사 준비 끝내기">' + esc(cur.note) + '</textarea></label>' +
-    (isNew ? '<p class="hint-in">비워 두면 그 달은 「목표를 적어 보세요」로 남아요.</p>'
-           : '<p class="hint-in">지우면 그 달이 빈 자리로 돌아가요.</p>');
+    (isNew ? '<p class="hint-in">비워 두면 이 칸은 「목표를 적어 보세요」로 남아요.</p>'
+           : '<p class="hint-in">지우면 이 칸이 빈 자리로 돌아가요.</p>');
   const acts = '<button class="sh-save" id="tmSave">저장</button>' +
     (isNew ? '' : '<button class="sh-del" id="tmDel">🗑 지우기</button>');
   openSheet('✨ ' + m + '월 목표', body, acts);
@@ -3587,25 +3722,33 @@ function openTyMonthSheet(m) {
     if (!t) { toast('목표를 적어 주세요'); titleEl.focus(); return; }
     const note = $('#tmNote').value.trim();
     const year = tyYear();
-    const store = tyMonthStore();
-    const prev = store[m] ? { ...store[m] } : null;
+    const snap = tyMonthSnap(m);
     const at = Date.now();
     const rec = { title: t, note: note || null, done: cur.done,
-      doneAt: (cur.done && prev && prev.doneAt) || (cur.done ? at : null), updatedAt: at };
-    store[m] = { ...(prev || {}), ...rec };
+      doneAt: (cur.done && cur.doneAt) || (cur.done ? at : null), updatedAt: at };
+    tyMonthPut(m, slot, rec);
     closeSheet(); render.sameTab = true; render();
-    try { await patch('thisYear/' + year + '/months/' + m, rec); toast(isNew ? '목표를 적었어요' : '저장했어요'); }
-    catch (err) { tyMonthRestore(m, prev); render.sameTab = true; render(); toast('저장하지 못했어요'); }
+    try { await patch('thisYear/' + year + '/months/' + m + '/goals/' + slot, rec); toast(isNew ? '목표를 적었어요' : '저장했어요'); }
+    catch (err) { tyMonthRestoreTo(m, snap); render.sameTab = true; render(); toast('저장하지 못했어요'); }
   });
   if (!isNew) $('#tmDel').addEventListener('click', async (e) => {
     if (!delArm(e.currentTarget)) return;
     const year = tyYear();
-    const store = tyMonthStore();
-    const prev = store[m] ? { ...store[m] } : null;
-    delete store[m];
+    const legacy = tyMonthLegacy(m);          /* v48까지의 「달에 목표 하나」 모양 */
+    const snap = tyMonthSnap(m);
+    tyMonthPut(m, slot, null);
+    if (slot === 0 && legacy) tyMonthClearLegacy(m);
     closeSheet(); render.sameTab = true; render();
-    try { await del('thisYear/' + year + '/months/' + m); toast('목표를 지웠어요'); }
-    catch (err) { tyMonthRestore(m, prev); render.sameTab = true; render(); toast('지우지 못했어요'); }
+    try {
+      await del('thisYear/' + year + '/months/' + m + '/goals/' + slot);
+      /* 0번 칸을 지울 때 옛 모양 값이 남아 있으면 새로고침 뒤 그 목표가 되살아난다 — 같이 비운다 */
+      if (slot === 0 && legacy) {
+        await patch('thisYear/' + year + '/months/' + m,
+          { title: null, note: null, done: null, doneAt: null });
+      }
+      toast('목표를 지웠어요');
+    }
+    catch (err) { tyMonthRestoreTo(m, snap); render.sameTab = true; render(); toast('지우지 못했어요'); }
   });
 }
 
