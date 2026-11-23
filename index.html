@@ -495,22 +495,49 @@
   /* ================= 하단 탭 4개 (비전 · 올해 · 전략 · 순자산) ================= */
   .tabs{grid-template-columns:repeat(4,1fr);gap:7px;overflow:visible}
 
-  /* ================= ✨ 올해 탭 — 2027년 목표 4개 · 1~12월 접기 카드 (2026-11-23 개편) ================= */
-  /* 위 카드 — 비전 탭 `2035년 · 만 40세` 카드(.hero.goalcard)와 **같은 클래스**로 그린다.
-     카드 여백 · 모서리 · 제목 크기 · 4줄 알약(padding/gap/min-height) · 노란 원(19px)이
-     두 탭에서 픽셀까지 같아진다. 올해 탭에만 있던 `✨ 올해 / 2027` 머리줄과 ✦ 장식은 없앴다(2026-11-24). */
-  .tyg-body{flex:1 1 auto;min-width:0;display:flex;align-items:center;text-align:left;background:none;padding:0}
-  .tyg-t.ph{font-weight:800;color:rgba(255,255,255,.46)}
-  .tyg-t.on{color:rgba(255,255,255,.52);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.4)}
-  .tyg-n{white-space:pre-line;overflow-wrap:anywhere}
-  .tyg-n.on{color:rgba(227,225,255,.4);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.26)}
-  /* 오른쪽 둥근 체크 — 비전 카드의 `현재` 알약 높이에 맞춰 26px(알약 줄 높이 48px 유지) */
-  .tyg-check{flex:0 0 auto;width:26px;height:26px;border-radius:50%;
-    border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.05);color:rgba(255,255,255,.38);
-    font-size:12px;font-weight:900;line-height:1;display:grid;place-items:center;
-    transition:background .15s,border-color .15s,color .15s,transform .1s}
-  .tyg-check:active{transform:scale(.93)}
-  .tyg-check.on{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
+  /* ================= ✨ 올해 탭 — 위 2027년 진남색 카드 · 1~12월 접기 카드 ================= */
+  /* 위 카드 — 비전 탭 `2027년` 연도 카드(vision/milestones)와 **같은 데이터**를 그리되,
+     올해 탭에서만 카드 전체를 진남색(`.hero`와 같은 그라데이션)으로 칠한다.
+     비전 탭의 연도 카드는 기존 크림 바탕 그대로다. 시안 downloads/bubudaisy-2027-deep-card-mockup.png */
+  .ty27{background:linear-gradient(155deg,#2B2799,#1E1B7A 62%);color:#fff;border-radius:var(--r);
+    padding:16px 14px 17px;box-shadow:0 14px 28px rgba(30,27,122,.28);
+    display:flex;flex-direction:column;gap:10px}
+  .ty27-h{display:flex;align-items:center;justify-content:space-between;gap:7px;padding:1px 1px 0;margin-bottom:3px}
+  .ty27-y{font-size:26px;font-weight:900;letter-spacing:-.045em;line-height:1.08;color:#fff}
+  .ty27-hr{display:flex;align-items:center;gap:6px;min-width:0}
+  .ty27-bd,.ty27-prog{flex:0 0 auto;font-size:11px;font-weight:900;letter-spacing:-.02em;line-height:1.2;
+    color:#fff;background:rgba(255,255,255,.10);border-radius:999px;padding:5px 11px}
+  .ty27-prog{color:#DDDAFB}
+  .ty27 .pen-btn{width:27px;height:27px;border-radius:50%;background:rgba(255,255,255,.13);color:#fff}
+  .ty27 .pen-btn:active{background:rgba(255,255,255,.24);transform:scale(.94)}
+  /* 큰 카드 3개 — 반투명 남색 칸 + 흰 글씨. 완료면 노란 테두리 + 노란 ✓ 배지 */
+  .ty27-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+  .ty27-box{position:relative;min-height:96px;padding:11px 5px;border-radius:15px;
+    background:rgba(255,255,255,.075);box-shadow:inset 0 0 0 1px rgba(255,255,255,.17);
+    color:#fff;font-size:13px;font-weight:900;letter-spacing:-.035em;line-height:1.36;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    word-break:keep-all;overflow-wrap:anywhere;transition:background .15s}
+  .ty27-box:active{background:rgba(255,255,255,.14)}
+  .ty27-box .ty27-ph{font-weight:800;color:rgba(255,255,255,.42)}
+  .ty27-box.done{background:rgba(255,230,128,.13);box-shadow:inset 0 0 0 1.5px rgba(255,230,128,.72);color:#FFE680}
+  .ty27-box.done:active{background:rgba(255,230,128,.2)}
+  .ty27-box .ck{position:absolute;top:6px;right:6px;width:14px;height:14px;border-radius:50%;
+    background:var(--yellow);color:#2A2694;font-size:9px;font-weight:900;line-height:1;display:grid;place-items:center}
+  /* 아래 태그 3개 — 칸마다 가운데 놓이는 반투명 알약 */
+  .ty27-tags{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+  .ty27-tag{justify-self:center;max-width:100%;min-width:0;padding:6px 12px;border-radius:999px;
+    background:rgba(255,255,255,.075);box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);
+    color:#fff;font-size:11px;font-weight:900;letter-spacing:-.02em;line-height:1.25;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background .15s}
+  .ty27-tag:active{background:rgba(255,255,255,.14)}
+  .ty27-tag.ph{color:rgba(255,255,255,.42);font-weight:800}
+  @media (max-width:359px){
+    .ty27{padding:13px 12px 13px;gap:9px}
+    .ty27-y{font-size:21px}
+    .ty27-bd,.ty27-prog{font-size:9.5px;padding:4px 8px}
+    .ty27-box{min-height:92px;font-size:11.5px}
+    .ty27-tag{font-size:9.5px;padding:5px 9px}
+  }
 
   /* 아래 — 1월부터 12월까지 흰 카드 12장. 헤더를 누르면 그 달만 접히고 펼쳐진다 */
   .tym{display:flex;flex-direction:column;gap:9px}
@@ -561,7 +588,7 @@
   /* 보기 전용일 때는 고치는 버튼·자리를 감춘다(체크박스는 읽는 상태 표시로만 남긴다) */
   body.ro .add-row,body.ro .add-btn,body.ro .card-add,body.ro .pen-btn,
   body.ro .srow-acts,body.ro .ms-pen,body.ro .sh-del{display:none !important}
-  body.ro .tyg-check,body.ro .tyg-body,body.ro .tym-check,body.ro .tym-body-btn,
+  body.ro .tym-check,body.ro .tym-body-btn,body.ro .ty27-box,body.ro .ty27-tag,
   body.ro .mli,body.ro .srow-face{cursor:default}
   body.ro .ty-hint{display:none}
 
@@ -1850,35 +1877,31 @@ function visionView() {
   return hero + flow + cf + expertise + core + ms + foot;
 }
 
-/* ---------- ✨ 올해 탭 — 2027년 목표 4개 · 1~12월 월별 목표 (rooms/{room}/thisYear/{YYYY}) ----------
-   위는 진남색 카드 한 장(`2027년 목표` 4줄), 아래는 1월부터 12월까지 흰 카드 12장(접기/펼치기).
-   목표 줄을 누르면 제목·메모 시트가, 오른쪽 둥근 체크를 누르면 완료가 바뀐다.
-   저장은 늘 항목 경로(thisYear/{YYYY}/goals/{칸} · thisYear/{YYYY}/months/{달}/goals/{칸})만 PATCH 해서
-   다른 칸·다른 노드를 건드리지 않는다. */
-const TY_SLOTS = [0, 1, 2, 3];
-const TY_PH = ['첫 번째 목표를 적어 보세요', '두 번째 목표를 적어 보세요', '세 번째 목표를 적어 보세요', '네 번째 목표를 적어 보세요'];
+/* ---------- ✨ 올해 탭 — 위 `2027년` 진남색 카드(비전 탭 연도 카드와 같은 데이터) · 1~12월 월별 목표 3개 ----------
+   위 카드는 비전 탭 `하나씩 천천히`의 `2027년` 연도 카드(`vision/milestones/{i}`) 하나를 그대로 읽어
+   올해 탭에서만 진남색으로 칠해 그린다 — ✏️·체크가 양쪽에 즉시 반영된다(2026-11-24).
+   아래는 1월부터 12월까지 흰 카드 12장(접기/펼치기)이고 달마다 목표 3칸(`months/{달}/goals/{0·1·2}`)이다.
+   4번째 칸(`goals/3`)은 방에 그대로 두고 화면에서만 보지 않는다. */
+const TY_SLOTS = [0, 1, 2];
 const TM_PH = '목표를 적어 보세요';
 function tyYear() { return TY_YEAR; }
-/* 올해 칸의 저장소를 화면 상태(ST) 안에서만 보정한다 — 빈 방이면 goals 만 비어 있는 상태 */
+/* 올해 칸의 저장소를 화면 상태(ST) 안에서만 보정한다 — 빈 방이면 months 만 비어 있는 상태 */
 function tyStore() {
   if (!ST.thisYear || typeof ST.thisYear !== 'object') ST.thisYear = {};
   const y = tyYear();
   if (!ST.thisYear[y] || typeof ST.thisYear[y] !== 'object') ST.thisYear[y] = {};
   return ST.thisYear[y];
 }
-function tyGoalList() {
-  const g = (tyStore().goals && typeof tyStore().goals === 'object') ? tyStore().goals : {};
-  return TY_SLOTS.map((_, i) => {
-    const v = (g[i] && typeof g[i] === 'object') ? g[i] : {};
-    return {
-      slot: i,
-      title: String(v.title || '').trim(),
-      note: String(v.note || '').trim(),
-      done: !!v.done
-    };
-  });
+/* 비전 탭 연도 카드 중 `2027`이 든 카드의 자리 — 없으면 -1 */
+function vMsIdx2027() {
+  const arr = vArr(ST.vision, 'milestones');
+  for (let i = 0; i < arr.length; i++) {
+    const y = String((arr[i] && arr[i].year) || '');
+    if (y.indexOf(tyYear()) >= 0) return i;
+  }
+  return -1;
 }
-/* 1~12월 목표 — rooms/{room}/thisYear/{YYYY}/months/{1..12}/goals/{0..3}
+/* 1~12월 목표 — rooms/{room}/thisYear/{YYYY}/months/{1..12}/goals/{0..2} (4번째 칸 goals/3 은 방에 그대로 두고 화면에서만 보지 않는다)
    v48까지는 달 노드에 목표가 하나뿐(months/{달} = {title·note·done})이었다.
    그 모양은 그 달의 goals/0 으로 읽어 준다(값을 옮겨 쓰지 않고 읽기만 호환). */
 function tyMonthStore() {
@@ -1948,27 +1971,46 @@ function tymToggleFold(el) {
   TYMF[String(el.dataset.m)] = fold ? 0 : 1;
   saveTymf();
 }
-function thisYearView() {
-  const year = tyYear();
-  /* 줄 모양은 비전 탭 `2035년 · 만 40세` 카드와 똑같은 .grow/.gn/.gt/.gv/.gsub 를 그대로 쓴다
-     (2026-11-24: 올해 탭만의 .tyg-pill/.tyg-num/.tyg-tw 여백을 없애 두 탭 카드 크기를 일치) */
-  const rows = tyGoalList().map(g => {
-    const empty = !g.title;
-    return '<div class="grow">' +
-      '<span class="gn" aria-hidden="true">' + (g.slot + 1) + '</span>' +
-      '<button class="tyg-body" data-act="ty-edit" data-slot="' + g.slot + '" aria-label="' + (g.slot + 1) + '번 목표 적기·수정">' +
-        '<span class="gt">' +
-          (empty
-            ? '<span class="gv tyg-t ph">' + TY_PH[g.slot] + '</span>'
-            : '<span class="gv tyg-t' + (g.done ? ' on' : '') + '">' + esc(g.title) + '</span>' +
-              (g.note ? '<span class="gsub tyg-n' + (g.done ? ' on' : '') + '">' + esc(g.note) + '</span>' : '')) +
-        '</span>' +
-      '</button>' +
-      '<button class="tyg-check' + (g.done ? ' on' : '') + '" data-act="ty-toggle" data-slot="' + g.slot + '"' +
-        ' aria-pressed="' + (g.done ? 'true' : 'false') + '"' +
-        ' aria-label="' + (g.slot + 1) + '번 목표 ' + (empty ? '적기' : (g.done ? '완료 취소' : '완료')) + '">✓</button>' +
-      '</div>';
+function ty27Card() {
+  const idx = vMsIdx2027();
+  const arr = vArr(ST.vision, 'milestones');
+  const m = (idx >= 0 && arr[idx]) ? arr[idx] : null;
+  const items = (m && Array.isArray(m.items)) ? m.items.slice(0, 3) : [];
+  const done = (m && Array.isArray(m.done)) ? m.done : [];
+  const subs = m ? msSubArr(m) : ['', '', ''];
+  const title = (m && m.year) ? String(m.year) : (tyYear() + '년');
+  const badge = (m && m.badge) ? String(m.badge) : '';
+  /* 진행률은 비전 탭 연도 카드와 같은 셈(적어 둔 칸 중 완료 수 / 적어 둔 칸 수) — 카드가 없으면 0/3 */
+  const okN = items.filter((_, b) => !!done[b]).length;
+  const progTxt = items.length ? (okN + '/' + items.length) : '0/3';
+  const boxes = [0, 1, 2].map(b => {
+    const t = String(items[b] == null ? '' : items[b]).trim();
+    const on = !!done[b] && !!t;
+    return '<button class="ty27-box' + (on ? ' done' : '') + '" data-act="ty27-box" data-b="' + b + '"' +
+      ' aria-pressed="' + (on ? 'true' : 'false') + '"' +
+      ' aria-label="' + esc(title) + ' ' + (b + 1) + '번 칸 ' + (t ? (on ? '완료 취소' : '완료') : '목표 적기') + '">' +
+      (on ? '<span class="ck" aria-hidden="true">✓</span>' : '') +
+      (t ? esc(t) : '<span class="ty27-ph">＋ 목표</span>') +
+      '</button>';
   }).join('');
+  const tags = subs.map((t, b) =>
+    '<button class="ty27-tag' + (t ? '' : ' ph') + '" data-act="ty27-tag" data-b="' + b + '"' +
+      ' aria-label="' + esc(title) + ' ' + (b + 1) + '번 태그 ' + (t ? '고치기' : '적기') + '">' +
+      (t ? esc(t) : '＋ 태그') + '</button>').join('');
+  return '<section class="ty27" id="ty27Card">' +
+      '<div class="ty27-h">' +
+        '<span class="ty27-y">' + esc(title) + '</span>' +
+        '<span class="ty27-hr">' +
+          (badge ? '<span class="ty27-bd">' + esc(badge) + '</span>' : '') +
+          '<span class="ty27-prog">' + progTxt + '</span>' +
+          '<button class="pen-btn" data-act="ty27-edit" aria-label="' + esc(title) + ' 목표 수정">✏️</button>' +
+        '</span>' +
+      '</div>' +
+      '<div class="ty27-grid">' + boxes + '</div>' +
+      '<div class="ty27-tags">' + tags + '</div>' +
+    '</section>';
+}
+function thisYearView() {
   /* 1월~12월 — 달마다 흰 카드 한 장. 헤더를 누르면 접히고 펼쳐진다 */
   const monthCards = TY_MONTHS.map(m => {
     const open = tymOpen(m);
@@ -2002,10 +2044,7 @@ function thisYearView() {
       '<div class="tym-body">' + monthRows + '</div>' +
     '</section>';
   }).join('');
-  return '<section class="hero goalcard" id="tyGoalsCard">' +
-      '<div class="hero-top goal-top"><span>' + year + '년 목표</span></div>' +
-      '<div class="grows">' + rows + '</div>' +
-    '</section>' +
+  return ty27Card() +
     '<div class="tym">' + monthCards + '</div>' +
     '<p class="foot-note">목표를 누르면 적고 고칠 수 있어요 · 달 이름을 누르면 접히고 펼쳐져요 🌼</p>';
 }
@@ -2670,8 +2709,9 @@ $('#view').addEventListener('click', async (e) => {
     return;
   }
   if (act === 'g-edit') return openGoalSheet(el.dataset.kind, el.dataset.id);
-  if (act === 'ty-edit') return openTySheet(Number(el.dataset.slot));
-  if (act === 'ty-toggle') return toggleTyDone(Number(el.dataset.slot));
+  if (act === 'ty27-edit') return openTy27Edit();
+  if (act === 'ty27-box') return openTy27Box(Number(el.dataset.b));
+  if (act === 'ty27-tag') return openTy27Tag(Number(el.dataset.b));
   if (act === 'ty-month-fold') return tymToggleFold(el);
   if (act === 'ty-month-edit') return openTyMonthSheet(Number(el.dataset.m), Number(el.dataset.slot));
   if (act === 'ty-month-toggle') return toggleTyMonthDone(Number(el.dataset.m), Number(el.dataset.slot));
@@ -3556,78 +3596,35 @@ function openGoalSheet(kind, id) {
   });
 }
 
-/* ---------- ✨ 2027년 목표 시트 (4칸 · 제목·메모 · 지우기) ---------- */
-function tyRestore(slot, prev) {
-  const store = tyStore();
-  if (!store.goals || typeof store.goals !== 'object') store.goals = {};
-  if (prev) store.goals[slot] = prev; else delete store.goals[slot];
+/* ---------- ✨ 올해 탭 위 `2027년` 카드 — 비전 탭 연도 카드(vision/milestones)를 그대로 읽고 쓴다 ----------
+   큰 칸 = 성공 ✓ 토글(빈 칸이면 그 칸부터 채우는 편집 시트) · 태그 = 하위 메모 시트 · ✏️ = 연도 카드 시트.
+   세 동작 모두 비전 탭과 같은 경로만 건드리므로 두 탭이 즉시 같이 바뀐다. */
+function openTy27Edit() {
+  const idx = vMsIdx2027();
+  if (idx < 0) return openTy27Create();
+  openVisionMsSheet(String(idx));
 }
-async function toggleTyDone(slot) {
-  const g = tyGoalList()[slot];
-  if (!g) return;
-  /* 아직 적지 않은 칸의 체크를 누르면 완료가 아니라 목표 적기 시트를 연다 */
-  if (!g.title) return openTySheet(slot);
-  const year = tyYear();
-  const store = tyStore();
-  if (!store.goals || typeof store.goals !== 'object') store.goals = {};
-  const prev = store.goals[slot] ? { ...store.goals[slot] } : null;
-  const next = !g.done;
-  const at = Date.now();
-  store.goals[slot] = { ...(prev || {}), title: g.title, note: g.note || null,
-    done: next, doneAt: next ? at : null, updatedAt: at };
-  render.sameTab = true; render();
-  try { await patch('thisYear/' + year + '/goals/' + slot, { done: next, doneAt: next ? at : null, updatedAt: at }); }
-  catch (err) { tyRestore(slot, prev); render.sameTab = true; render(); toast('저장하지 못했어요'); }
+function openTy27Box(b) {
+  const idx = vMsIdx2027();
+  if (idx < 0) return openTy27Create(b);
+  const m = vArr(ST.vision, 'milestones')[idx] || {};
+  const t = String((Array.isArray(m.items) ? m.items : [])[b] || '').trim();
+  if (!t) return openVisionMsSheet(String(idx), b);
+  return toggleMsDone(String(idx), b);
 }
-function openTySheet(slot) {
-  const cur = tyGoalList()[slot];
-  if (!cur) return;
-  const isNew = !cur.title;
-  const n = slot + 1;
-  const body =
-    '<label class="fld"><span>' + n + '번째 목표</span>' +
-      '<input class="inp" id="tyTitle" maxlength="60" placeholder="' + TY_PH[slot] + '" value="' + esc(cur.title) + '"></label>' +
-    '<label class="fld"><span>메모 (선택)</span>' +
-      '<textarea class="inp" id="tyNote" placeholder="예: 매달 100만원씩 모으기">' + esc(cur.note) + '</textarea></label>' +
-    (isNew ? '<p class="hint-in">비워 두면 이 칸은 흐린 안내로 남아요.</p>'
-           : '<p class="hint-in">지우면 이 칸이 빈 자리로 돌아가요.</p>');
-  const acts = '<button class="sh-save" id="tySave">저장</button>' +
-    (isNew ? '' : '<button class="sh-del" id="tyDel">🗑 지우기</button>');
-  openSheet('✨ ' + tyYear() + '년 목표', body, acts);
-  const titleEl = $('#tyTitle');
-  setTimeout(() => { if (titleEl) titleEl.focus(); }, 80);
-  titleEl.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); $('#tySave').click(); }
-  });
-  $('#tySave').addEventListener('click', async () => {
-    const title = $('#tyTitle').value.replace(/\s+/g, ' ').trim();
-    if (!title) { toast('목표를 적어 주세요'); titleEl.focus(); return; }
-    const note = $('#tyNote').value.trim();
-    const year = tyYear();
-    const store = tyStore();
-    if (!store.goals || typeof store.goals !== 'object') store.goals = {};
-    const prev = store.goals[slot] ? { ...store.goals[slot] } : null;
-    const at = Date.now();
-    const rec = { title, note: note || null, done: cur.done,
-      doneAt: (cur.done && prev && prev.doneAt) || (cur.done ? at : null), updatedAt: at };
-    store.goals[slot] = { ...(prev || {}), ...rec };
-    closeSheet(); render.sameTab = true; render();
-    try { await patch('thisYear/' + year + '/goals/' + slot, rec); toast(isNew ? '목표를 적었어요' : '저장했어요'); }
-    catch (err) { tyRestore(slot, prev); render.sameTab = true; render(); toast('저장하지 못했어요'); }
-  });
-  if (!isNew) $('#tyDel').addEventListener('click', async (e) => {
-    if (!delArm(e.currentTarget)) return;
-    const year = tyYear();
-    const store = tyStore();
-    const prev = (store.goals && store.goals[slot]) ? { ...store.goals[slot] } : null;
-    if (store.goals) delete store.goals[slot];
-    closeSheet(); render.sameTab = true; render();
-    try { await del('thisYear/' + year + '/goals/' + slot); toast('목표를 지웠어요'); }
-    catch (err) { tyRestore(slot, prev); render.sameTab = true; render(); toast('지우지 못했어요'); }
-  });
+function openTy27Tag(b) {
+  const idx = vMsIdx2027();
+  if (idx < 0) return openTy27Create(b);
+  return openMsSubSheet(String(idx), b);
+}
+/* 비전 탭에 아직 2027년 연도 카드가 없을 때 — 새 카드로 열고 연도를 미리 적어 둔다 */
+function openTy27Create(box) {
+  openVisionMsSheet('new', box);
+  const el = $('#vmYear');
+  if (el && !el.value) el.value = tyYear() + '년';
 }
 
-/* ---------- ✨ 달별 목표 시트 (1~12월 · 4칸 · 제목·메모 · 지우기) ---------- */
+/* ---------- ✨ 달별 목표 시트 (1~12월 · 3칸 · 제목·메모 · 지우기) ---------- */
 function tyMonthSnap(m) {
   const v = tyMonthStore()[m];
   return (v && typeof v === 'object') ? JSON.parse(JSON.stringify(v)) : null;
