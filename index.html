@@ -132,13 +132,21 @@
     padding:2px 16px 20px;display:flex;flex-direction:column;gap:13px;scrollbar-width:none}
   #view > *{flex:0 0 auto}
   #view::-webkit-scrollbar{display:none}
-  .tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  /* 하단 탭 4개 — 🌼 비전 · ✨ 올해 · 🍯 전략 · 💰 순자산 (2026-11-23 ✨ 올해 신설) */
+  .tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;
     padding:8px 12px calc(8px + env(safe-area-inset-bottom));
     background:rgba(255,255,255,.72);backdrop-filter:blur(10px);
     border-radius:24px 24px 0 0;box-shadow:0 -6px 20px rgba(112,86,0,.12)}
   .tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 0;border-radius:16px;
-    font-size:12.5px;font-weight:800;color:#8F8A73;letter-spacing:-.02em;transition:background .18s,color .18s}
+    min-width:0;font-size:12.5px;font-weight:800;color:#8F8A73;letter-spacing:-.02em;
+    transition:background .18s,color .18s;white-space:nowrap}
   .tab .ic{font-size:21px;line-height:1;opacity:.55;transition:opacity .18s}
+  /* 320px 폰에서도 네 칸이 한 줄에 들어가게 글자·아이콘을 한 단계 줄인다 */
+  @media (max-width:379px){
+    .tabs{gap:5px;padding-left:9px;padding-right:9px}
+    .tab{padding:8px 0;font-size:11.5px;letter-spacing:-.03em}
+    .tab .ic{font-size:19px}
+  }
   .tab.on{color:var(--navy);background:var(--white);box-shadow:0 3px 10px rgba(112,86,0,.13)}
   .tab.on .ic{opacity:1}
 
@@ -484,8 +492,46 @@
     .fs-emoji{font-size:18px}
   }
 
-  /* ================= 하단 탭 3개 (비전 · 전략 · 순자산) ================= */
-  .tabs{grid-template-columns:repeat(3,1fr);gap:8px;overflow:visible}
+  /* ================= 하단 탭 4개 (비전 · 올해 · 전략 · 순자산) ================= */
+  .tabs{grid-template-columns:repeat(4,1fr);gap:7px;overflow:visible}
+
+  /* ================= ✨ 올해 탭 — 올해의 목표 3가지 (2026-11-23) ================= */
+  .ty-card{gap:10px}
+  .ty-h{align-items:center;gap:8px}
+  .ty-title{margin:0;min-width:0;font-size:16.5px;font-weight:900;letter-spacing:-.04em;
+    color:var(--ink);line-height:1.22;word-break:keep-all}
+  .ty-dday{flex:0 0 auto;padding:7px 13px;border-radius:999px;background:var(--navy);color:#fff;
+    font-size:12px;font-weight:900;letter-spacing:-.02em;line-height:1.15;
+    box-shadow:0 6px 14px rgba(30,27,122,.22)}
+  .ty-meta{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:1px}
+  .ty-meta .ty-k{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:-.02em}
+  .ty-meta .ty-k b{font-size:14.5px;font-weight:900;color:var(--navy);letter-spacing:-.03em}
+  .ty-meta .ty-p{font-size:14.5px;font-weight:900;color:var(--navy);letter-spacing:-.03em}
+  .ty-goals{display:flex;flex-direction:column;margin-top:2px}
+  .ty-row{display:flex;align-items:center;gap:11px;padding:11px 1px;border-top:1px solid var(--cream-line)}
+  .ty-row:first-child{border-top:0;padding-top:2px}
+  .ty-row:last-child{padding-bottom:2px}
+  .ty-check{flex:0 0 auto;width:26px;height:26px;border-radius:9px;border:2px solid #DED8C1;background:#fff;
+    display:grid;place-items:center;font-size:12px;font-weight:900;line-height:1;color:transparent;
+    transition:background .15s,border-color .15s,transform .1s}
+  .ty-check:active{transform:scale(.93)}
+  .ty-check.on{background:var(--navy);border-color:var(--navy);color:#fff}
+  .ty-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px;text-align:left}
+  .ty-txt{font-size:13.5px;font-weight:800;color:var(--ink);letter-spacing:-.025em;line-height:1.4;
+    word-break:keep-all;overflow-wrap:anywhere;white-space:pre-line}
+  .ty-txt.ph{font-size:12.5px;font-weight:800;color:#BEB79F}
+  .ty-txt.on{color:#A29C85;text-decoration:line-through;text-decoration-color:#C6BFA6}
+  .ty-note{font-size:10.5px;font-weight:700;color:#8F8A73;letter-spacing:-.02em;line-height:1.45;
+    white-space:pre-line}
+  .ty-note.on{color:#B3AD97;text-decoration:line-through;text-decoration-color:#D5CFB8}
+  .ty-hint{margin:1px 0 0;font-size:10.5px;font-weight:700;color:#8F8A66;text-align:center;
+    letter-spacing:-.02em;line-height:1.5}
+  @media (max-width:359px){
+    .ty-title{font-size:15.5px}
+    .ty-dday{padding:6px 11px;font-size:11.5px}
+    .ty-txt{font-size:12.5px}
+    .ty-txt.ph{font-size:11.5px}
+  }
 
   /* ================= 👨🏻 찬규 탭 보드 (세은 탭과 같은 6섹션 · 제목부터 전부 편집) ================= */
   /* 목표 카드 제목 — 가운데 정렬을 지키면서 오른쪽에 ✏️ 만 띄운다 */
@@ -835,6 +881,7 @@
   <main id="view"></main>
   <nav class="tabs" id="tabs">
     <button class="tab on" data-tab="vision"><span class="ic">🌼</span>비전</button>
+    <button class="tab" data-tab="thisyear"><span class="ic">✨</span>올해</button>
     <button class="tab" data-tab="strategy"><span class="ic">🍯</span>전략</button>
     <button class="tab" data-tab="networth"><span class="ic">💰</span>순자산</button>
   </nav>
@@ -863,8 +910,8 @@ const VERIFY_HEX = 'c94584ef0ca10084ad0655e469418be1f0dad47b16e4762adc1d36b35c51
 const AUTH_KEY = 'bubudaisy.auth';
 const ROOM_KEY_RE = /^bubudaisy-[a-z0-9]{12,32}$/;
 
-/* 하단 탭 순서 — 비전 → 전략 → 순자산 (2026-11-23 세은 님 지시: 찬규 탭 빼고 세은 탭을 비전으로) */
-const TABS = ['vision', 'strategy', 'networth'];
+/* 하단 탭 순서 — 비전 → 올해 → 전략 → 순자산 (2026-11-23: ✨ 올해 탭 신설) */
+const TABS = ['vision', 'thisyear', 'strategy', 'networth'];
 
 /* ---------- 🗓️ 연도 카드 접기/펼치기 (이 기기에만 저장) ----------
    연도 카드 헤더(✏️ 제외)를 누르면 그 연도의 3칸이 접힌다. 기본값은 펼침이고,
@@ -964,6 +1011,7 @@ function hex(buf) {
 const ST = {
   vision: null, netWorth: {}, roadmap: {}, goals: {}, affirmations: {},
   bucket: {}, tradeUp: {}, plan: {}, sm: {}, cashflow: {}, lastSeen: {},
+  thisYear: {},
   tab: 'vision', loaded: false
 };
 /* 이 기기를 쓰는 사람(seeun / chankyu) — 같은 방·비밀번호를 둘이 쓰므로 기기마다 한 번 고른다 */
@@ -1192,6 +1240,8 @@ function absorb(d) {
   /* rooms/{room}/chankyuVision 은 앱에서 더 이상 읽지도 쓰지도 않는다 —
      찬규 님 탭은 주주가 따로 만들고, 기존 데이터는 이관용으로 방에 그대로 보존한다(2026-11-23). */
   ST.cashflow = (d.cashflowBoxes && typeof d.cashflowBoxes === 'object') ? d.cashflowBoxes : {};
+  /* ✨ 올해 — rooms/{room}/thisYear/{YYYY}/goals/{0·1·2} (기존 노드는 건드리지 않는다) */
+  ST.thisYear = (d.thisYear && typeof d.thisYear === 'object') ? d.thisYear : {};
   /* 마지막 접속: 서버 값이 내가 방금 남긴 값보다 오래됐으면 내 값을 유지(깜빡임 방지) */
   const myPrev = ME ? seenAt((ST.lastSeen || {})[ME]) : 0;
   ST.lastSeen = (d.lastSeen && typeof d.lastSeen === 'object') ? d.lastSeen : {};
@@ -1255,14 +1305,15 @@ function connect() {
 const NODE_TO_ST = {
   netWorth: 'netWorth', roadmap: 'roadmap', goals: 'goals', affirmations: 'affirmations',
   bucket: 'bucket', tradeUpStrategies: 'tradeUp', masterPlan: 'plan',
-  strategyMind: 'sm', cashflowBoxes: 'cashflow', lastSeen: 'lastSeen'
+  strategyMind: 'sm', cashflowBoxes: 'cashflow', lastSeen: 'lastSeen', thisYear: 'thisYear'
 };
 function applyNode(name, data) {
   if (name === 'vision') {
     absorb({
       vision: data, netWorth: ST.netWorth, roadmap: ST.roadmap, goals: ST.goals,
       affirmations: ST.affirmations, bucket: ST.bucket, tradeUpStrategies: ST.tradeUp,
-      masterPlan: ST.plan, strategyMind: ST.sm, cashflowBoxes: ST.cashflow, lastSeen: ST.lastSeen
+      masterPlan: ST.plan, strategyMind: ST.sm, cashflowBoxes: ST.cashflow, lastSeen: ST.lastSeen,
+      thisYear: ST.thisYear
     });
     return;
   }
@@ -1549,6 +1600,7 @@ function render() {
   view.classList.toggle('fix-half', ST.tab === 'strategy');
   if (ST.tab === 'networth') { view.innerHTML = netWorthView(); fitAmounts(view); }
   else if (ST.tab === 'strategy') { view.innerHTML = strategyView(); }
+  else if (ST.tab === 'thisyear') { view.innerHTML = thisYearView(); }
   else { view.innerHTML = visionView(); fitGoalBadges(view); }
   if (render.sameTab) view.scrollTop = keep;
   render.sameTab = true;
@@ -1733,6 +1785,69 @@ function visionView() {
 
   const foot = (v && v.footer) ? '<p class="foot-note">' + esc(v.footer) + '</p>' : '';
   return hero + flow + cf + expertise + core + ms + foot;
+}
+
+/* ---------- ✨ 올해 탭 — 올해의 목표 3가지 (rooms/{room}/thisYear/{YYYY}) ----------
+   해가 바뀌면 새 연도 칸이 빈 채로 열린다. 칸은 1·2·3 세 개로 고정이고,
+   목표를 누르면 제목·메모 시트가, 왼쪽 체크를 누르면 완료가 바뀐다.
+   저장은 늘 항목 경로(thisYear/{YYYY}/goals/{칸})만 PATCH 해서 다른 칸·다른 노드를 건드리지 않는다. */
+const TY_SLOTS = [0, 1, 2];
+const TY_PH = ['첫 번째 목표를 적어 보세요', '두 번째 목표를 적어 보세요', '세 번째 목표를 적어 보세요'];
+function tyYear() { return String(new Date().getFullYear()); }
+/* 올해 칸의 저장소를 화면 상태(ST) 안에서만 보정한다 — 빈 방이면 goals 만 비어 있는 상태 */
+function tyStore() {
+  if (!ST.thisYear || typeof ST.thisYear !== 'object') ST.thisYear = {};
+  const y = tyYear();
+  if (!ST.thisYear[y] || typeof ST.thisYear[y] !== 'object') ST.thisYear[y] = {};
+  return ST.thisYear[y];
+}
+function tyGoalList() {
+  const g = (tyStore().goals && typeof tyStore().goals === 'object') ? tyStore().goals : {};
+  return TY_SLOTS.map((_, i) => {
+    const v = (g[i] && typeof g[i] === 'object') ? g[i] : {};
+    return {
+      slot: i,
+      title: String(v.title || '').trim(),
+      note: String(v.note || '').trim(),
+      done: !!v.done
+    };
+  });
+}
+/* 12월 31일까지 남은 일수 — 12/31 당일은 D-0 */
+function tyDaysLeft() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const end = new Date(now.getFullYear(), 11, 31);
+  return Math.max(0, Math.round((end - today) / 86400000));
+}
+function thisYearView() {
+  const year = tyYear();
+  const list = tyGoalList();
+  const done = list.filter(g => g.done).length;
+  const pct = Math.round(done / list.length * 100);
+  const rows = list.map(g => {
+    const empty = !g.title;
+    return '<div class="ty-row">' +
+      '<button class="ty-check' + (g.done ? ' on' : '') + '" data-act="ty-toggle" data-slot="' + g.slot + '"' +
+        ' aria-pressed="' + (g.done ? 'true' : 'false') + '"' +
+        ' aria-label="' + (g.slot + 1) + '번 목표 ' + (empty ? '적기' : (g.done ? '완료 취소' : '완료')) + '">✓</button>' +
+      '<button class="ty-body" data-act="ty-edit" data-slot="' + g.slot + '" aria-label="' + (g.slot + 1) + '번 목표 적기·수정">' +
+        (empty
+          ? '<span class="ty-txt ph">' + TY_PH[g.slot] + '</span>'
+          : '<span class="ty-txt' + (g.done ? ' on' : '') + '">' + esc(g.title) + '</span>' +
+            (g.note ? '<span class="ty-note' + (g.done ? ' on' : '') + '">' + esc(g.note) + '</span>' : '')) +
+      '</button></div>';
+  }).join('');
+  return '<section class="card ty-card">' +
+    '<div class="card-h ty-h"><h2 class="ty-title">' + year + '년 올해의 목표</h2>' +
+      '<span class="ty-dday">D-' + tyDaysLeft() + '</span></div>' +
+    '<div class="ty-meta"><span class="ty-k"><b>' + done + '</b> / ' + list.length + ' 완료</span>' +
+      '<span class="ty-p">' + pct + '%</span></div>' +
+    '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="ty-goals">' + rows + '</div>' +
+    '<p class="ty-hint">목표를 누르면 제목과 메모를 적을 수 있어요</p>' +
+    '</section>' +
+    '<p class="foot-note">체크하면 두 분 폰에 바로 함께 반영돼요 🌼</p>';
 }
 
 /* ---------- 🏠 올선등기 (구 갈아타기 · 비전 탭 · 편집 가능) ---------- */
@@ -2391,6 +2506,8 @@ $('#view').addEventListener('click', async (e) => {
     return;
   }
   if (act === 'g-edit') return openGoalSheet(el.dataset.kind, el.dataset.id);
+  if (act === 'ty-edit') return openTySheet(Number(el.dataset.slot));
+  if (act === 'ty-toggle') return toggleTyDone(Number(el.dataset.slot));
   if (act === 'pl-item') return openPlanItemSheet(el.dataset.c, el.dataset.s, el.dataset.i);
   if (act === 'pl-add') return openPlanItemSheet(el.dataset.c, el.dataset.s, null);
   if (act === 'pl-ch') return openPlanChapterSheet(el.dataset.c);
@@ -3271,6 +3388,77 @@ function openGoalSheet(kind, id) {
   });
 }
 
+/* ---------- ✨ 올해 목표 시트 (제목·메모 · 지우기) ---------- */
+function tyRestore(slot, prev) {
+  const store = tyStore();
+  if (!store.goals || typeof store.goals !== 'object') store.goals = {};
+  if (prev) store.goals[slot] = prev; else delete store.goals[slot];
+}
+async function toggleTyDone(slot) {
+  const g = tyGoalList()[slot];
+  if (!g) return;
+  /* 아직 적지 않은 칸의 체크를 누르면 완료가 아니라 목표 적기 시트를 연다 */
+  if (!g.title) return openTySheet(slot);
+  const year = tyYear();
+  const store = tyStore();
+  if (!store.goals || typeof store.goals !== 'object') store.goals = {};
+  const prev = store.goals[slot] ? { ...store.goals[slot] } : null;
+  const next = !g.done;
+  const at = Date.now();
+  store.goals[slot] = { ...(prev || {}), title: g.title, note: g.note || null,
+    done: next, doneAt: next ? at : null, updatedAt: at };
+  render.sameTab = true; render();
+  try { await patch('thisYear/' + year + '/goals/' + slot, { done: next, doneAt: next ? at : null, updatedAt: at }); }
+  catch (err) { tyRestore(slot, prev); render.sameTab = true; render(); toast('저장하지 못했어요'); }
+}
+function openTySheet(slot) {
+  const cur = tyGoalList()[slot];
+  if (!cur) return;
+  const isNew = !cur.title;
+  const n = slot + 1;
+  const body =
+    '<label class="fld"><span>' + n + '번째 목표</span>' +
+      '<input class="inp" id="tyTitle" maxlength="60" placeholder="' + TY_PH[slot] + '" value="' + esc(cur.title) + '"></label>' +
+    '<label class="fld"><span>메모 (선택)</span>' +
+      '<textarea class="inp" id="tyNote" placeholder="예: 매달 100만원씩 모으기">' + esc(cur.note) + '</textarea></label>' +
+    (isNew ? '<p class="hint-in">해가 바뀌면 이 칸은 새 연도 목표로 비워져요.</p>'
+           : '<p class="hint-in">지우면 이 칸이 빈 자리로 돌아가요.</p>');
+  const acts = '<button class="sh-save" id="tySave">저장</button>' +
+    (isNew ? '' : '<button class="sh-del" id="tyDel">🗑 지우기</button>');
+  openSheet('✨ ' + n + '번째 올해 목표', body, acts);
+  const titleEl = $('#tyTitle');
+  setTimeout(() => { if (titleEl) titleEl.focus(); }, 80);
+  titleEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); $('#tySave').click(); }
+  });
+  $('#tySave').addEventListener('click', async () => {
+    const title = $('#tyTitle').value.replace(/\s+/g, ' ').trim();
+    if (!title) { toast('목표를 적어 주세요'); titleEl.focus(); return; }
+    const note = $('#tyNote').value.trim();
+    const year = tyYear();
+    const store = tyStore();
+    if (!store.goals || typeof store.goals !== 'object') store.goals = {};
+    const prev = store.goals[slot] ? { ...store.goals[slot] } : null;
+    const at = Date.now();
+    const rec = { title, note: note || null, done: cur.done,
+      doneAt: (cur.done && prev && prev.doneAt) || (cur.done ? at : null), updatedAt: at };
+    store.goals[slot] = { ...(prev || {}), ...rec };
+    closeSheet(); render.sameTab = true; render();
+    try { await patch('thisYear/' + year + '/goals/' + slot, rec); toast(isNew ? '목표를 적었어요' : '저장했어요'); }
+    catch (err) { tyRestore(slot, prev); render.sameTab = true; render(); toast('저장하지 못했어요'); }
+  });
+  if (!isNew) $('#tyDel').addEventListener('click', async (e) => {
+    if (!delArm(e.currentTarget)) return;
+    const year = tyYear();
+    const store = tyStore();
+    const prev = (store.goals && store.goals[slot]) ? { ...store.goals[slot] } : null;
+    if (store.goals) delete store.goals[slot];
+    closeSheet(); render.sameTab = true; render();
+    try { await del('thisYear/' + year + '/goals/' + slot); toast('목표를 지웠어요'); }
+    catch (err) { tyRestore(slot, prev); render.sameTab = true; render(); toast('지우지 못했어요'); }
+  });
+}
+
 /* ============================================================
    📘 플랜 (masterPlan)
    카드 내용도 전부 Firebase 방에서만 온다. 정적 코드에는 없다.
@@ -3448,7 +3636,7 @@ function openPlanChapterSheet(cid) {
    ============================================================ */
 const MEMO_KEY = 'bubudaisy.memos';
 const TAB_NAMES = {
-  vision: '비전', strategy: '전략', networth: '순자산'
+  vision: '비전', thisyear: '올해', strategy: '전략', networth: '순자산'
 };
 let MEMOS = loadMemos();
 function loadMemos() {
