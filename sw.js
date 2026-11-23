@@ -1,6 +1,6 @@
 /* BUBUDAISY 서비스워커 — 오프라인에서도 마지막 화면은 열리게.
    비공개 방(Firebase) 통신은 절대 캐시하지 않는다. */
-const CACHE = 'bubudaisy-v49';
+const CACHE = 'bubudaisy-v50';
 const ASSETS = [
   './',
   './index.html',

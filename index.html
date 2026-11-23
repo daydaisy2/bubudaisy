@@ -496,42 +496,18 @@
   .tabs{grid-template-columns:repeat(4,1fr);gap:7px;overflow:visible}
 
   /* ================= ✨ 올해 탭 — 2027년 목표 4개 · 1~12월 접기 카드 (2026-11-23 개편) ================= */
-  /* 탭 머리 — 가운데 「✨ 올해」와 연도 */
-  .ty-head{display:flex;flex-direction:column;align-items:center;gap:1px;padding:1px 0 0}
-  .ty-head .t1{font-size:20px;font-weight:900;letter-spacing:-.04em;color:var(--navy);line-height:1.2}
-  .ty-head .t2{font-size:11.5px;font-weight:900;color:#8A8368;letter-spacing:.06em;line-height:1.2}
-
-  /* 위 카드 — `2035년 · 만 40세` 카드와 같은 진남색 그라데이션 한 장.
-     가운데 흰 제목 + 반투명 남색 알약 4줄(노란 원 숫자 · 목표·메모 · 오른쪽 둥근 체크) */
-  .ty-navy{position:relative;border-radius:var(--r);padding:14px 12px 13px;
-    background:linear-gradient(155deg,#2B2799,#1E1B7A 62%);color:#fff;
-    box-shadow:0 14px 28px rgba(30,27,122,.28);display:flex;flex-direction:column;gap:8px;
-    overflow:hidden}
-  .ty-navy::before,.ty-navy::after{content:'✦';position:absolute;color:rgba(255,255,255,.3);
-    font-size:11px;line-height:1;pointer-events:none}
-  .ty-navy::before{left:15px;top:14px}
-  .ty-navy::after{right:14px;top:18px;font-size:8px;color:rgba(251,224,73,.75)}
-  .ty-navy-h{margin:3px 0 2px;text-align:center}
-  .ty-navy-h h2{margin:0;font-size:17.5px;font-weight:900;letter-spacing:-.04em;color:#fff;line-height:1.25}
-  .tyg{display:flex;flex-direction:column;gap:6px}
-  .tyg-pill{display:flex;align-items:center;gap:8px;min-height:52px;padding:7px 8px;
-    background:rgba(126,122,228,.24);box-shadow:inset 0 0 0 1px rgba(255,255,255,.075);
-    border-radius:16px;transition:background .15s}
-  .tyg-body{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:9px;text-align:left;
-    background:none;padding:1px 0}
-  .tyg-num{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--yellow);
-    color:var(--navy);font-size:13px;font-weight:900;line-height:1;display:grid;place-items:center}
-  .tyg-tw{display:flex;flex-direction:column;gap:2px;min-width:0}
-  .tyg-t{font-size:13.5px;font-weight:900;color:#fff;letter-spacing:-.025em;line-height:1.38;
-    word-break:keep-all;overflow-wrap:anywhere;white-space:pre-line}
-  .tyg-t.ph{font-size:12.5px;font-weight:800;color:rgba(255,255,255,.46)}
+  /* 위 카드 — 비전 탭 `2035년 · 만 40세` 카드(.hero.goalcard)와 **같은 클래스**로 그린다.
+     카드 여백 · 모서리 · 제목 크기 · 4줄 알약(padding/gap/min-height) · 노란 원(19px)이
+     두 탭에서 픽셀까지 같아진다. 올해 탭에만 있던 `✨ 올해 / 2027` 머리줄과 ✦ 장식은 없앴다(2026-11-24). */
+  .tyg-body{flex:1 1 auto;min-width:0;display:flex;align-items:center;text-align:left;background:none;padding:0}
+  .tyg-t.ph{font-weight:800;color:rgba(255,255,255,.46)}
   .tyg-t.on{color:rgba(255,255,255,.52);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.4)}
-  .tyg-n{font-size:10.5px;font-weight:700;color:rgba(227,225,255,.74);letter-spacing:-.02em;line-height:1.45;
-    white-space:pre-line;overflow-wrap:anywhere}
+  .tyg-n{white-space:pre-line;overflow-wrap:anywhere}
   .tyg-n.on{color:rgba(227,225,255,.4);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.26)}
-  .tyg-check{flex:0 0 auto;width:32px;height:32px;border-radius:50%;
+  /* 오른쪽 둥근 체크 — 비전 카드의 `현재` 알약 높이에 맞춰 26px(알약 줄 높이 48px 유지) */
+  .tyg-check{flex:0 0 auto;width:26px;height:26px;border-radius:50%;
     border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.05);color:rgba(255,255,255,.38);
-    font-size:13px;font-weight:900;line-height:1;display:grid;place-items:center;
+    font-size:12px;font-weight:900;line-height:1;display:grid;place-items:center;
     transition:background .15s,border-color .15s,color .15s,transform .1s}
   .tyg-check:active{transform:scale(.93)}
   .tyg-check.on{background:var(--yellow);border-color:var(--yellow);color:var(--navy)}
@@ -574,13 +550,6 @@
   .ty-hint{margin:1px 0 0;font-size:10.5px;font-weight:700;color:#8F8A66;text-align:center;
     letter-spacing:-.02em;line-height:1.5}
   @media (max-width:359px){
-    .ty-head .t1{font-size:18px}
-    .ty-navy-h h2{font-size:16px}
-    .tyg-pill{gap:7px;padding:6px 7px}
-    .tyg-t{font-size:12.5px}
-    .tyg-t.ph{font-size:11.5px}
-    .tyg-num{width:28px;height:28px;font-size:12px}
-    .tyg-check{width:30px;height:30px}
     .tym-t{font-size:12px}
     .tym-t.ph{font-size:11.5px}
   }
@@ -1981,16 +1950,18 @@ function tymToggleFold(el) {
 }
 function thisYearView() {
   const year = tyYear();
+  /* 줄 모양은 비전 탭 `2035년 · 만 40세` 카드와 똑같은 .grow/.gn/.gt/.gv/.gsub 를 그대로 쓴다
+     (2026-11-24: 올해 탭만의 .tyg-pill/.tyg-num/.tyg-tw 여백을 없애 두 탭 카드 크기를 일치) */
   const rows = tyGoalList().map(g => {
     const empty = !g.title;
-    return '<div class="tyg-pill">' +
+    return '<div class="grow">' +
+      '<span class="gn" aria-hidden="true">' + (g.slot + 1) + '</span>' +
       '<button class="tyg-body" data-act="ty-edit" data-slot="' + g.slot + '" aria-label="' + (g.slot + 1) + '번 목표 적기·수정">' +
-        '<span class="tyg-num" aria-hidden="true">' + (g.slot + 1) + '</span>' +
-        '<span class="tyg-tw">' +
+        '<span class="gt">' +
           (empty
-            ? '<span class="tyg-t ph">' + TY_PH[g.slot] + '</span>'
-            : '<span class="tyg-t' + (g.done ? ' on' : '') + '">' + esc(g.title) + '</span>' +
-              (g.note ? '<span class="tyg-n' + (g.done ? ' on' : '') + '">' + esc(g.note) + '</span>' : '')) +
+            ? '<span class="gv tyg-t ph">' + TY_PH[g.slot] + '</span>'
+            : '<span class="gv tyg-t' + (g.done ? ' on' : '') + '">' + esc(g.title) + '</span>' +
+              (g.note ? '<span class="gsub tyg-n' + (g.done ? ' on' : '') + '">' + esc(g.note) + '</span>' : '')) +
         '</span>' +
       '</button>' +
       '<button class="tyg-check' + (g.done ? ' on' : '') + '" data-act="ty-toggle" data-slot="' + g.slot + '"' +
@@ -2031,10 +2002,9 @@ function thisYearView() {
       '<div class="tym-body">' + monthRows + '</div>' +
     '</section>';
   }).join('');
-  return '<div class="ty-head"><span class="t1">✨ 올해</span><span class="t2">' + year + '</span></div>' +
-    '<section class="ty-navy" id="tyGoalsCard">' +
-      '<div class="ty-navy-h"><h2>' + year + '년 목표</h2></div>' +
-      '<div class="tyg">' + rows + '</div>' +
+  return '<section class="hero goalcard" id="tyGoalsCard">' +
+      '<div class="hero-top goal-top"><span>' + year + '년 목표</span></div>' +
+      '<div class="grows">' + rows + '</div>' +
     '</section>' +
     '<div class="tym">' + monthCards + '</div>' +
     '<p class="foot-note">목표를 누르면 적고 고칠 수 있어요 · 달 이름을 누르면 접히고 펼쳐져요 🌼</p>';
